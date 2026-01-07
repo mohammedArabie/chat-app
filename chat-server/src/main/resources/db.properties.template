@@ -1,0 +1,5 @@
+jdbcUrl=jdbc:mysql://localhost:3306/YOUR_DB_NAME
+username=YOUR_USER_NAME
+password=YOUR_PASSWORD
+maximumPoolSize=10
+minimumIdle=2
