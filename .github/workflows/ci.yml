@@ -22,7 +22,7 @@ jobs:
           cache: "maven"
 
       - name: Run Checkstyle
-        run: mvn checkstyle:check -Dcheckstyle.config.location=.github/linters/sun_checks.xml
+        run: mvn checkstyle:check
 
       - name: Build and Run Tests
         run: mvn clean verify -Djava.awt.headless=true
