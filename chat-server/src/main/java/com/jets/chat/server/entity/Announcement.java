@@ -14,13 +14,8 @@ public class Announcement {
     public Announcement() {
     }
 
-    public Announcement(final long announcementId,
-                        final String content,
-                        final Timestamp sentAt,
-                        final String fontColor,
-                        final String fontStyle,
-                        final boolean isBold,
-                        final boolean isItalic) {
+    public Announcement(long announcementId, String content, Timestamp sentAt, String fontColor,
+            String fontStyle, boolean isBold, boolean isItalic) {
         this.announcementId = announcementId;
         this.content = content;
         this.sentAt = sentAt;
@@ -34,7 +29,7 @@ public class Announcement {
         return announcementId;
     }
 
-    public void setAnnouncementId(final long announcementId) {
+    public void setAnnouncementId(long announcementId) {
         this.announcementId = announcementId;
     }
 
@@ -42,7 +37,7 @@ public class Announcement {
         return content;
     }
 
-    public void setContent(final String content) {
+    public void setContent(String content) {
         this.content = content;
     }
 
@@ -50,7 +45,7 @@ public class Announcement {
         return sentAt;
     }
 
-    public void setSentAt(final Timestamp sentAt) {
+    public void setSentAt(Timestamp sentAt) {
         this.sentAt = sentAt;
     }
 
@@ -58,7 +53,7 @@ public class Announcement {
         return fontColor;
     }
 
-    public void setFontColor(final String fontColor) {
+    public void setFontColor(String fontColor) {
         this.fontColor = fontColor;
     }
 
@@ -66,7 +61,7 @@ public class Announcement {
         return fontStyle;
     }
 
-    public void setFontStyle(final String fontStyle) {
+    public void setFontStyle(String fontStyle) {
         this.fontStyle = fontStyle;
     }
 
@@ -74,7 +69,7 @@ public class Announcement {
         return isBold;
     }
 
-    public void setBold(final boolean bold) {
+    public void setBold(boolean bold) {
         isBold = bold;
     }
 
@@ -82,7 +77,7 @@ public class Announcement {
         return isItalic;
     }
 
-    public void setItalic(final boolean italic) {
+    public void setItalic(boolean italic) {
         isItalic = italic;
     }
 }

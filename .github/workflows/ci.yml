@@ -42,8 +42,8 @@ jobs:
       - name: Initialize Database Schema
         run: mysql -h 127.0.0.1 -u root -proot chat_app < chat-server/src/main/resources/schema.sql
 
-      - name: Run Checkstyle
-        run: mvn checkstyle:check
+      - name: Run Spotless Check
+        run: mvn spotless:check
 
       - name: Build and Run Tests
         run: mvn clean verify -Djava.awt.headless=true
