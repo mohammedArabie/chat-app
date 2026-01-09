@@ -1,4 +1,4 @@
-package com.jets.chat.server;
+package com.jets.chat.server.dao;
 
 import com.jets.chat.server.dao.impl.AnnouncementDaoImpl;
 import com.jets.chat.server.entity.Announcement;
