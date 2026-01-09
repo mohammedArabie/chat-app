@@ -195,8 +195,7 @@ public class AnnouncementDaoTest {
         assertTrue(recentLarge.size() >= 10);
 
         for (int i = 0; i < recent5.size() - 1; i++) {
-            assertTrue(recent5.get(i).getSentAt()
-                    .compareTo(recent5.get(i + 1).getSentAt()) >= 0);
+            assertTrue(recent5.get(i).getSentAt().compareTo(recent5.get(i + 1).getSentAt()) >= 0);
         }
     }
 
@@ -334,8 +333,8 @@ public class AnnouncementDaoTest {
         assertEquals(saved.getFontColor(), retrievedAnn.getFontColor());
         assertEquals(saved.isBold(), retrievedAnn.isBold());
         assertEquals(saved.isItalic(), retrievedAnn.isItalic());
-        assertThat(retrievedAnn.getSentAt().toInstant())
-                .isCloseTo(saved.getSentAt().toInstant(), within(1, ChronoUnit.SECONDS));
+        assertThat(retrievedAnn.getSentAt().toInstant()).isCloseTo(saved.getSentAt().toInstant(),
+                within(1, ChronoUnit.SECONDS));
     }
 
     @Test
