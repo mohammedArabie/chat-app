@@ -2,13 +2,24 @@ name: JavaFX Chat App CI
 
 on:
   push:
-    branches: ["main", "dev"]
+    branches: [ "main" ]
   pull_request:
-    branches: ["main", "dev"]
+    branches: [ "main" ]
 
 jobs:
   build-and-check:
     runs-on: ubuntu-latest
+
+    # 1. Add a Service container for the Database (Required for DAO tests)
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: chat_app  # Change this to match your DB name
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
       - name: Checkout code
@@ -17,9 +28,20 @@ jobs:
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
-          java-version: "21"
-          distribution: "temurin"
-          cache: "maven"
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      # 2. Fix the "inStream is null" error by creating db.properties
+      - name: Configure Database Properties
+        run: |
+          # Copy the template to the actual file name
+          cp chat-server/src/main/resources/db.properties.template chat-server/src/main/resources/db.properties
+          
+          # This replaces "password=..." in the file with "password=root"
+          sed -i 's/password=.*/password=root/' chat-server/src/main/resources/db.properties
+          sed -i 's/username=.*/username=root/' chat-server/src/main/resources/db.properties
+          sed -i 's/url=.*/url=jdbc:mysql:\/\/127.0.0.1:3306\/chat_app/' chat-server/src/main/resources/db.properties
 
       - name: Run Checkstyle
         run: mvn checkstyle:check
