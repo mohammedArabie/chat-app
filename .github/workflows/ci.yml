@@ -4,18 +4,19 @@ on:
   push:
     branches: [ "main", "dev" ]
   pull_request:
-    branches: [ "main" , "dev" ]
+    branches: [ "main", "dev" ]
 
 jobs:
   build-and-check:
     runs-on: ubuntu-latest
 
+    # Service container for MySQL
     services:
       mysql:
         image: mysql:8.0
         env:
           MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: chat_app  # Change this to match your DB name
+          MYSQL_DATABASE: chat_app
         ports:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
@@ -31,16 +32,16 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      # 2. Fix the "inStream is null" error by creating db.properties
       - name: Configure Database Properties
         run: |
-          # Copy the template to the actual file name
           cp chat-server/src/main/resources/db.properties.template chat-server/src/main/resources/db.properties
-          
-          # This replaces "password=..." in the file with "password=root"
           sed -i 's/password=.*/password=root/' chat-server/src/main/resources/db.properties
           sed -i 's/username=.*/username=root/' chat-server/src/main/resources/db.properties
           sed -i 's/url=.*/url=jdbc:mysql:\/\/127.0.0.1:3306\/chat_app/' chat-server/src/main/resources/db.properties
+
+      - name: Initialize Database Schema
+        run: mysql -h 127.0.0.1 -u root -proot chat_app < chat-server/src/main/resources/schema.sql
+
 
       - name: Run Checkstyle
         run: mvn checkstyle:check
