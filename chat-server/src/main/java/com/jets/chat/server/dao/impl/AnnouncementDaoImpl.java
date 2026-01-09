@@ -1,15 +1,20 @@
 package com.jets.chat.server.dao.impl;
 
-import com.jets.chat.server.config.DataSourceConfig;
-import com.jets.chat.server.dao.AnnouncementDao;
-import com.jets.chat.server.entity.Announcement;
-
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class AnnouncementDaoImpl implements AnnouncementDao {
+import com.jets.chat.server.config.DataSourceConfig;
+import com.jets.chat.server.dao.AnnouncementDao;
+import com.jets.chat.server.entity.Announcement;
+
+public final class AnnouncementDaoImpl implements AnnouncementDao {
 
     private static volatile AnnouncementDaoImpl instance;
 
@@ -26,19 +31,21 @@ public class AnnouncementDaoImpl implements AnnouncementDao {
         }
         return instance;
     }
-
+    @SuppressWarnings("checkstyle:LineLength")
     private static final String INSERT_SQL = "INSERT INTO announcements (content, sent_at, font_style, font_color, is_bold, is_italic) VALUES (?, ?, ?, ?, ?, ?)";
     private static final String SELECT_RECENT_SQL = "SELECT * FROM announcements ORDER BY sent_at DESC LIMIT ?";
     private static final String SELECT_ALL_SQL = "SELECT * FROM announcements ORDER BY sent_at DESC";
     private static final String SELECT_BY_ID_SQL = "SELECT * FROM announcements WHERE announcement_id = ?";
+    @SuppressWarnings("checkstyle:LineLength")
     private static final String UPDATE_SQL = "UPDATE announcements SET content = ?, font_style = ?, font_color = ?, is_bold = ?, is_italic = ? WHERE announcement_id = ?";
     private static final String DELETE_SQL = "DELETE FROM announcements WHERE announcement_id = ?";
 
+    @SuppressWarnings("checkstyle:MagicNumber")
     @Override
-    public Announcement save(Announcement announcement) {
+    public Announcement save(final Announcement announcement) {
         try (Connection connection = DataSourceConfig.getDataSource().getConnection();
-             PreparedStatement statement = connection.prepareStatement(INSERT_SQL,
-                     Statement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement statement = connection.prepareStatement(INSERT_SQL,
+                        Statement.RETURN_GENERATED_KEYS)) {
 
             statement.setString(1, announcement.getContent());
             if (announcement.getSentAt() == null) {
@@ -68,12 +75,13 @@ public class AnnouncementDaoImpl implements AnnouncementDao {
         }
     }
 
+    @SuppressWarnings("checkstyle:MagicNumber")
     @Override
-    public List<Announcement> findRecent(int limit) {
+    public List<Announcement> findRecent(final int limit) {
         try (Connection connection = DataSourceConfig.getDataSource().getConnection();
-             PreparedStatement statement = connection.prepareStatement(SELECT_RECENT_SQL)) {
+                PreparedStatement statement = connection.prepareStatement(SELECT_RECENT_SQL)) {
             statement.setInt(1, limit > 0 ? limit : 5);
-            try (ResultSet rs = statement.executeQuery();) {
+            try (ResultSet rs = statement.executeQuery()) {
                 List<Announcement> announcements = new ArrayList<>();
                 while (rs.next()) {
                     announcements.add(mapRowToAnnouncement(rs));
@@ -88,8 +96,8 @@ public class AnnouncementDaoImpl implements AnnouncementDao {
     @Override
     public List<Announcement> findAll() {
         try (Connection connection = DataSourceConfig.getDataSource().getConnection();
-             PreparedStatement statement = connection.prepareStatement(SELECT_ALL_SQL)) {
-            try (ResultSet rs = statement.executeQuery();) {
+                PreparedStatement statement = connection.prepareStatement(SELECT_ALL_SQL)) {
+            try (ResultSet rs = statement.executeQuery()) {
                 List<Announcement> announcements = new ArrayList<>();
                 while (rs.next()) {
                     announcements.add(mapRowToAnnouncement(rs));
@@ -102,24 +110,23 @@ public class AnnouncementDaoImpl implements AnnouncementDao {
     }
 
     @Override
-    public Optional<Announcement> findById(long id) {
+    public Optional<Announcement> findById(final long id) {
         try (Connection connection = DataSourceConfig.getDataSource().getConnection();
-             PreparedStatement statement = connection.prepareStatement(SELECT_BY_ID_SQL)) {
+                PreparedStatement statement = connection.prepareStatement(SELECT_BY_ID_SQL)) {
             statement.setLong(1, id);
-            try (ResultSet rs = statement.executeQuery();) {
-                return rs.next() ?
-                        Optional.of(mapRowToAnnouncement(rs)) :
-                        Optional.empty();
+            try (ResultSet rs = statement.executeQuery()) {
+                return rs.next() ? Optional.of(mapRowToAnnouncement(rs)) : Optional.empty();
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
+    @SuppressWarnings("checkstyle:MagicNumber")
     @Override
-    public boolean update(Announcement announcement) {
+    public boolean update(final Announcement announcement) {
         try (Connection connection = DataSourceConfig.getDataSource().getConnection();
-             PreparedStatement statement = connection.prepareStatement(UPDATE_SQL)) {
+                PreparedStatement statement = connection.prepareStatement(UPDATE_SQL)) {
             statement.setString(1, announcement.getContent());
             statement.setString(2, announcement.getFontStyle());
             statement.setString(3, announcement.getFontColor());
@@ -133,9 +140,9 @@ public class AnnouncementDaoImpl implements AnnouncementDao {
     }
 
     @Override
-    public boolean deleteById(long id) {
+    public boolean deleteById(final long id) {
         try (Connection connection = DataSourceConfig.getDataSource().getConnection();
-             PreparedStatement statement = connection.prepareStatement(DELETE_SQL);) {
+                PreparedStatement statement = connection.prepareStatement(DELETE_SQL)) {
             statement.setLong(1, id);
             return statement.executeUpdate() == 1;
 
@@ -144,7 +151,7 @@ public class AnnouncementDaoImpl implements AnnouncementDao {
         }
     }
 
-    private static Announcement mapRowToAnnouncement(ResultSet rs) throws SQLException {
+    private static Announcement mapRowToAnnouncement(final ResultSet rs) throws SQLException {
         Announcement announcement = new Announcement();
         announcement.setAnnouncementId(rs.getLong("announcement_id"));
         announcement.setContent(rs.getString("content"));
