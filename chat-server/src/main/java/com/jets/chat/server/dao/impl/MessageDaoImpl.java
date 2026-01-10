@@ -22,11 +22,12 @@ public class MessageDaoImpl implements MessageDao {
 
     @Override
     public MessageResponseDto save(CreateMessageDto dto) {
-        String sql = "INSERT INTO messages (chat_id, sender_id, message_type, content, font_style, font_color, font_size, is_bold, is_italic, is_underline, background_color) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO messages (chat_id, sender_id, message_type, content, font_style, font_color, font_size, is_bold, is_italic, is_underline, background_color) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement ps = conn.prepareStatement(sql,
+                        Statement.RETURN_GENERATED_KEYS)) {
             ps.setLong(1, dto.getChatId());
             ps.setLong(2, dto.getSenderId());
             ps.setString(3, dto.getMessageType());
@@ -56,12 +57,12 @@ public class MessageDaoImpl implements MessageDao {
     @Override
     public List<MessageResponseDto> findAll() {
         List<MessageResponseDto> messages = new ArrayList<>();
-        String sql = "SELECT m.*, u.display_name FROM messages m " +
-                "JOIN users u ON m.sender_id = u.user_id ORDER BY m.sent_at ASC";
+        String sql = "SELECT m.*, u.display_name FROM messages m "
+                + "JOIN users u ON m.sender_id = u.user_id ORDER BY m.sent_at ASC";
 
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+                PreparedStatement ps = conn.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 messages.add(mapResultSetToResponseDto(rs));
@@ -74,11 +75,11 @@ public class MessageDaoImpl implements MessageDao {
 
     @Override
     public Optional<MessageResponseDto> findById(long id) {
-        String sql = "SELECT m.*, u.display_name FROM messages m " +
-                "JOIN users u ON m.sender_id = u.user_id WHERE m.message_id = ?";
+        String sql = "SELECT m.*, u.display_name FROM messages m "
+                + "JOIN users u ON m.sender_id = u.user_id WHERE m.message_id = ?";
 
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setLong(1, id);
             try (ResultSet rs = ps.executeQuery()) {
@@ -94,12 +95,12 @@ public class MessageDaoImpl implements MessageDao {
 
     @Override
     public MessageResponseDto update(EditMessageDto dto) {
-        String sql = "UPDATE messages SET content = ?, font_style = ?, font_color = ?, " +
-                "font_size = ?, is_bold = ?, is_italic = ?, is_underline = ?, background_color = ? " +
-                "WHERE message_id = ?";
+        String sql = "UPDATE messages SET content = ?, font_style = ?, font_color = ?, "
+                + "font_size = ?, is_bold = ?, is_italic = ?, is_underline = ?, background_color = ? "
+                + "WHERE message_id = ?";
 
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, dto.getContent());
             ps.setString(2, dto.getFontStyle());
@@ -127,7 +128,7 @@ public class MessageDaoImpl implements MessageDao {
         if (toDelete.isPresent()) {
             String sql = "DELETE FROM messages WHERE message_id = ?";
             try (Connection conn = dataSource.getConnection();
-                 PreparedStatement ps = conn.prepareStatement(sql)) {
+                    PreparedStatement ps = conn.prepareStatement(sql)) {
                 ps.setLong(1, id);
                 ps.executeUpdate();
                 return toDelete.get();

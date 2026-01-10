@@ -20,7 +20,9 @@ public class Message {
     public Message() {
     }
 
-    public Message(long messageId, long chatId, long senderId, String messageType, String content, Timestamp sentAt, String fontStyle, String fontColor, int fontSize, boolean isBold, boolean isItalic, boolean isUnderline, String backgroundColor) {
+    public Message(long messageId, long chatId, long senderId, String messageType, String content,
+            Timestamp sentAt, String fontStyle, String fontColor, int fontSize, boolean isBold,
+            boolean isItalic, boolean isUnderline, String backgroundColor) {
         this.messageId = messageId;
         this.chatId = chatId;
         this.senderId = senderId;

@@ -17,7 +17,9 @@ public class CreateMessageDto {
     public CreateMessageDto() {
     }
 
-    public CreateMessageDto(long chatId, long senderId, String messageType, String content, String fontStyle, String fontColor, int fontSize, boolean isBold, boolean isItalic, boolean isUnderline, String backgroundColor) {
+    public CreateMessageDto(long chatId, long senderId, String messageType, String content,
+            String fontStyle, String fontColor, int fontSize, boolean isBold, boolean isItalic,
+            boolean isUnderline, String backgroundColor) {
         this.chatId = chatId;
         this.senderId = senderId;
         this.messageType = messageType;
