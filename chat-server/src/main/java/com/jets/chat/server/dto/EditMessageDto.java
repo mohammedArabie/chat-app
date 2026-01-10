@@ -14,7 +14,9 @@ public class EditMessageDto {
     public EditMessageDto() {
     }
 
-    public EditMessageDto(long messageId, String content, String fontStyle, String fontColor, int fontSize, boolean isBold, boolean isItalic, boolean isUnderline, String backgroundColor) {
+    public EditMessageDto(long messageId, String content, String fontStyle, String fontColor,
+            int fontSize, boolean isBold, boolean isItalic, boolean isUnderline,
+            String backgroundColor) {
         this.messageId = messageId;
         this.content = content;
         this.fontStyle = fontStyle;

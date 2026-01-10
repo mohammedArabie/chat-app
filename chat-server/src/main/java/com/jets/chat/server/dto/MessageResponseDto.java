@@ -20,7 +20,10 @@ public class MessageResponseDto {
     public MessageResponseDto() {
     }
 
-    public MessageResponseDto(long messageId, String senderName, String content, String formattedTimestamp, String messageType, String fontStyle, String fontColor, int fontSize, boolean isBold, boolean isItalic, boolean isUnderline, String backgroundColor) {
+    public MessageResponseDto(long messageId, String senderName, String content,
+            String formattedTimestamp, String messageType, String fontStyle, String fontColor,
+            int fontSize, boolean isBold, boolean isItalic, boolean isUnderline,
+            String backgroundColor) {
         this.messageId = messageId;
         this.senderName = senderName;
         this.content = content;

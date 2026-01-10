@@ -1,6 +1,5 @@
 package com.jets.chat.server;
 
-import com.jets.chat.server.config.DataSourceConfig;
 import com.jets.chat.server.dao.MessageDao;
 import com.jets.chat.server.dao.impl.MessageDaoImpl;
 import com.jets.chat.server.dto.CreateMessageDto;
@@ -10,7 +9,6 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.junit.jupiter.api.*;
 
-import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.util.*;
@@ -37,22 +35,20 @@ public class MessageDaoImplTest {
         dataSource = new HikariDataSource(config);
 
         try (Connection conn = dataSource.getConnection();
-             Statement stmt = conn.createStatement()) {
+                Statement stmt = conn.createStatement()) {
 
-            stmt.execute("CREATE TABLE users (user_id BIGINT PRIMARY KEY AUTO_INCREMENT, display_name VARCHAR(100))");
+            stmt.execute(
+                    "CREATE TABLE users (user_id BIGINT PRIMARY KEY AUTO_INCREMENT, display_name VARCHAR(100))");
             stmt.execute("CREATE TABLE chats (chat_id BIGINT PRIMARY KEY AUTO_INCREMENT)");
 
-            stmt.execute("CREATE TABLE messages (" +
-                    "message_id BIGINT PRIMARY KEY AUTO_INCREMENT, " +
-                    "chat_id BIGINT, " +
-                    "sender_id BIGINT, " +
-                    "message_type VARCHAR(10), " +
-                    "content TEXT, " +
-                    "sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
-                    "font_style VARCHAR(50), font_color VARCHAR(20), font_size INT, " +
-                    "is_bold TINYINT(1), is_italic TINYINT(1), is_underline TINYINT(1), " +
-                    "background_color VARCHAR(20), " +
-                    "FOREIGN KEY (sender_id) REFERENCES users(user_id))");
+            stmt.execute("CREATE TABLE messages ("
+                    + "message_id BIGINT PRIMARY KEY AUTO_INCREMENT, " + "chat_id BIGINT, "
+                    + "sender_id BIGINT, " + "message_type VARCHAR(10), " + "content TEXT, "
+                    + "sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, "
+                    + "font_style VARCHAR(50), font_color VARCHAR(20), font_size INT, "
+                    + "is_bold TINYINT(1), is_italic TINYINT(1), is_underline TINYINT(1), "
+                    + "background_color VARCHAR(20), "
+                    + "FOREIGN KEY (sender_id) REFERENCES users(user_id))");
 
             stmt.execute("INSERT INTO users (display_name) VALUES ('TestUser')");
             stmt.execute("INSERT INTO chats (chat_id) VALUES (1)");
@@ -175,7 +171,8 @@ public class MessageDaoImplTest {
 
         assertTrue(finished, "Concurrect test timed out");
         assertEquals(threadCount, successfulSaves.get(), "Some messages failed to save under load");
-        assertEquals(threadCount, generatedIds.size(), "Duplicate IDs detected - thread safety issue!");
+        assertEquals(threadCount, generatedIds.size(),
+                "Duplicate IDs detected - thread safety issue!");
 
         executor.shutdown();
     }
