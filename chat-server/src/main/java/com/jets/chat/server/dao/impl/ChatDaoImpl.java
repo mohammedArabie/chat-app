@@ -93,9 +93,7 @@ public final class ChatDaoImpl implements ChatDao {
                         new Chat(
                                 rs.getLong("chat_id"),
                                 ChatType.valueOf(rs.getString("chat_type")),
-                                rs.getTimestamp("created_at").toLocalDateTime()
-                        )
-                );
+                                rs.getTimestamp("created_at").toLocalDateTime()));
             }
             return Optional.empty();
 
@@ -126,9 +124,7 @@ public final class ChatDaoImpl implements ChatDao {
                         new Chat(
                                 rs.getLong("chat_id"),
                                 ChatType.valueOf(rs.getString("chat_type")),
-                                rs.getTimestamp("created_at").toLocalDateTime()
-                        )
-                );
+                                rs.getTimestamp("created_at").toLocalDateTime()));
             }
         } catch (SQLException e) {
             throw new RuntimeException("Failed to find chats for user: " + userId, e);
@@ -190,9 +186,7 @@ public final class ChatDaoImpl implements ChatDao {
                         new ChatParticipant(
                                 rs.getLong("chat_id"),
                                 rs.getLong("user_id"),
-                                rs.getTimestamp("joined_at").toLocalDateTime()
-                        )
-                );
+                                rs.getTimestamp("joined_at").toLocalDateTime()));
             }
         } catch (SQLException e) {
             throw new RuntimeException("Failed to get participants for chat: " + chatId, e);
@@ -217,9 +211,7 @@ public final class ChatDaoImpl implements ChatDao {
                         new ChatGroup(
                                 rs.getLong("chat_id"),
                                 rs.getString("group_name"),
-                                rs.getLong("owner_id")
-                        )
-                );
+                                rs.getLong("owner_id")));
             }
             return Optional.empty();
 
@@ -293,7 +285,8 @@ public final class ChatDaoImpl implements ChatDao {
         if (connection != null) {
             try {
                 connection.rollback();
-            } catch (SQLException ignored) {}
+            } catch (SQLException ignored) {
+            }
         }
     }
 
@@ -301,7 +294,8 @@ public final class ChatDaoImpl implements ChatDao {
         if (connection != null) {
             try {
                 connection.setAutoCommit(true);
-            } catch (SQLException ignored) {}
+            } catch (SQLException ignored) {
+            }
         }
     }
 
@@ -309,7 +303,8 @@ public final class ChatDaoImpl implements ChatDao {
         if (connection != null) {
             try {
                 connection.close();
-            } catch (SQLException ignored) {}
+            } catch (SQLException ignored) {
+            }
         }
     }
 }
