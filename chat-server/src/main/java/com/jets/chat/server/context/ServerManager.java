@@ -1,11 +1,13 @@
 package com.jets.chat.server.context;
 
 import com.jets.chat.common.rmi.RemoteAnnouncementService;
+import com.jets.chat.server.config.DataSourceConfig;
 import com.jets.chat.server.dao.AnnouncementDao;
 import com.jets.chat.server.dao.impl.AnnouncementDaoImpl;
 import com.jets.chat.server.rmi.RemoteAnnouncementServiceImpl;
 import com.jets.chat.server.service.AnnouncementService;
 import com.jets.chat.server.service.impl.AnnouncementServiceImpl;
+import com.zaxxer.hikari.HikariDataSource;
 
 import java.rmi.RemoteException;
 
@@ -25,8 +27,9 @@ public class ServerManager {
         return instance;
     }
 
-    public ServerManager() throws RemoteException {
-        AnnouncementDao announcementDao = AnnouncementDaoImpl.getInstance();
+    private ServerManager() throws RemoteException {
+        HikariDataSource dataSource = DataSourceConfig.getDataSource();
+        AnnouncementDao announcementDao = new AnnouncementDaoImpl(dataSource);
         this.announcementService = new AnnouncementServiceImpl(announcementDao);
         this.remoteAnnouncementService = new RemoteAnnouncementServiceImpl(announcementService);
 

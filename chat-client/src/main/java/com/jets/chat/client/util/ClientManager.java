@@ -24,7 +24,7 @@ public class ClientManager {
         return instance;
     }
 
-    public ClientManager() {
+    private ClientManager() {
         try {
             Registry registry = LocateRegistry.getRegistry(ProjectConstants.RMI_SERVICE_HOST,
                     ProjectConstants.RMI_SERVICE_PORT);
