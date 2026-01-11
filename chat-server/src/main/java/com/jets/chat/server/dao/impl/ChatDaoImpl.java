@@ -83,16 +83,14 @@ public final class ChatDaoImpl implements ChatDao {
         String sql = "SELECT chat_id, chat_type, created_at FROM chats WHERE chat_id = ?";
 
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement ps = connection.prepareStatement(sql)) {
+                PreparedStatement ps = connection.prepareStatement(sql)) {
 
             ps.setLong(1, chatId);
             ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
                 return Optional.of(
-                        new Chat(
-                                rs.getLong("chat_id"),
-                                ChatType.valueOf(rs.getString("chat_type")),
+                        new Chat(rs.getLong("chat_id"), ChatType.valueOf(rs.getString("chat_type")),
                                 rs.getTimestamp("created_at").toLocalDateTime()));
             }
             return Optional.empty();
@@ -114,16 +112,14 @@ public final class ChatDaoImpl implements ChatDao {
         List<Chat> chats = new ArrayList<>();
 
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement ps = connection.prepareStatement(sql)) {
+                PreparedStatement ps = connection.prepareStatement(sql)) {
 
             ps.setLong(1, userId);
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
                 chats.add(
-                        new Chat(
-                                rs.getLong("chat_id"),
-                                ChatType.valueOf(rs.getString("chat_type")),
+                        new Chat(rs.getLong("chat_id"), ChatType.valueOf(rs.getString("chat_type")),
                                 rs.getTimestamp("created_at").toLocalDateTime()));
             }
         } catch (SQLException e) {
@@ -143,7 +139,8 @@ public final class ChatDaoImpl implements ChatDao {
         }
     }
 
-    private void addParticipant(Connection connection, long chatId, long userId) throws SQLException {
+    private void addParticipant(Connection connection, long chatId, long userId)
+            throws SQLException {
         String sql = "INSERT INTO chat_participants (chat_id, user_id) VALUES (?, ?)";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -158,7 +155,7 @@ public final class ChatDaoImpl implements ChatDao {
         String sql = "DELETE FROM chat_participants WHERE chat_id = ? AND user_id = ?";
 
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement ps = connection.prepareStatement(sql)) {
+                PreparedStatement ps = connection.prepareStatement(sql)) {
 
             ps.setLong(1, chatId);
             ps.setLong(2, userId);
@@ -176,17 +173,14 @@ public final class ChatDaoImpl implements ChatDao {
         List<ChatParticipant> participants = new ArrayList<>();
 
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement ps = connection.prepareStatement(sql)) {
+                PreparedStatement ps = connection.prepareStatement(sql)) {
 
             ps.setLong(1, chatId);
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
-                participants.add(
-                        new ChatParticipant(
-                                rs.getLong("chat_id"),
-                                rs.getLong("user_id"),
-                                rs.getTimestamp("joined_at").toLocalDateTime()));
+                participants.add(new ChatParticipant(rs.getLong("chat_id"), rs.getLong("user_id"),
+                        rs.getTimestamp("joined_at").toLocalDateTime()));
             }
         } catch (SQLException e) {
             throw new RuntimeException("Failed to get participants for chat: " + chatId, e);
@@ -201,17 +195,14 @@ public final class ChatDaoImpl implements ChatDao {
         String sql = "SELECT chat_id, group_name, owner_id FROM chat_groups WHERE chat_id = ?";
 
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement ps = connection.prepareStatement(sql)) {
+                PreparedStatement ps = connection.prepareStatement(sql)) {
 
             ps.setLong(1, chatId);
             ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
-                return Optional.of(
-                        new ChatGroup(
-                                rs.getLong("chat_id"),
-                                rs.getString("group_name"),
-                                rs.getLong("owner_id")));
+                return Optional.of(new ChatGroup(rs.getLong("chat_id"), rs.getString("group_name"),
+                        rs.getLong("owner_id")));
             }
             return Optional.empty();
 
@@ -225,7 +216,7 @@ public final class ChatDaoImpl implements ChatDao {
         String sql = "UPDATE chat_groups SET group_name = ? WHERE chat_id = ?";
 
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement ps = connection.prepareStatement(sql)) {
+                PreparedStatement ps = connection.prepareStatement(sql)) {
 
             ps.setString(1, newName);
             ps.setLong(2, chatId);
@@ -241,7 +232,7 @@ public final class ChatDaoImpl implements ChatDao {
         String sql = "UPDATE chat_groups SET owner_id = ? WHERE chat_id = ?";
 
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement ps = connection.prepareStatement(sql)) {
+                PreparedStatement ps = connection.prepareStatement(sql)) {
 
             ps.setLong(1, newOwnerId);
             ps.setLong(2, chatId);
@@ -256,7 +247,8 @@ public final class ChatDaoImpl implements ChatDao {
     private long insertChat(Connection connection, ChatType type) throws SQLException {
         String sql = "INSERT INTO chats (chat_type) VALUES (?)";
 
-        try (PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement ps = connection.prepareStatement(sql,
+                Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, type.name());
             ps.executeUpdate();
 
@@ -270,7 +262,8 @@ public final class ChatDaoImpl implements ChatDao {
         }
     }
 
-    private void insertGroup(Connection connection, long chatId, String groupName, long ownerId) throws SQLException {
+    private void insertGroup(Connection connection, long chatId, String groupName, long ownerId)
+            throws SQLException {
         String sql = "INSERT INTO chat_groups (chat_id, group_name, owner_id) VALUES (?, ?, ?)";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
