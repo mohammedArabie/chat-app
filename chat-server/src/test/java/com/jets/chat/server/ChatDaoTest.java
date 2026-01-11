@@ -153,8 +153,8 @@ class ChatDaoTest {
         String getLastIdSql = "SELECT LAST_INSERT_ID()";
 
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             PreparedStatement idPs = conn.prepareStatement(getLastIdSql)) {
+                PreparedStatement ps = conn.prepareStatement(sql);
+                PreparedStatement idPs = conn.prepareStatement(getLastIdSql)) {
 
             ps.setString(1, phoneNumber);
             ps.setString(2, displayName);

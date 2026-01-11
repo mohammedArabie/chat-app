@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 public class Chat {
     private long chatId;
-    private ChatType chatType;   // PRIVATE or GROUP
+    private ChatType chatType; // PRIVATE or GROUP
     private LocalDateTime createdAt;
 
     public Chat() {
