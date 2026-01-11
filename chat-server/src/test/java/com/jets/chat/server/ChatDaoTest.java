@@ -143,11 +143,12 @@ class ChatDaoTest {
     }
 
     // ===================== HELPER METHODS =====================
-    private long insertTestUser(String phoneNumber, String displayName, String gender) throws SQLException {
+    private long insertTestUser(String phoneNumber, String displayName, String gender)
+            throws SQLException {
         String sql = """
-            INSERT INTO users (phone_number, display_name, password_hash, gender, created_at)
-            VALUES (?, ?, ?, ?, NOW())
-            """;
+                INSERT INTO users (phone_number, display_name, password_hash, gender, created_at)
+                VALUES (?, ?, ?, ?, NOW())
+                """;
 
         String getLastIdSql = "SELECT LAST_INSERT_ID()";
 
@@ -183,7 +184,8 @@ class ChatDaoTest {
     }
 
     private void deleteFromTable(Connection conn, String tableName) throws SQLException {
-        String sql = "DELETE FROM " + tableName + " WHERE created_at > DATE_SUB(NOW(), INTERVAL 1 HOUR)";
+        String sql = "DELETE FROM " + tableName
+                + " WHERE created_at > DATE_SUB(NOW(), INTERVAL 1 HOUR)";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.executeUpdate();
         } catch (SQLException e) {
