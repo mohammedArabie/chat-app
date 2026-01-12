@@ -1,4 +1,4 @@
-package com.jets.chat.server.entity;
+package com.jets.chat.common.entity;
 
 public enum ChatType {
     PRIVATE, GROUP

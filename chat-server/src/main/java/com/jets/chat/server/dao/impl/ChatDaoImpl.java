@@ -4,11 +4,10 @@ import com.jets.chat.server.dao.ChatDao;
 import com.jets.chat.server.entity.Chat;
 import com.jets.chat.server.entity.ChatGroup;
 import com.jets.chat.server.entity.ChatParticipant;
-import com.jets.chat.server.entity.ChatType;
+import com.jets.chat.common.entity.ChatType;
 
 import javax.sql.DataSource;
 import java.sql.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
