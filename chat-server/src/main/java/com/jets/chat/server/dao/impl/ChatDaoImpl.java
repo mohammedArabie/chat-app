@@ -46,7 +46,7 @@ public final class ChatDaoImpl implements ChatDao {
     }
 
     @Override
-    public void insertGroup(long chatId, String groupName, long ownerId) {
+    public boolean insertGroup(long chatId, String groupName, long ownerId) {
         String sql = "INSERT INTO chat_groups (chat_id, group_name, owner_id) VALUES (?, ?, ?)";
 
         try (Connection connection = dataSource.getConnection();
@@ -55,7 +55,9 @@ public final class ChatDaoImpl implements ChatDao {
             ps.setLong(1, chatId);
             ps.setString(2, groupName);
             ps.setLong(3, ownerId);
-            ps.executeUpdate();
+
+            int affectedRows = ps.executeUpdate();
+            return affectedRows > 0;
 
         } catch (SQLException e) {
             throw new RuntimeException("Failed to insert chat group", e);
