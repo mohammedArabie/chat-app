@@ -39,48 +39,41 @@ public class ChatDaoTest {
         dataSource = new HikariDataSource(config);
 
         try (Connection conn = dataSource.getConnection();
-             Statement stmt = conn.createStatement()) {
+                Statement stmt = conn.createStatement()) {
 
             // Create users table
-            stmt.execute("CREATE TABLE users (" +
-                    "user_id BIGINT PRIMARY KEY AUTO_INCREMENT, " +
-                    "display_name VARCHAR(100), " +
-                    "email VARCHAR(100), " +
-                    "password VARCHAR(255))");
+            stmt.execute("CREATE TABLE users (" + "user_id BIGINT PRIMARY KEY AUTO_INCREMENT, "
+                    + "display_name VARCHAR(100), " + "email VARCHAR(100), "
+                    + "password VARCHAR(255))");
 
             // Create chats table
-            stmt.execute("CREATE TABLE chats (" +
-                    "chat_id BIGINT PRIMARY KEY AUTO_INCREMENT, " +
-                    "chat_type VARCHAR(10) NOT NULL, " +
-                    "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)");
+            stmt.execute("CREATE TABLE chats (" + "chat_id BIGINT PRIMARY KEY AUTO_INCREMENT, "
+                    + "chat_type VARCHAR(10) NOT NULL, "
+                    + "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)");
 
             // Create chat_participants table
-            stmt.execute("CREATE TABLE chat_participants (" +
-                    "chat_id BIGINT, " +
-                    "user_id BIGINT, " +
-                    "joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
-                    "PRIMARY KEY (chat_id, user_id), " +
-                    "FOREIGN KEY (chat_id) REFERENCES chats(chat_id) ON DELETE CASCADE, " +
-                    "FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE)");
+            stmt.execute("CREATE TABLE chat_participants (" + "chat_id BIGINT, "
+                    + "user_id BIGINT, " + "joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, "
+                    + "PRIMARY KEY (chat_id, user_id), "
+                    + "FOREIGN KEY (chat_id) REFERENCES chats(chat_id) ON DELETE CASCADE, "
+                    + "FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE)");
 
             // Create chat_groups table
-            stmt.execute("CREATE TABLE chat_groups (" +
-                    "chat_id BIGINT PRIMARY KEY, " +
-                    "group_name VARCHAR(100) NOT NULL, " +
-                    "owner_id BIGINT NOT NULL, " +
-                    "FOREIGN KEY (chat_id) REFERENCES chats(chat_id) ON DELETE CASCADE, " +
-                    "FOREIGN KEY (owner_id) REFERENCES users(user_id) ON DELETE CASCADE)");
+            stmt.execute("CREATE TABLE chat_groups (" + "chat_id BIGINT PRIMARY KEY, "
+                    + "group_name VARCHAR(100) NOT NULL, " + "owner_id BIGINT NOT NULL, "
+                    + "FOREIGN KEY (chat_id) REFERENCES chats(chat_id) ON DELETE CASCADE, "
+                    + "FOREIGN KEY (owner_id) REFERENCES users(user_id) ON DELETE CASCADE)");
 
             // Insert test users
             for (int i = 1; i <= 20; i++) {
-                stmt.execute(String.format(
-                        "INSERT INTO users (display_name, email, password) " +
-                                "VALUES ('User%d', 'user%d@test.com', 'pass%d')", i, i, i));
+                stmt.execute(String.format("INSERT INTO users (display_name, email, password) "
+                        + "VALUES ('User%d', 'user%d@test.com', 'pass%d')", i, i, i));
             }
 
             // Insert a test chat for basic operations
             stmt.execute("INSERT INTO chats (chat_type) VALUES ('GROUP')");
-            stmt.execute("INSERT INTO chat_groups (chat_id, group_name, owner_id) VALUES (1, 'Existing Group', 1)");
+            stmt.execute(
+                    "INSERT INTO chat_groups (chat_id, group_name, owner_id) VALUES (1, 'Existing Group', 1)");
             stmt.execute("INSERT INTO chat_participants (chat_id, user_id) VALUES (1, 1)");
             stmt.execute("INSERT INTO chat_participants (chat_id, user_id) VALUES (1, 2)");
 
@@ -268,8 +261,9 @@ public class ChatDaoTest {
             executor.submit(() -> {
                 try {
                     startLatch.await();
-                    ChatType type = (ThreadLocalRandom.current().nextBoolean()) ?
-                            ChatType.PRIVATE : ChatType.GROUP;
+                    ChatType type = (ThreadLocalRandom.current().nextBoolean())
+                            ? ChatType.PRIVATE
+                            : ChatType.GROUP;
                     long chatId = chatDao.insertChat(type);
                     generatedChatIds.add(chatId);
                     successfulInserts.incrementAndGet();
@@ -306,11 +300,11 @@ public class ChatDaoTest {
             executor.submit(() -> {
                 try {
                     switch (taskType) {
-                        case 0:
+                        case 0 :
                             // Add participant
                             chatDao.addParticipant(createdChatId, userId);
                             break;
-                        case 1:
+                        case 1 :
                             // Remove participant (may fail if not exists)
                             try {
                                 chatDao.removeParticipant(createdChatId, userId);
@@ -318,11 +312,11 @@ public class ChatDaoTest {
                                 // Expected if participant doesn't exist
                             }
                             break;
-                        case 2:
+                        case 2 :
                             // Get participants
                             chatDao.getParticipants(createdChatId);
                             break;
-                        case 3:
+                        case 3 :
                             // Get group info
                             chatDao.getGroupInfo(createdChatId);
                             break;
