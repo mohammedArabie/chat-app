@@ -12,7 +12,7 @@ public interface ChatDao {
     // Chat creation
     long insertChat(ChatType type);
 
-    void insertGroup(long chatId, String groupName, long ownerId);
+    boolean insertGroup(long chatId, String groupName, long ownerId);
 
     // Chat retrieval
     Optional<Chat> findById(long chatId);
