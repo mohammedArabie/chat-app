@@ -4,13 +4,13 @@ import java.sql.Timestamp;
 
 public class Chat {
     private long chatId;
-    private ChatType chatType; // PRIVATE or GROUP
+    private com.jets.chat.common.entity.ChatType chatType; // PRIVATE or GROUP
     private Timestamp createdAt;
 
     public Chat() {
     }
 
-    public Chat(long chatId, ChatType chatType, Timestamp createdAt) {
+    public Chat(long chatId, com.jets.chat.common.entity.ChatType chatType, Timestamp createdAt) {
         this.chatId = chatId;
         this.chatType = chatType;
         this.createdAt = createdAt;
@@ -24,11 +24,11 @@ public class Chat {
         this.chatId = chatId;
     }
 
-    public ChatType getChatType() {
+    public com.jets.chat.common.entity.ChatType getChatType() {
         return chatType;
     }
 
-    public void setChatType(ChatType chatType) {
+    public void setChatType(com.jets.chat.common.entity.ChatType chatType) {
         this.chatType = chatType;
     }
 

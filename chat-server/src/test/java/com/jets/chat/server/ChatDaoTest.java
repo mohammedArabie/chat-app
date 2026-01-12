@@ -5,15 +5,13 @@ import com.jets.chat.server.dao.impl.ChatDaoImpl;
 import com.jets.chat.server.entity.Chat;
 import com.jets.chat.server.entity.ChatGroup;
 import com.jets.chat.server.entity.ChatParticipant;
-import com.jets.chat.server.entity.ChatType;
+import com.jets.chat.common.entity.ChatType;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.junit.jupiter.api.*;
 
 import java.sql.Connection;
 import java.sql.Statement;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
