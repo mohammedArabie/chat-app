@@ -24,58 +24,46 @@ public final class ChatDaoImpl implements ChatDao {
 
     // ================== CHAT CREATION ==================
     @Override
-    public Chat createPrivateChat(long user1Id, long user2Id) {
-        Connection connection = null;
+    public long insertChat(ChatType type) {
+        String sql = "INSERT INTO chats (chat_type) VALUES (?)";
 
-        try {
-            connection = dataSource.getConnection();
-            connection.setAutoCommit(false);
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement ps = connection.prepareStatement(
+                     sql, Statement.RETURN_GENERATED_KEYS)) {
 
-            long chatId = insertChat(connection, ChatType.PRIVATE);
-            addParticipant(connection, chatId, user1Id);
-            addParticipant(connection, chatId, user2Id);
+            ps.setString(1, type.name());
+            ps.executeUpdate();
 
-            connection.commit();
-            return new Chat(chatId, ChatType.PRIVATE, LocalDateTime.now());
-
-        } catch (SQLException e) {
-            rollback(connection);
-            throw new RuntimeException("Failed to create private chat", e);
-        } finally {
-            restoreAutoCommit(connection);
-            closeConnection(connection);
-        }
-    }
-
-    @Override
-    public Chat createGroupChat(String groupName, long ownerId, List<Long> participantIds) {
-        Connection connection = null;
-
-        try {
-            connection = dataSource.getConnection();
-            connection.setAutoCommit(false);
-
-            long chatId = insertChat(connection, ChatType.GROUP);
-            insertGroup(connection, chatId, groupName, ownerId);
-            addParticipant(connection, chatId, ownerId);
-
-            for (Long userId : participantIds) {
-                if (!userId.equals(ownerId)) {
-                    addParticipant(connection, chatId, userId);
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    return rs.getLong(1);
                 }
+                throw new SQLException("Failed to generate chat ID");
             }
 
-            connection.commit();
-            return new Chat(chatId, ChatType.GROUP, LocalDateTime.now());
-
         } catch (SQLException e) {
-            rollback(connection);
-            throw new RuntimeException("Failed to create group chat", e);
-        } finally {
-            restoreAutoCommit(connection);
-            closeConnection(connection);
+            throw new RuntimeException("Failed to insert chat", e);
         }
     }
+
+
+    @Override
+    public void insertGroup(long chatId, String groupName, long ownerId) {
+        String sql = "INSERT INTO chat_groups (chat_id, group_name, owner_id) VALUES (?, ?, ?)";
+
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            ps.setLong(1, chatId);
+            ps.setString(2, groupName);
+            ps.setLong(3, ownerId);
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to insert chat group", e);
+        }
+    }
+
 
     // ================== CHAT RETRIEVAL ==================
     @Override
@@ -83,7 +71,7 @@ public final class ChatDaoImpl implements ChatDao {
         String sql = "SELECT chat_id, chat_type, created_at FROM chats WHERE chat_id = ?";
 
         try (Connection connection = dataSource.getConnection();
-                PreparedStatement ps = connection.prepareStatement(sql)) {
+             PreparedStatement ps = connection.prepareStatement(sql)) {
 
             ps.setLong(1, chatId);
             ResultSet rs = ps.executeQuery();
@@ -91,7 +79,7 @@ public final class ChatDaoImpl implements ChatDao {
             if (rs.next()) {
                 return Optional.of(
                         new Chat(rs.getLong("chat_id"), ChatType.valueOf(rs.getString("chat_type")),
-                                rs.getTimestamp("created_at").toLocalDateTime()));
+                                rs.getTimestamp("created_at")));
             }
             return Optional.empty();
 
@@ -112,7 +100,7 @@ public final class ChatDaoImpl implements ChatDao {
         List<Chat> chats = new ArrayList<>();
 
         try (Connection connection = dataSource.getConnection();
-                PreparedStatement ps = connection.prepareStatement(sql)) {
+             PreparedStatement ps = connection.prepareStatement(sql)) {
 
             ps.setLong(1, userId);
             ResultSet rs = ps.executeQuery();
@@ -120,7 +108,7 @@ public final class ChatDaoImpl implements ChatDao {
             while (rs.next()) {
                 chats.add(
                         new Chat(rs.getLong("chat_id"), ChatType.valueOf(rs.getString("chat_type")),
-                                rs.getTimestamp("created_at").toLocalDateTime()));
+                                rs.getTimestamp("created_at")));
             }
         } catch (SQLException e) {
             throw new RuntimeException("Failed to find chats for user: " + userId, e);
@@ -131,35 +119,39 @@ public final class ChatDaoImpl implements ChatDao {
 
     // ================== PARTICIPANTS ==================
     @Override
-    public void addParticipant(long chatId, long userId) {
+    public boolean addParticipant(long chatId, long userId) {
         try (Connection connection = dataSource.getConnection()) {
-            addParticipant(connection, chatId, userId);
+            return addParticipant(connection, chatId, userId);
         } catch (SQLException e) {
             throw new RuntimeException("Failed to add participant", e);
         }
     }
 
-    private void addParticipant(Connection connection, long chatId, long userId)
+    private boolean addParticipant(Connection connection, long chatId, long userId)
             throws SQLException {
         String sql = "INSERT INTO chat_participants (chat_id, user_id) VALUES (?, ?)";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setLong(1, chatId);
             ps.setLong(2, userId);
-            ps.executeUpdate();
+
+            int affectedRows = ps.executeUpdate();
+            return affectedRows > 0;
         }
     }
 
     @Override
-    public void removeParticipant(long chatId, long userId) {
+    public boolean removeParticipant(long chatId, long userId) {
         String sql = "DELETE FROM chat_participants WHERE chat_id = ? AND user_id = ?";
 
         try (Connection connection = dataSource.getConnection();
-                PreparedStatement ps = connection.prepareStatement(sql)) {
+             PreparedStatement ps = connection.prepareStatement(sql)) {
 
             ps.setLong(1, chatId);
             ps.setLong(2, userId);
-            ps.executeUpdate();
+
+            int affectedRows = ps.executeUpdate();
+            return affectedRows > 0;
 
         } catch (SQLException e) {
             throw new RuntimeException("Failed to remove participant", e);
@@ -173,14 +165,14 @@ public final class ChatDaoImpl implements ChatDao {
         List<ChatParticipant> participants = new ArrayList<>();
 
         try (Connection connection = dataSource.getConnection();
-                PreparedStatement ps = connection.prepareStatement(sql)) {
+             PreparedStatement ps = connection.prepareStatement(sql)) {
 
             ps.setLong(1, chatId);
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
                 participants.add(new ChatParticipant(rs.getLong("chat_id"), rs.getLong("user_id"),
-                        rs.getTimestamp("joined_at").toLocalDateTime()));
+                        rs.getTimestamp("joined_at")));
             }
         } catch (SQLException e) {
             throw new RuntimeException("Failed to get participants for chat: " + chatId, e);
@@ -195,7 +187,7 @@ public final class ChatDaoImpl implements ChatDao {
         String sql = "SELECT chat_id, group_name, owner_id FROM chat_groups WHERE chat_id = ?";
 
         try (Connection connection = dataSource.getConnection();
-                PreparedStatement ps = connection.prepareStatement(sql)) {
+             PreparedStatement ps = connection.prepareStatement(sql)) {
 
             ps.setLong(1, chatId);
             ResultSet rs = ps.executeQuery();
@@ -212,15 +204,17 @@ public final class ChatDaoImpl implements ChatDao {
     }
 
     @Override
-    public void renameGroup(long chatId, String newName) {
+    public boolean renameGroup(long chatId, String newName) {
         String sql = "UPDATE chat_groups SET group_name = ? WHERE chat_id = ?";
 
         try (Connection connection = dataSource.getConnection();
-                PreparedStatement ps = connection.prepareStatement(sql)) {
+             PreparedStatement ps = connection.prepareStatement(sql)) {
 
             ps.setString(1, newName);
             ps.setLong(2, chatId);
-            ps.executeUpdate();
+
+            int affectedRows = ps.executeUpdate();
+            return affectedRows > 0;
 
         } catch (SQLException e) {
             throw new RuntimeException("Failed to rename group", e);
@@ -228,49 +222,20 @@ public final class ChatDaoImpl implements ChatDao {
     }
 
     @Override
-    public void changeGroupOwner(long chatId, long newOwnerId) {
+    public boolean changeGroupOwner(long chatId, long newOwnerId) {
         String sql = "UPDATE chat_groups SET owner_id = ? WHERE chat_id = ?";
 
         try (Connection connection = dataSource.getConnection();
-                PreparedStatement ps = connection.prepareStatement(sql)) {
+             PreparedStatement ps = connection.prepareStatement(sql)) {
 
             ps.setLong(1, newOwnerId);
             ps.setLong(2, chatId);
-            ps.executeUpdate();
+
+            int affectedRows = ps.executeUpdate();
+            return affectedRows > 0;
 
         } catch (SQLException e) {
             throw new RuntimeException("Failed to change group owner", e);
-        }
-    }
-
-    // ================== PRIVATE HELPERS ==================
-    private long insertChat(Connection connection, ChatType type) throws SQLException {
-        String sql = "INSERT INTO chats (chat_type) VALUES (?)";
-
-        try (PreparedStatement ps = connection.prepareStatement(sql,
-                Statement.RETURN_GENERATED_KEYS)) {
-            ps.setString(1, type.name());
-            ps.executeUpdate();
-
-            try (ResultSet rs = ps.getGeneratedKeys()) {
-                if (rs.next()) {
-                    return rs.getLong(1);
-                } else {
-                    throw new SQLException("Failed to get generated chat ID");
-                }
-            }
-        }
-    }
-
-    private void insertGroup(Connection connection, long chatId, String groupName, long ownerId)
-            throws SQLException {
-        String sql = "INSERT INTO chat_groups (chat_id, group_name, owner_id) VALUES (?, ?, ?)";
-
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setLong(1, chatId);
-            ps.setString(2, groupName);
-            ps.setLong(3, ownerId);
-            ps.executeUpdate();
         }
     }
 
