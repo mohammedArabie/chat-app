@@ -2,9 +2,7 @@ package com.jets.chat.server;
 
 import com.jets.chat.server.dao.MessageDao;
 import com.jets.chat.server.dao.impl.MessageDaoImpl;
-import com.jets.chat.server.dto.CreateMessageDto;
-import com.jets.chat.server.dto.EditMessageDto;
-import com.jets.chat.server.dto.MessageResponseDto;
+import com.jets.chat.server.entity.Message;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.junit.jupiter.api.*;
@@ -28,6 +26,7 @@ public class MessageDaoImplTest {
     @BeforeAll
     void setup() throws Exception {
         HikariConfig config = new HikariConfig();
+        config.setDriverClassName("org.h2.Driver");
         config.setJdbcUrl("jdbc:h2:mem:chat_integration_test;MODE=MySQL;DB_CLOSE_DELAY=-1");
         config.setUsername("sa");
         config.setPassword("");
@@ -48,7 +47,8 @@ public class MessageDaoImplTest {
                     + "font_style VARCHAR(50), font_color VARCHAR(20), font_size INT, "
                     + "is_bold TINYINT(1), is_italic TINYINT(1), is_underline TINYINT(1), "
                     + "background_color VARCHAR(20), "
-                    + "FOREIGN KEY (sender_id) REFERENCES users(user_id))");
+                    + "FOREIGN KEY (sender_id) REFERENCES users(user_id), "
+                    + "FOREIGN KEY (chat_id) REFERENCES chats(chat_id))");
 
             stmt.execute("INSERT INTO users (display_name) VALUES ('TestUser')");
             stmt.execute("INSERT INTO chats (chat_id) VALUES (1)");
@@ -59,51 +59,54 @@ public class MessageDaoImplTest {
 
     @AfterAll
     void tearDown() {
-        dataSource.close();
+        if (dataSource != null) {
+            dataSource.close();
+        }
     }
 
     @Test
     @Order(1)
-    @DisplayName("CRUD: Save new message")
+    @DisplayName("Happy Path: Save new message entity")
     void testSave() {
-        CreateMessageDto dto = new CreateMessageDto();
-        dto.setChatId(1);
-        dto.setSenderId(1);
-        dto.setMessageType("TEXT");
-        dto.setContent("Hello, this is a test message");
-        dto.setBold(true);
+        Message message = new Message();
+        message.setChatId(1);
+        message.setSenderId(1);
+        message.setMessageType("TEXT");
+        message.setContent("Hello, this is a test message");
+        message.setBold(true);
 
-        MessageResponseDto response = messageDao.save(dto);
+        Message savedMessage = messageDao.save(message);
 
-        assertNotNull(response);
-        assertTrue(response.getMessageId() > 0);
-        assertEquals("TestUser", response.getSenderName());
-        assertEquals("Hello, this is a test message", response.getContent());
+        assertNotNull(savedMessage);
+        assertTrue(savedMessage.getMessageId() > 0);
+        assertNotNull(savedMessage.getSentAt());
+        assertEquals("Hello, this is a test message", savedMessage.getContent());
 
-        createdMessageId = response.getMessageId();
+        createdMessageId = savedMessage.getMessageId();
     }
 
     @Test
     @Order(2)
-    @DisplayName("CRUD: Find message by ID")
+    @DisplayName("Happy Path: Find message by ID")
     void testFindById() {
-        Optional<MessageResponseDto> found = messageDao.findById(createdMessageId);
+        Optional<Message> found = messageDao.findById(createdMessageId);
 
         assertTrue(found.isPresent());
         assertEquals(createdMessageId, found.get().getMessageId());
+        assertEquals(1, found.get().getChatId());
     }
 
     @Test
     @Order(3)
-    @DisplayName("CRUD: Update existing message")
+    @DisplayName("Happy Path: Update existing message")
     void testUpdate() {
-        EditMessageDto editDto = new EditMessageDto();
-        editDto.setMessageId(createdMessageId);
-        editDto.setContent("Updated content");
-        editDto.setItalic(true);
-        editDto.setFontSize(18);
+        Message message = messageDao.findById(createdMessageId).get();
 
-        MessageResponseDto updated = messageDao.update(editDto);
+        message.setContent("Updated content");
+        message.setItalic(true);
+        message.setFontSize(18);
+
+        Message updated = messageDao.update(message);
 
         assertNotNull(updated);
         assertEquals("Updated content", updated.getContent());
@@ -113,26 +116,35 @@ public class MessageDaoImplTest {
 
     @Test
     @Order(4)
-    @DisplayName("CRUD: Find all messages")
-    void testFindAll() {
-        List<MessageResponseDto> messages = messageDao.findAll();
+    @DisplayName("Happy Path: Find messages by Chat ID")
+    void testFindByChatId() {
+        List<Message> messages = messageDao.findByChatId(1);
         assertFalse(messages.isEmpty());
         assertTrue(messages.stream().anyMatch(m -> m.getMessageId() == createdMessageId));
     }
 
     @Test
     @Order(5)
-    @DisplayName("CRUD: Delete message by ID")
+    @DisplayName("Happy Path: Delete message by ID")
     void testDelete() {
-        MessageResponseDto deleted = messageDao.deleteById(createdMessageId);
-        assertNotNull(deleted);
+        Optional<Message> deleted = messageDao.deleteById(createdMessageId);
+        assertTrue(deleted.isPresent());
+        assertEquals(createdMessageId, deleted.get().getMessageId());
 
-        Optional<MessageResponseDto> found = messageDao.findById(createdMessageId);
+        Optional<Message> found = messageDao.findById(createdMessageId);
         assertFalse(found.isPresent());
     }
 
     @Test
     @Order(6)
+    @DisplayName("Sad Path: Find non-existent message")
+    void testFindByIdNotFound() {
+        Optional<Message> found = messageDao.findById(9999);
+        assertFalse(found.isPresent());
+    }
+
+    @Test
+    @Order(7)
     @DisplayName("Concurrency: 50 simultaneous inserts")
     void testConcurrentInserts() throws InterruptedException {
         int threadCount = 50;
@@ -147,13 +159,13 @@ public class MessageDaoImplTest {
             executor.submit(() -> {
                 try {
                     startLatch.await();
-                    CreateMessageDto dto = new CreateMessageDto();
-                    dto.setChatId(1);
-                    dto.setSenderId(1);
-                    dto.setMessageType("TEXT");
-                    dto.setContent("Concurrent Msg");
+                    Message m = new Message();
+                    m.setChatId(1);
+                    m.setSenderId(1);
+                    m.setMessageType("TEXT");
+                    m.setContent("Concurrent Msg");
 
-                    MessageResponseDto res = messageDao.save(dto);
+                    Message res = messageDao.save(m);
                     if (res != null) {
                         generatedIds.add(res.getMessageId());
                         successfulSaves.incrementAndGet();
@@ -169,16 +181,15 @@ public class MessageDaoImplTest {
         startLatch.countDown();
         boolean finished = endLatch.await(10, TimeUnit.SECONDS);
 
-        assertTrue(finished, "Concurrect test timed out");
-        assertEquals(threadCount, successfulSaves.get(), "Some messages failed to save under load");
-        assertEquals(threadCount, generatedIds.size(),
-                "Duplicate IDs detected - thread safety issue!");
+        assertTrue(finished, "Concurrent test timed out");
+        assertEquals(threadCount, successfulSaves.get());
+        assertEquals(threadCount, generatedIds.size());
 
         executor.shutdown();
     }
 
     @Test
-    @Order(7)
+    @Order(8)
     @DisplayName("Concurrency: Mixed Read/Write operations")
     void testMixedReadWrite() throws InterruptedException {
         int tasks = 40;
@@ -188,17 +199,17 @@ public class MessageDaoImplTest {
         for (int i = 0; i < tasks; i++) {
             if (i % 2 == 0) {
                 executor.submit(() -> {
-                    CreateMessageDto d = new CreateMessageDto();
-                    d.setChatId(1);
-                    d.setSenderId(1);
-                    d.setMessageType("TEXT");
-                    d.setContent("Spam");
-                    messageDao.save(d);
+                    Message m = new Message();
+                    m.setChatId(1);
+                    m.setSenderId(1);
+                    m.setMessageType("TEXT");
+                    m.setContent("Spam");
+                    messageDao.save(m);
                     latch.countDown();
                 });
             } else {
                 executor.submit(() -> {
-                    messageDao.findAll();
+                    messageDao.findByChatId(1);
                     latch.countDown();
                 });
             }
