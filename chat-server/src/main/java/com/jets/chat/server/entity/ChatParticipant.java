@@ -1,16 +1,16 @@
 package com.jets.chat.server.entity;
 
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 
 public class ChatParticipant {
     private long chatId;
     private long userId;
-    private LocalDateTime joinedAt;
+    private Timestamp joinedAt;
 
     public ChatParticipant() {
     }
 
-    public ChatParticipant(long chatId, long userId, LocalDateTime joinedAt) {
+    public ChatParticipant(long chatId, long userId, Timestamp joinedAt) {
         this.chatId = chatId;
         this.userId = userId;
         this.joinedAt = joinedAt;
@@ -32,11 +32,11 @@ public class ChatParticipant {
         this.userId = userId;
     }
 
-    public LocalDateTime getJoinedAt() {
+    public Timestamp getJoinedAt() {
         return joinedAt;
     }
 
-    public void setJoinedAt(LocalDateTime joinedAt) {
+    public void setJoinedAt(Timestamp joinedAt) {
         this.joinedAt = joinedAt;
     }
 }
