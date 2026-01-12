@@ -1,8 +1,8 @@
 package com.jets.chat.server.dao.impl;
 
-import com.jets.chat.server.config.DataSourceConfig;
 import com.jets.chat.server.dao.AnnouncementDao;
 import com.jets.chat.server.entity.Announcement;
+import com.zaxxer.hikari.HikariDataSource;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -11,20 +11,10 @@ import java.util.Optional;
 
 public final class AnnouncementDaoImpl implements AnnouncementDao {
 
-    private static volatile AnnouncementDaoImpl instance;
+    private final HikariDataSource dataSource;
 
-    private AnnouncementDaoImpl() {
-    }
-
-    public static AnnouncementDaoImpl getInstance() {
-        if (instance == null) {
-            synchronized (AnnouncementDaoImpl.class) {
-                if (instance == null) {
-                    instance = new AnnouncementDaoImpl();
-                }
-            }
-        }
-        return instance;
+    public AnnouncementDaoImpl(HikariDataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     private static final String INSERT_SQL = "INSERT INTO announcements (content, sent_at, font_style, font_color, is_bold, is_italic) VALUES (?, ?, ?, ?, ?, ?)";
@@ -36,7 +26,7 @@ public final class AnnouncementDaoImpl implements AnnouncementDao {
 
     @Override
     public Announcement save(Announcement announcement) {
-        try (Connection connection = DataSourceConfig.getDataSource().getConnection();
+        try (Connection connection = dataSource.getConnection();
                 PreparedStatement statement = connection.prepareStatement(INSERT_SQL,
                         Statement.RETURN_GENERATED_KEYS)) {
 
@@ -70,7 +60,7 @@ public final class AnnouncementDaoImpl implements AnnouncementDao {
 
     @Override
     public List<Announcement> findRecent(int limit) {
-        try (Connection connection = DataSourceConfig.getDataSource().getConnection();
+        try (Connection connection = dataSource.getConnection();
                 PreparedStatement statement = connection.prepareStatement(SELECT_RECENT_SQL)) {
             statement.setInt(1, limit > 0 ? limit : 5);
             try (ResultSet rs = statement.executeQuery()) {
@@ -87,7 +77,7 @@ public final class AnnouncementDaoImpl implements AnnouncementDao {
 
     @Override
     public List<Announcement> findAll() {
-        try (Connection connection = DataSourceConfig.getDataSource().getConnection();
+        try (Connection connection = dataSource.getConnection();
                 PreparedStatement statement = connection.prepareStatement(SELECT_ALL_SQL)) {
             try (ResultSet rs = statement.executeQuery()) {
                 List<Announcement> announcements = new ArrayList<>();
@@ -103,7 +93,7 @@ public final class AnnouncementDaoImpl implements AnnouncementDao {
 
     @Override
     public Optional<Announcement> findById(long id) {
-        try (Connection connection = DataSourceConfig.getDataSource().getConnection();
+        try (Connection connection = dataSource.getConnection();
                 PreparedStatement statement = connection.prepareStatement(SELECT_BY_ID_SQL)) {
             statement.setLong(1, id);
             try (ResultSet rs = statement.executeQuery()) {
@@ -116,7 +106,7 @@ public final class AnnouncementDaoImpl implements AnnouncementDao {
 
     @Override
     public boolean update(Announcement announcement) {
-        try (Connection connection = DataSourceConfig.getDataSource().getConnection();
+        try (Connection connection = dataSource.getConnection();
                 PreparedStatement statement = connection.prepareStatement(UPDATE_SQL)) {
             statement.setString(1, announcement.getContent());
             statement.setString(2, announcement.getFontStyle());
@@ -132,7 +122,7 @@ public final class AnnouncementDaoImpl implements AnnouncementDao {
 
     @Override
     public boolean deleteById(long id) {
-        try (Connection connection = DataSourceConfig.getDataSource().getConnection();
+        try (Connection connection = dataSource.getConnection();
                 PreparedStatement statement = connection.prepareStatement(DELETE_SQL)) {
             statement.setLong(1, id);
             return statement.executeUpdate() == 1;

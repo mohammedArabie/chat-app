@@ -1,9 +1,13 @@
-package com.jets.chat.server;
+package com.jets.chat.server.dao;
 
 import com.jets.chat.server.dao.impl.AnnouncementDaoImpl;
 import com.jets.chat.server.entity.Announcement;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import org.junit.jupiter.api.*;
 
+import java.sql.Connection;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -18,66 +22,53 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.within;
 import static org.junit.jupiter.api.Assertions.*;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class AnnouncementDaoTest {
 
-    private static AnnouncementDaoImpl dao;
-    private static Long sharedTestId;
-    private static List<Long> createdIds = new ArrayList<>();
+    private HikariDataSource dataSource;
+    private AnnouncementDaoImpl dao;
+    private Long sharedTestId;
+    private List<Long> createdIds = new ArrayList<>();
 
     @BeforeAll
-    static void init() {
-        dao = AnnouncementDaoImpl.getInstance();
+    void init() throws Exception {
+        HikariConfig config = new HikariConfig();
+        config.setJdbcUrl("jdbc:h2:mem:announcement_test;MODE=MySQL;DB_CLOSE_DELAY=-1");
+        config.setUsername("sa");
+        config.setPassword("");
+        config.setMaximumPoolSize(20);
+        dataSource = new HikariDataSource(config);
+
+        try (Connection conn = dataSource.getConnection();
+                Statement stmt = conn.createStatement()) {
+
+            stmt.execute("CREATE TABLE announcements ("
+                    + "announcement_id BIGINT PRIMARY KEY AUTO_INCREMENT, "
+                    + "content TEXT NOT NULL, " + "sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, "
+                    + "font_style VARCHAR(50), " + "font_color VARCHAR(20), "
+                    + "is_bold TINYINT(1) DEFAULT 0, " + "is_italic TINYINT(1) DEFAULT 0)");
+        }
+
+        dao = new AnnouncementDaoImpl(dataSource);
     }
 
     @AfterAll
-    static void cleanup() {
+    void cleanup() {
         for (Long id : createdIds) {
             try {
                 dao.deleteById(id);
             } catch (Exception e) {
+                // Ignore cleanup errors
             }
+        }
+        if (dataSource != null) {
+            dataSource.close();
         }
     }
 
     @Test
     @Order(1)
-    @DisplayName("Singleton: Should always return the same instance")
-    void testSingletonIdentity() {
-        AnnouncementDaoImpl instance1 = AnnouncementDaoImpl.getInstance();
-        AnnouncementDaoImpl instance2 = AnnouncementDaoImpl.getInstance();
-        assertSame(instance1, instance2, "Both instances must be the same object");
-    }
-
-    @Test
-    @Order(2)
-    @DisplayName("Singleton: Should be thread-safe under high concurrency")
-    void testSingletonThreadSafety() throws InterruptedException {
-        int threads = 50;
-        ExecutorService executor = Executors.newFixedThreadPool(threads);
-        Set<AnnouncementDaoImpl> distinctInstances = Collections.synchronizedSet(new HashSet<>());
-        CountDownLatch latch = new CountDownLatch(1);
-
-        for (int i = 0; i < threads; i++) {
-            executor.submit(() -> {
-                try {
-                    latch.await();
-                    distinctInstances.add(AnnouncementDaoImpl.getInstance());
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
-            });
-        }
-
-        latch.countDown();
-        executor.shutdown();
-        executor.awaitTermination(5, TimeUnit.SECONDS);
-
-        assertThat(distinctInstances).hasSize(1);
-    }
-
-    @Test
-    @Order(3)
     @DisplayName("CRUD: Save announcement and verify ID generation")
     void testSave() {
         Announcement a = new Announcement();
@@ -97,7 +88,7 @@ public class AnnouncementDaoTest {
     }
 
     @Test
-    @Order(4)
+    @Order(2)
     @DisplayName("CRUD: Save announcement with custom timestamp")
     void testSaveWithCustomTimestamp() {
         Timestamp customTime = Timestamp.valueOf(LocalDateTime.now().minusDays(1));
@@ -117,7 +108,7 @@ public class AnnouncementDaoTest {
     }
 
     @Test
-    @Order(5)
+    @Order(3)
     @DisplayName("CRUD: Find by ID and check data integrity")
     void testFindById() {
         Optional<Announcement> found = dao.findById(sharedTestId);
@@ -133,7 +124,7 @@ public class AnnouncementDaoTest {
     }
 
     @Test
-    @Order(6)
+    @Order(4)
     @DisplayName("CRUD: Find by non-existent ID returns empty Optional")
     void testFindByNonExistentId() {
         Optional<Announcement> found = dao.findById(999999L);
@@ -141,7 +132,7 @@ public class AnnouncementDaoTest {
     }
 
     @Test
-    @Order(7)
+    @Order(5)
     @DisplayName("CRUD: Find all announcements")
     void testFindAll() {
         Announcement a1 = new Announcement();
@@ -171,7 +162,7 @@ public class AnnouncementDaoTest {
     }
 
     @Test
-    @Order(8)
+    @Order(6)
     @DisplayName("CRUD: Find recent announcements with limit")
     void testFindRecent() {
         for (int i = 1; i <= 10; i++) {
@@ -200,7 +191,7 @@ public class AnnouncementDaoTest {
     }
 
     @Test
-    @Order(9)
+    @Order(7)
     @DisplayName("CRUD: Update and verify changes")
     void testUpdate() {
         Announcement a = dao.findById(sharedTestId).get();
@@ -227,7 +218,7 @@ public class AnnouncementDaoTest {
     }
 
     @Test
-    @Order(10)
+    @Order(8)
     @DisplayName("CRUD: Update non-existent announcement returns false")
     void testUpdateNonExistent() {
         Announcement a = new Announcement();
@@ -239,7 +230,7 @@ public class AnnouncementDaoTest {
     }
 
     @Test
-    @Order(11)
+    @Order(9)
     @DisplayName("CRUD: Delete and verify removal")
     void testDelete() {
         Announcement toDelete = new Announcement();
@@ -261,7 +252,7 @@ public class AnnouncementDaoTest {
     }
 
     @Test
-    @Order(12)
+    @Order(10)
     @DisplayName("CRUD: Delete non-existent announcement returns false")
     void testDeleteNonExistent() {
         boolean deleted = dao.deleteById(999999L);
@@ -269,7 +260,7 @@ public class AnnouncementDaoTest {
     }
 
     @Test
-    @Order(13)
+    @Order(11)
     @DisplayName("Concurrent: Multiple threads saving announcements")
     void testConcurrentSaves() throws InterruptedException {
         int threadCount = 10;
@@ -311,7 +302,7 @@ public class AnnouncementDaoTest {
     }
 
     @Test
-    @Order(14)
+    @Order(12)
     @DisplayName("Data Mapping: Verify all fields are properly mapped from ResultSet")
     void testDataMapping() {
         Announcement a = new Announcement();
@@ -338,7 +329,7 @@ public class AnnouncementDaoTest {
     }
 
     @Test
-    @Order(15)
+    @Order(13)
     @DisplayName("Boundary: Announcement with maximum length content")
     void testMaxLengthContent() {
         StringBuilder longContent = new StringBuilder();
@@ -359,7 +350,7 @@ public class AnnouncementDaoTest {
     }
 
     @Test
-    @Order(16)
+    @Order(14)
     @DisplayName("Null Handling: Announcement with null optional fields")
     void testNullOptionalFields() {
         Announcement a = new Announcement();
@@ -374,7 +365,7 @@ public class AnnouncementDaoTest {
     }
 
     @Test
-    @Order(17)
+    @Order(15)
     @DisplayName("Error Handling: Save with null content should throw exception")
     void testSaveWithNullContent() {
         Announcement a = new Announcement();
