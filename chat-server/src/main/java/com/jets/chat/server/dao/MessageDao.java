@@ -1,20 +1,18 @@
 package com.jets.chat.server.dao;
 
-import com.jets.chat.server.dto.CreateMessageDto;
-import com.jets.chat.server.dto.MessageResponseDto;
-import com.jets.chat.server.dto.EditMessageDto;
+import com.jets.chat.server.entity.Message;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface MessageDao {
-    MessageResponseDto save(CreateMessageDto messageDto);
+    Message save(Message messageDto);
 
-    List<MessageResponseDto> findAll();
+    List<Message> findByChatId(long chatId);
 
-    Optional<MessageResponseDto> findById(long id);
+    Optional<Message> findById(long id);
 
-    MessageResponseDto update(EditMessageDto messageDto);
+    Message update(Message messageDto);
 
-    MessageResponseDto deleteById(long id);
+    Optional<Message> deleteById(long id);
 }
