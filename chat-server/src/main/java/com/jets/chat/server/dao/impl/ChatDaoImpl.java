@@ -27,8 +27,8 @@ public final class ChatDaoImpl implements ChatDao {
         String sql = "INSERT INTO chats (chat_type) VALUES (?)";
 
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement ps = connection.prepareStatement(
-                     sql, Statement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement ps = connection.prepareStatement(sql,
+                        Statement.RETURN_GENERATED_KEYS)) {
 
             ps.setString(1, type.name());
             ps.executeUpdate();
@@ -45,13 +45,12 @@ public final class ChatDaoImpl implements ChatDao {
         }
     }
 
-
     @Override
     public void insertGroup(long chatId, String groupName, long ownerId) {
         String sql = "INSERT INTO chat_groups (chat_id, group_name, owner_id) VALUES (?, ?, ?)";
 
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement ps = connection.prepareStatement(sql)) {
+                PreparedStatement ps = connection.prepareStatement(sql)) {
 
             ps.setLong(1, chatId);
             ps.setString(2, groupName);
@@ -63,14 +62,13 @@ public final class ChatDaoImpl implements ChatDao {
         }
     }
 
-
     // ================== CHAT RETRIEVAL ==================
     @Override
     public Optional<Chat> findById(long chatId) {
         String sql = "SELECT chat_id, chat_type, created_at FROM chats WHERE chat_id = ?";
 
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement ps = connection.prepareStatement(sql)) {
+                PreparedStatement ps = connection.prepareStatement(sql)) {
 
             ps.setLong(1, chatId);
             ResultSet rs = ps.executeQuery();
@@ -99,7 +97,7 @@ public final class ChatDaoImpl implements ChatDao {
         List<Chat> chats = new ArrayList<>();
 
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement ps = connection.prepareStatement(sql)) {
+                PreparedStatement ps = connection.prepareStatement(sql)) {
 
             ps.setLong(1, userId);
             ResultSet rs = ps.executeQuery();
@@ -144,7 +142,7 @@ public final class ChatDaoImpl implements ChatDao {
         String sql = "DELETE FROM chat_participants WHERE chat_id = ? AND user_id = ?";
 
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement ps = connection.prepareStatement(sql)) {
+                PreparedStatement ps = connection.prepareStatement(sql)) {
 
             ps.setLong(1, chatId);
             ps.setLong(2, userId);
@@ -164,7 +162,7 @@ public final class ChatDaoImpl implements ChatDao {
         List<ChatParticipant> participants = new ArrayList<>();
 
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement ps = connection.prepareStatement(sql)) {
+                PreparedStatement ps = connection.prepareStatement(sql)) {
 
             ps.setLong(1, chatId);
             ResultSet rs = ps.executeQuery();
@@ -186,7 +184,7 @@ public final class ChatDaoImpl implements ChatDao {
         String sql = "SELECT chat_id, group_name, owner_id FROM chat_groups WHERE chat_id = ?";
 
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement ps = connection.prepareStatement(sql)) {
+                PreparedStatement ps = connection.prepareStatement(sql)) {
 
             ps.setLong(1, chatId);
             ResultSet rs = ps.executeQuery();
@@ -207,7 +205,7 @@ public final class ChatDaoImpl implements ChatDao {
         String sql = "UPDATE chat_groups SET group_name = ? WHERE chat_id = ?";
 
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement ps = connection.prepareStatement(sql)) {
+                PreparedStatement ps = connection.prepareStatement(sql)) {
 
             ps.setString(1, newName);
             ps.setLong(2, chatId);
@@ -225,7 +223,7 @@ public final class ChatDaoImpl implements ChatDao {
         String sql = "UPDATE chat_groups SET owner_id = ? WHERE chat_id = ?";
 
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement ps = connection.prepareStatement(sql)) {
+                PreparedStatement ps = connection.prepareStatement(sql)) {
 
             ps.setLong(1, newOwnerId);
             ps.setLong(2, chatId);
