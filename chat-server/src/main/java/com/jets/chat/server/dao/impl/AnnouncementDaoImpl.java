@@ -2,8 +2,8 @@ package com.jets.chat.server.dao.impl;
 
 import com.jets.chat.server.dao.AnnouncementDao;
 import com.jets.chat.server.entity.Announcement;
-import com.zaxxer.hikari.HikariDataSource;
 
+import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,9 +11,9 @@ import java.util.Optional;
 
 public final class AnnouncementDaoImpl implements AnnouncementDao {
 
-    private final HikariDataSource dataSource;
+    private final DataSource dataSource;
 
-    public AnnouncementDaoImpl(HikariDataSource dataSource) {
+    public AnnouncementDaoImpl(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
