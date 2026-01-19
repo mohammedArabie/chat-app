@@ -1,6 +1,6 @@
 package com.jets.chat.server.dao.impl;
 
-import com.jets.chat.common.entity.ContactStatus;
+import com.jets.chat.common.enums.ContactStatus;
 import com.jets.chat.server.dao.ContactsDao;
 import com.jets.chat.server.entity.Contact;
 import com.zaxxer.hikari.HikariDataSource;
@@ -18,45 +18,48 @@ public final class ContactsDaoImpl implements ContactsDao {
         this.dataSource = dataSource;
     }
 
-    private static final String INSERT_SQL =
-            "INSERT INTO contacts (owner_id, contact_id, status, category, created_at) VALUES (?, ?, ?, ?, ?)";
+    private static final String INSERT_SQL = "INSERT INTO contacts (owner_id, contact_id, status, category, created_at) VALUES (?, ?, ?, ?, ?)";
 
-    private static final String SELECT_BY_IDS_SQL =
-            "SELECT * FROM contacts WHERE owner_id = ? AND contact_id = ?";
+    private static final String SELECT_BY_IDS_SQL = "SELECT * FROM contacts WHERE owner_id = ? AND contact_id = ?";
 
-    private static final String SELECT_ALL_BY_OWNER_SQL =
-            "SELECT * FROM contacts WHERE owner_id = ? ORDER BY created_at DESC";
+    private static final String SELECT_ALL_BY_OWNER_SQL = "SELECT * FROM contacts WHERE owner_id = ? ORDER BY created_at DESC";
 
-    private static final String SELECT_ALL_BY_OWNER_AND_STATUS_SQL =
-            "SELECT * FROM contacts WHERE owner_id = ? AND status = ? ORDER BY created_at DESC";
+    private static final String SELECT_ALL_BY_OWNER_AND_STATUS_SQL = "SELECT * FROM contacts WHERE owner_id = ? AND status = ? ORDER BY created_at DESC";
 
-    private static final String SELECT_ALL_BY_OWNER_AND_CATEGORY_SQL =
-            "SELECT * FROM contacts WHERE owner_id = ? AND category = ? ORDER BY created_at DESC";
+    private static final String SELECT_ALL_BY_OWNER_AND_CATEGORY_SQL = "SELECT * FROM contacts WHERE owner_id = ? AND category = ? ORDER BY created_at DESC";
 
-    private static final String UPDATE_SQL =
-            "UPDATE contacts SET status = ?, category = ? WHERE owner_id = ? AND contact_id = ?";
+    private static final String UPDATE_SQL = "UPDATE contacts SET status = ?, category = ? WHERE owner_id = ? AND contact_id = ?";
 
-    private static final String UPDATE_STATUS_SQL =
-            "UPDATE contacts SET status = ? WHERE owner_id = ? AND contact_id = ?";
+    private static final String UPDATE_STATUS_SQL = "UPDATE contacts SET status = ? WHERE owner_id = ? AND contact_id = ?";
 
-    private static final String UPDATE_CATEGORY_SQL =
-            "UPDATE contacts SET category = ? WHERE owner_id = ? AND contact_id = ?";
+    private static final String UPDATE_CATEGORY_SQL = "UPDATE contacts SET category = ? WHERE owner_id = ? AND contact_id = ?";
 
-    private static final String DELETE_SQL =
-            "DELETE FROM contacts WHERE owner_id = ? AND contact_id = ?";
+    private static final String DELETE_SQL = "DELETE FROM contacts WHERE owner_id = ? AND contact_id = ?";
 
-    private static final String EXISTS_SQL =
-            "SELECT 1 FROM contacts WHERE owner_id = ? AND contact_id = ? LIMIT 1";
+    private static final String EXISTS_SQL = "SELECT 1 FROM contacts WHERE owner_id = ? AND contact_id = ? LIMIT 1";
 
     @Override
     public Contact save(Contact contact) {
+        if (contact == null) {
+            throw new IllegalArgumentException("contact must not be null");
+        }
+        if (contact.getOwnerId() <= 0) {
+            throw new IllegalArgumentException("ownerId must be > 0");
+        }
+        if (contact.getContactId() <= 0) {
+            throw new IllegalArgumentException("contactId must be > 0");
+        }
+        if (contact.getStatus() == null) {
+            throw new IllegalArgumentException("status must not be null");
+        }
+
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(INSERT_SQL)) {
+                PreparedStatement statement = connection.prepareStatement(INSERT_SQL)) {
 
             statement.setLong(1, contact.getOwnerId());
             statement.setLong(2, contact.getContactId());
 
-            // ENUM in MySQL is stored as String, so we send status.name()
+            // MySQL ENUM values are sent/received as Strings in JDBC
             statement.setString(3, contact.getStatus().name());
 
             statement.setString(4, contact.getCategory());
@@ -80,7 +83,7 @@ public final class ContactsDaoImpl implements ContactsDao {
     @Override
     public Optional<Contact> findByIds(long ownerId, long contactId) {
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SELECT_BY_IDS_SQL)) {
+                PreparedStatement statement = connection.prepareStatement(SELECT_BY_IDS_SQL)) {
 
             statement.setLong(1, ownerId);
             statement.setLong(2, contactId);
@@ -97,7 +100,8 @@ public final class ContactsDaoImpl implements ContactsDao {
     @Override
     public List<Contact> findAllContactsByOwnerId(long ownerId) {
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SELECT_ALL_BY_OWNER_SQL)) {
+                PreparedStatement statement = connection
+                        .prepareStatement(SELECT_ALL_BY_OWNER_SQL)) {
 
             statement.setLong(1, ownerId);
 
@@ -116,8 +120,13 @@ public final class ContactsDaoImpl implements ContactsDao {
 
     @Override
     public List<Contact> findAllContactsByOwnerIdAndStatus(long ownerId, ContactStatus status) {
+        if (status == null) {
+            throw new IllegalArgumentException("status must not be null");
+        }
+
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SELECT_ALL_BY_OWNER_AND_STATUS_SQL)) {
+                PreparedStatement statement = connection
+                        .prepareStatement(SELECT_ALL_BY_OWNER_AND_STATUS_SQL)) {
 
             statement.setLong(1, ownerId);
             statement.setString(2, status.name());
@@ -138,7 +147,8 @@ public final class ContactsDaoImpl implements ContactsDao {
     @Override
     public List<Contact> findAllContactsByOwnerIdAndCategory(long ownerId, String category) {
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SELECT_ALL_BY_OWNER_AND_CATEGORY_SQL)) {
+                PreparedStatement statement = connection
+                        .prepareStatement(SELECT_ALL_BY_OWNER_AND_CATEGORY_SQL)) {
 
             statement.setLong(1, ownerId);
             statement.setString(2, category);
@@ -158,8 +168,15 @@ public final class ContactsDaoImpl implements ContactsDao {
 
     @Override
     public boolean update(Contact contact) {
+        if (contact == null) {
+            throw new IllegalArgumentException("contact must not be null");
+        }
+        if (contact.getStatus() == null) {
+            throw new IllegalArgumentException("status must not be null");
+        }
+
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(UPDATE_SQL)) {
+                PreparedStatement statement = connection.prepareStatement(UPDATE_SQL)) {
 
             statement.setString(1, contact.getStatus().name());
             statement.setString(2, contact.getCategory());
@@ -175,8 +192,12 @@ public final class ContactsDaoImpl implements ContactsDao {
 
     @Override
     public boolean updateStatus(long ownerId, long contactId, ContactStatus status) {
+        if (status == null) {
+            throw new IllegalArgumentException("status must not be null");
+        }
+
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(UPDATE_STATUS_SQL)) {
+                PreparedStatement statement = connection.prepareStatement(UPDATE_STATUS_SQL)) {
 
             statement.setString(1, status.name());
             statement.setLong(2, ownerId);
@@ -192,7 +213,7 @@ public final class ContactsDaoImpl implements ContactsDao {
     @Override
     public boolean updateCategory(long ownerId, long contactId, String category) {
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(UPDATE_CATEGORY_SQL)) {
+                PreparedStatement statement = connection.prepareStatement(UPDATE_CATEGORY_SQL)) {
 
             statement.setString(1, category);
             statement.setLong(2, ownerId);
@@ -208,7 +229,7 @@ public final class ContactsDaoImpl implements ContactsDao {
     @Override
     public boolean deleteByIds(long ownerId, long contactId) {
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(DELETE_SQL)) {
+                PreparedStatement statement = connection.prepareStatement(DELETE_SQL)) {
 
             statement.setLong(1, ownerId);
             statement.setLong(2, contactId);
@@ -223,7 +244,7 @@ public final class ContactsDaoImpl implements ContactsDao {
     @Override
     public boolean exists(long ownerId, long contactId) {
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(EXISTS_SQL)) {
+                PreparedStatement statement = connection.prepareStatement(EXISTS_SQL)) {
 
             statement.setLong(1, ownerId);
             statement.setLong(2, contactId);
@@ -242,7 +263,6 @@ public final class ContactsDaoImpl implements ContactsDao {
         contact.setOwnerId(rs.getLong("owner_id"));
         contact.setContactId(rs.getLong("contact_id"));
 
-        // Convert DB string -> enum
         String statusStr = rs.getString("status");
         contact.setStatus(ContactStatus.valueOf(statusStr));
 
