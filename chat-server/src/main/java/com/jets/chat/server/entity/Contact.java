@@ -1,6 +1,6 @@
 package com.jets.chat.server.entity;
 
-import com.jets.chat.common.entity.ContactStatus;
+import com.jets.chat.common.enums.ContactStatus;
 
 import java.sql.Timestamp;
 
@@ -15,7 +15,8 @@ public class Contact {
     public Contact() {
     }
 
-    public Contact(long ownerId, long contactId, ContactStatus status, String category, Timestamp createdAt) {
+    public Contact(long ownerId, long contactId, ContactStatus status, String category,
+            Timestamp createdAt) {
         this.ownerId = ownerId;
         this.contactId = contactId;
         this.status = status;

@@ -1,6 +1,6 @@
 package com.jets.chat.server.dao;
 
-import com.jets.chat.common.entity.ContactStatus;
+import com.jets.chat.common.enums.ContactStatus;
 import com.jets.chat.server.entity.Contact;
 
 import java.util.List;
