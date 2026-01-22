@@ -5,7 +5,7 @@ import com.jets.chat.server.dao.impl.ChatDaoImpl;
 import com.jets.chat.server.entity.Chat;
 import com.jets.chat.server.entity.ChatGroup;
 import com.jets.chat.server.entity.ChatParticipant;
-import com.jets.chat.common.entity.ChatType;
+import com.jets.chat.common.enums.ChatType;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.junit.jupiter.api.*;
