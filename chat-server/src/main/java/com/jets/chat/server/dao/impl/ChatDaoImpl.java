@@ -4,7 +4,7 @@ import com.jets.chat.server.dao.ChatDao;
 import com.jets.chat.server.entity.Chat;
 import com.jets.chat.server.entity.ChatGroup;
 import com.jets.chat.server.entity.ChatParticipant;
-import com.jets.chat.common.entity.ChatType;
+import com.jets.chat.common.enums.ChatType;
 
 import javax.sql.DataSource;
 import java.sql.*;
