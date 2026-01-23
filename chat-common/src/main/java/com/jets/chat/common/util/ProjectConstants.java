@@ -8,4 +8,5 @@ public final class ProjectConstants {
     public static final int RMI_SERVICE_PORT = 1099;
 
     public static final String ANNOUNCEMENT_SERVICE = "AnnouncementService";
+    public static final String USER_SERVICE = "UserService";
 }
