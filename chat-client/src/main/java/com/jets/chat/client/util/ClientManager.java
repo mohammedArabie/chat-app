@@ -1,6 +1,7 @@
 package com.jets.chat.client.util;
 
 import com.jets.chat.common.rmi.RemoteAnnouncementService;
+import com.jets.chat.common.rmi.RemoteUserService;
 import com.jets.chat.common.util.ProjectConstants;
 
 import java.rmi.NotBoundException;
@@ -12,6 +13,8 @@ public class ClientManager {
     private static ClientManager instance;
 
     private final RemoteAnnouncementService remoteAnnouncementService;
+
+    private final RemoteUserService remoteUserService;
 
     public static ClientManager getInstance() {
         if (instance == null) {
@@ -30,6 +33,8 @@ public class ClientManager {
                     ProjectConstants.RMI_SERVICE_PORT);
             this.remoteAnnouncementService = (RemoteAnnouncementService) registry
                     .lookup(ProjectConstants.ANNOUNCEMENT_SERVICE);
+            this.remoteUserService = (RemoteUserService) registry
+                    .lookup(ProjectConstants.USER_SERVICE);
 
         } catch (RemoteException e) {
             System.out.println("Failed to connect");
@@ -42,5 +47,8 @@ public class ClientManager {
 
     public RemoteAnnouncementService getRemoteAnnouncementService() {
         return remoteAnnouncementService;
+    }
+    public RemoteUserService getRemoteUserService() {
+        return remoteUserService;
     }
 }
