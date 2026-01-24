@@ -93,10 +93,10 @@ public class RegisterController implements Initializable {
     private void initializeCountries() {
         ObservableList<String> countries = FXCollections.observableArrayList("United States",
                 "United Kingdom", "Canada", "Australia", "Germany", "France", "Spain", "Italy",
-                "Japan", "China", "India", "Egypt", "Brazil", "Mexico", "South Korea", "Netherlands",
-                "Sweden", "Norway", "Denmark", "Finland", "Switzerland", "Austria", "Belgium",
-                "Poland", "Portugal", "Ireland", "New Zealand", "Singapore", "Malaysia", "Thailand",
-                "Vietnam");
+                "Japan", "China", "India", "Egypt", "Brazil", "Mexico", "South Korea",
+                "Netherlands", "Sweden", "Norway", "Denmark", "Finland", "Switzerland", "Austria",
+                "Belgium", "Poland", "Portugal", "Ireland", "New Zealand", "Singapore", "Malaysia",
+                "Thailand", "Vietnam");
         countryComboBox.setItems(countries);
     }
 
@@ -186,7 +186,6 @@ public class RegisterController implements Initializable {
             eyeIcon.setContent(EYE_OPEN);
         }
     }
-
 
     @FXML
     private void handleRegister() {
