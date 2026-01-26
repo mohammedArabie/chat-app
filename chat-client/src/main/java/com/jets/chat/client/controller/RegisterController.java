@@ -7,6 +7,7 @@ import com.jets.chat.common.enums.Gender;
 
 import java.sql.Date;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -79,6 +80,8 @@ public class RegisterController implements Initializable {
 
         // Setup bio character counter
         setupBioCharacterCounter();
+
+        dobPicker.setEditable(false);
 
         // Set date picker constraints
         dobPicker.setDayCellFactory(picker -> new DateCell() {
@@ -193,34 +196,37 @@ public class RegisterController implements Initializable {
         if (!validateFields())
             return;
 
-        try {
-            RegisterRequestDTO dto = new RegisterRequestDTO();
+        RegisterRequestDTO dto = new RegisterRequestDTO();
+        dto.setDisplayName(fullNameField.getText().trim());
+        dto.setEmail(emailField.getText().trim());
+        dto.setPhoneNumber(phoneField.getText().trim());
+        dto.setPassword(passwordField.getText());
+        dto.setGender(Gender.valueOf(genderComboBox.getValue().toUpperCase()));
+        dto.setCountry(countryComboBox.getValue());
+        dto.setDateOfBirth(Date.valueOf(dobPicker.getValue()));
+        dto.setBio(bioTextArea.getText().trim());
 
-            dto.setDisplayName(fullNameField.getText().trim());
-            dto.setEmail(emailField.getText().trim());
-            dto.setPhoneNumber(phoneField.getText().trim());
-            dto.setPassword(passwordField.getText());
+        new Thread(() -> {
+            try {
+                RegisterResponseDTO response = ClientManager.getInstance().getRemoteUserService()
+                        .register(dto);
 
-            dto.setGender(Gender.valueOf(genderComboBox.getValue()));
+                Platform.runLater(() -> {
+                    if (response.isSuccess()) {
+                        showAlert(Alert.AlertType.INFORMATION, "Success",
+                                "Account created successfully 🎉");
+                    } else {
+                        showAlert(Alert.AlertType.ERROR, "Registration Failed",
+                                response.getMessage());
+                    }
+                });
 
-            dto.setCountry(countryComboBox.getValue());
-            dto.setDateOfBirth(Date.valueOf(dobPicker.getValue()));
-            dto.setBio(bioTextArea.getText().trim());
-
-            RegisterResponseDTO response = ClientManager.getInstance().getRemoteUserService()
-                    .register(dto);
-
-            if (response.isSuccess()) {
-                showAlert(Alert.AlertType.INFORMATION, "Success",
-                        "Account created successfully 🎉");
-            } else {
-                showAlert(Alert.AlertType.ERROR, "Registration Failed", response.getMessage());
+            } catch (Exception e) {
+                e.printStackTrace();
+                Platform.runLater(() -> showAlert(Alert.AlertType.ERROR, "Server Error",
+                        "Server is not running or unreachable"));
             }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Server Error", "Could not connect to server");
-        }
+        }).start();
     }
 
     private boolean validateFields() {

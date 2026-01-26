@@ -256,7 +256,7 @@
     -fx-border-color: #27272a;
     -fx-border-radius: 8;
     -fx-border-width: 1;
-    -fx-padding: 12 12 12 40;
+    -fx-padding: 12 12 12 12;
     -fx-pref-height: 48;
     -fx-font-family: "System";
     -fx-font-size: 14;
@@ -446,7 +446,7 @@
     -fx-border-color: #27272a;
     -fx-border-radius: 8;
     -fx-border-width: 1;
-    -fx-padding: 12 12 12 40;
+    -fx-padding: 12 12 12 12;
     -fx-font-family: "System";
     -fx-font-size: 14;
     -fx-text-fill: #fafafa;
