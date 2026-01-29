@@ -65,8 +65,19 @@ public class RegisterController implements Initializable {
     private boolean passwordVisible = false;
     @FXML
     private TextField visiblePasswordField;
+    // Add with your other @FXML fields
+    @FXML
+    private PasswordField confirmPasswordField;
+    @FXML
+    private Button toggleConfirmPasswordBtn;
+    @FXML
+    private SVGPath confirmEyeIcon;
+    private boolean confirmPasswordVisible = false;
+    @FXML
+    private TextField visibleConfirmPasswordField;  // Optional - only if you want toggle
 
     private StringProperty passwordProperty = new SimpleStringProperty("");
+    private StringProperty confirmPasswordProperty = new SimpleStringProperty("");
 
     // Eye icons SVG paths
     private static final String EYE_OPEN = "M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8zM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z";
@@ -85,6 +96,9 @@ public class RegisterController implements Initializable {
         // Bind both fields to the same property
         passwordField.textProperty().bindBidirectional(passwordProperty);
         visiblePasswordField.textProperty().bindBidirectional(passwordProperty);
+
+        confirmPasswordField.textProperty().bindBidirectional(confirmPasswordProperty);
+        visibleConfirmPasswordField.textProperty().bindBidirectional(confirmPasswordProperty);
 
         // Setup bio character counter
         setupBioCharacterCounter();
@@ -212,6 +226,31 @@ public class RegisterController implements Initializable {
     }
 
     @FXML
+    private void toggleConfirmPasswordVisibility() {
+        confirmPasswordVisible = !confirmPasswordVisible;
+
+        if (confirmPasswordVisible) {
+            // Show visible field, hide password field
+            visibleConfirmPasswordField.setVisible(true);
+            visibleConfirmPasswordField.setManaged(true);
+            confirmPasswordField.setVisible(false);
+            confirmPasswordField.setManaged(false);
+            confirmEyeIcon.setContent(EYE_CLOSED);
+
+            Platform.runLater(() -> visibleConfirmPasswordField.requestFocus());
+        } else {
+            // Show password field, hide visible field
+            confirmPasswordField.setVisible(true);
+            confirmPasswordField.setManaged(true);
+            visibleConfirmPasswordField.setVisible(false);
+            visibleConfirmPasswordField.setManaged(false);
+            confirmEyeIcon.setContent(EYE_OPEN);
+
+            Platform.runLater(() -> confirmPasswordField.requestFocus());
+        }
+    }
+
+    @FXML
     private void handleRegister() {
 
         if (!validateFields())
@@ -221,7 +260,7 @@ public class RegisterController implements Initializable {
         dto.setDisplayName(fullNameField.getText().trim());
         dto.setEmail(emailField.getText().trim());
         dto.setPhoneNumber(phoneField.getText().trim());
-        dto.setPassword(passwordField.getText());
+        dto.setPassword(passwordProperty.get());
         dto.setGender(Gender.valueOf(genderComboBox.getValue().toUpperCase()));
         dto.setCountry(countryComboBox.getValue());
         dto.setDateOfBirth(Date.valueOf(dobPicker.getValue()));
@@ -253,6 +292,8 @@ public class RegisterController implements Initializable {
     private boolean validateFields() {
         StringBuilder errors = new StringBuilder();
 
+        String confirmPassword = confirmPasswordProperty.get();
+
         if (fullNameField.getText().trim().isEmpty()) {
             errors.append("- Full name is required\n");
         }
@@ -269,7 +310,7 @@ public class RegisterController implements Initializable {
             errors.append("- Phone number must contain only digits (10-15 digits)\n");
         }
 
-        String password = passwordField.getText();
+        String password = passwordProperty.get();
         if (password.isEmpty()) {
             errors.append("- Password is required\n");
         } else {
@@ -285,6 +326,12 @@ public class RegisterController implements Initializable {
             if (!password.matches(".*[!@#$%^&*].*")) {
                 errors.append("- Password must contain a special character\n");
             }
+        }
+
+        if (confirmPassword.isEmpty()) {
+            errors.append("- Please confirm your password\n");
+        } else if (!password.equals(confirmPassword)) {
+            errors.append("- Passwords do not match\n");
         }
 
         if (genderComboBox.getValue() == null) {
