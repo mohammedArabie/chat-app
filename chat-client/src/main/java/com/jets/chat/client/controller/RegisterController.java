@@ -8,6 +8,8 @@ import com.jets.chat.common.enums.Gender;
 import java.sql.Date;
 
 import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -64,6 +66,8 @@ public class RegisterController implements Initializable {
     @FXML
     private TextField visiblePasswordField;
 
+    private StringProperty passwordProperty = new SimpleStringProperty("");
+
     // Eye icons SVG paths
     private static final String EYE_OPEN = "M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8zM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z";
     private static final String EYE_CLOSED = "M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24M1 1l22 22";
@@ -77,6 +81,10 @@ public class RegisterController implements Initializable {
 
         // Setup password strength listener
         setupPasswordStrengthListener();
+
+        // Bind both fields to the same property
+        passwordField.textProperty().bindBidirectional(passwordProperty);
+        visiblePasswordField.textProperty().bindBidirectional(passwordProperty);
 
         // Setup bio character counter
         setupBioCharacterCounter();
@@ -104,15 +112,17 @@ public class RegisterController implements Initializable {
     }
 
     private void setupPasswordStrengthListener() {
-        passwordField.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null && !newValue.isEmpty()) {
-                passwordStrengthContainer.setVisible(true);
-                passwordStrengthContainer.setManaged(true);
-                updatePasswordStrength(newValue);
-            } else {
-                passwordStrengthContainer.setVisible(false);
-                passwordStrengthContainer.setManaged(false);
-            }
+        passwordProperty.addListener((observable, oldValue, newValue) -> {
+            Platform.runLater(() -> {
+                if (newValue != null && !newValue.isEmpty()) {
+                    passwordStrengthContainer.setVisible(true);
+                    passwordStrengthContainer.setManaged(true);
+                    updatePasswordStrength(newValue);
+                } else {
+                    passwordStrengthContainer.setVisible(false);
+                    passwordStrengthContainer.setManaged(false);
+                }
+            });
         });
     }
 
@@ -136,17 +146,22 @@ public class RegisterController implements Initializable {
 
     private void updateStrengthIndicator(SVGPath icon, boolean isValid) {
         if (isValid) {
-            icon.getStyleClass().add("valid");
-            // Also update the parent label if needed
+            if (!icon.getStyleClass().contains("valid")) {
+                icon.getStyleClass().add("valid");
+            }
+            // updating the parent label
             if (icon.getParent() instanceof HBox hbox) {
-                hbox.getChildren().stream().filter(node -> node instanceof Label)
-                        .forEach(node -> node.getStyleClass().add("valid"));
+                hbox.getChildren().stream().filter(node -> node instanceof Label).forEach(node -> {
+                    if (!node.getStyleClass().contains("valid")) {
+                        node.getStyleClass().add("valid");
+                    }
+                });
             }
         } else {
-            icon.getStyleClass().remove("valid");
+            icon.getStyleClass().removeAll("valid");
             if (icon.getParent() instanceof HBox hbox) {
                 hbox.getChildren().stream().filter(node -> node instanceof Label)
-                        .forEach(node -> node.getStyleClass().remove("valid"));
+                        .forEach(node -> node.getStyleClass().removeAll("valid"));
             }
         }
     }
@@ -168,7 +183,6 @@ public class RegisterController implements Initializable {
         passwordVisible = !passwordVisible;
 
         if (passwordVisible) {
-            visiblePasswordField.setText(passwordField.getText());
 
             visiblePasswordField.setVisible(true);
             visiblePasswordField.setManaged(true);
@@ -177,8 +191,11 @@ public class RegisterController implements Initializable {
             passwordField.setManaged(false);
 
             eyeIcon.setContent(EYE_CLOSED);
+            Platform.runLater(() -> {
+                visiblePasswordField.requestFocus();
+                updatePasswordStrength(passwordProperty.get());
+            });
         } else {
-            passwordField.setText(visiblePasswordField.getText());
 
             passwordField.setVisible(true);
             passwordField.setManaged(true);
@@ -187,6 +204,10 @@ public class RegisterController implements Initializable {
             visiblePasswordField.setManaged(false);
 
             eyeIcon.setContent(EYE_OPEN);
+            Platform.runLater(() -> {
+                passwordField.requestFocus();
+                updatePasswordStrength(passwordProperty.get());
+            });
         }
     }
 
@@ -214,7 +235,7 @@ public class RegisterController implements Initializable {
                 Platform.runLater(() -> {
                     if (response.isSuccess()) {
                         showAlert(Alert.AlertType.INFORMATION, "Success",
-                                "Account created successfully 🎉");
+                                "Account created successfully ");
                     } else {
                         showAlert(Alert.AlertType.ERROR, "Registration Failed",
                                 response.getMessage());
@@ -244,6 +265,8 @@ public class RegisterController implements Initializable {
 
         if (phoneField.getText().trim().isEmpty()) {
             errors.append("- Phone number is required\n");
+        } else if (!isValidPhone(phoneField.getText().trim())) {
+            errors.append("- Phone number must contain only digits (10-15 digits)\n");
         }
 
         String password = passwordField.getText();
@@ -287,6 +310,11 @@ public class RegisterController implements Initializable {
     private boolean isValidEmail(String email) {
         String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
         return email.matches(emailRegex);
+    }
+
+    private boolean isValidPhone(String phone) {
+        String phoneRegex = "^[0-9]{10,15}$";
+        return phone.matches(phoneRegex);
     }
 
     @FXML
