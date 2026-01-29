@@ -163,6 +163,34 @@
                         </HBox>
                     </VBox>
 
+                    <!-- Confirm Password Field -->
+                    <VBox styleClass="field-group" spacing="8">
+                        <Label styleClass="field-label" text="Confirm password"/>
+                        <HBox styleClass="input-container" alignment="CENTER_LEFT" spacing="8">
+                            <!-- Add this TextField for visible password -->
+                            <TextField fx:id="visibleConfirmPasswordField"
+                                       styleClass="text-input"
+                                       promptText="Re-enter your password"
+                                       visible="false"
+                                       managed="false"
+                                       HBox.hgrow="ALWAYS"/>
+
+                            <PasswordField fx:id="confirmPasswordField"
+                                           styleClass="text-input"
+                                           promptText="Re-enter your password"
+                                           HBox.hgrow="ALWAYS"/>
+
+                            <Button fx:id="toggleConfirmPasswordBtn"
+                                    styleClass="toggle-password-btn"
+                                    onAction="#toggleConfirmPasswordVisibility">
+                                <graphic>
+                                    <SVGPath fx:id="confirmEyeIcon" styleClass="eye-icon"
+                                             content="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8zM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/>
+                                </graphic>
+                            </Button>
+                        </HBox>
+                    </VBox>
+
 
                     <!-- Gender and Country Row -->
                     <HBox spacing="16">
