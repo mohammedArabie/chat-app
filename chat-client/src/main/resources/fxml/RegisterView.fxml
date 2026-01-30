@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.ProgressIndicator?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
@@ -232,6 +233,72 @@
                             <TextArea fx:id="bioTextArea" styleClass="textarea-input" promptText="Tell us a little about yourself..." wrapText="true" prefRowCount="3"/>
                         </StackPane>
                         <Label fx:id="bioCharCount" styleClass="char-count" text="0/200"/>
+                    </VBox>
+
+                    <!-- Profile Picture Field -->
+                    <VBox styleClass="field-group" spacing="8">
+                        <Label styleClass="field-label" text="Profile Picture (Optional)"/>
+
+                        <HBox styleClass="profile-picture-container" spacing="16" alignment="CENTER_LEFT">
+                            <!-- Profile Picture Preview -->
+                            <StackPane styleClass="profile-picture-preview" fx:id="profilePicturePreview"
+                                       minWidth="80" minHeight="80"
+                                       maxWidth="80" maxHeight="80">
+                                <clip>
+                                    <Circle radius="40" centerX="40" centerY="40"/>
+                                </clip>
+
+                                <!-- Default avatar (shown when no picture) -->
+                                <SVGPath styleClass="default-avatar"
+                                         content="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"/>
+
+                                <!-- Actual image (hidden by default) with circular clip -->
+                                <ImageView fx:id="profileImageView"
+                                           styleClass="profile-image"
+                                           fitWidth="80"
+                                           fitHeight="80"
+                                           preserveRatio="false"
+                                           visible="false"/>
+
+                                <!-- Upload progress (hidden by default) -->
+                                <ProgressIndicator fx:id="uploadProgress"
+                                                   styleClass="upload-progress"
+                                                   visible="false"/>
+                            </StackPane>
+
+                            <!-- Upload Controls -->
+                            <VBox styleClass="upload-controls" spacing="8">
+                                <Button fx:id="uploadPictureBtn"
+                                        styleClass="upload-btn"
+                                        text="Choose Photo"
+                                        onAction="#chooseProfilePicture">
+                                    <graphic>
+                                        <SVGPath styleClass="upload-icon"
+                                                 content="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+                                    </graphic>
+                                </Button>
+
+                                <Button fx:id="removePictureBtn"
+                                        styleClass="remove-btn"
+                                        text="Remove"
+                                        onAction="#removeProfilePicture"
+                                        visible="false">
+                                    <graphic>
+                                        <SVGPath styleClass="remove-icon"
+                                                 content="M18 6L6 18M6 6l12 12"/>
+                                    </graphic>
+                                </Button>
+
+                                <Label fx:id="fileNameLabel"
+                                       styleClass="file-name"
+                                       text="No file selected"
+                                       visible="false"/>
+                            </VBox>
+                        </HBox>
+
+                        <!-- File restrictions hint -->
+                        <Label styleClass="file-hint"
+                               text="JPG, PNG or GIF • Max 5MB"/>
                     </VBox>
 
                     <!-- Submit Button -->

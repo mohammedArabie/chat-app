@@ -21,4 +21,14 @@ public class RemoteUserServiceImpl extends UnicastRemoteObject implements Remote
     public RegisterResponseDTO register(RegisterRequestDTO request) throws RemoteException {
         return userService.register(request);
     }
+
+    @Override
+    public byte[] getProfilePicture(String picturePath) throws RemoteException {
+        try {
+            return userService.getProfilePicture(picturePath);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }
