@@ -37,11 +37,14 @@ public class ServerManager {
 
     private ServerManager() throws RemoteException {
         HikariDataSource dataSource = DataSourceConfig.getDataSource();
+
         AnnouncementDao announcementDao = new AnnouncementDaoImpl(dataSource);
         UserDao userDao = new UserDaoImpl(dataSource);
+
         this.announcementService = new AnnouncementServiceImpl(announcementDao);
-        this.remoteAnnouncementService = new RemoteAnnouncementServiceImpl(announcementService);
         this.userService = new UserServiceImpl(userDao);
+
+        this.remoteAnnouncementService = new RemoteAnnouncementServiceImpl(announcementService);
         this.remoteUserService = new RemoteUserServiceImpl(userService);
 
     }
