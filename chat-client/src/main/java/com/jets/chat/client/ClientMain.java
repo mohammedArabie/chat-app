@@ -50,7 +50,6 @@ public class ClientMain extends Application {
         }
     }
 
-
     private void handleStartupError(Exception e) {
         logger.log(Level.SEVERE, "Fatal error: Client failed to start", e);
         Platform.runLater(() -> {
