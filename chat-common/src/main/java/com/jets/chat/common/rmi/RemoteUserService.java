@@ -9,4 +9,5 @@ import java.rmi.RemoteException;
 public interface RemoteUserService extends Remote {
 
     RegisterResponseDTO register(RegisterRequestDTO request) throws RemoteException;
+    byte[] getProfilePicture(String picturePath) throws RemoteException;
 }

@@ -14,6 +14,7 @@ public class RegisterRequestDTO implements Serializable {
     private String country;
     private Date dateOfBirth;
     private String bio;
+    private String ProfilePicture;
     public RegisterRequestDTO() {
     }
 
@@ -79,5 +80,13 @@ public class RegisterRequestDTO implements Serializable {
 
     public void setBio(String bio) {
         this.bio = bio;
+    }
+
+    public String getProfilePicture() {
+        return ProfilePicture;
+    }
+
+    public void setProfilePicture(String profilePicture) {
+        ProfilePicture = profilePicture;
     }
 }

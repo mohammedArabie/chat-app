@@ -5,5 +5,6 @@ import com.jets.chat.common.dto.RegisterResponseDTO;
 public interface UserService {
 
     public RegisterResponseDTO register(RegisterRequestDTO dto);
+    public byte[] getProfilePicture(String picturePath);
 
 }

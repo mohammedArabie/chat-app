@@ -5,7 +5,11 @@ import com.jets.chat.common.dto.RegisterRequestDTO;
 import com.jets.chat.common.dto.RegisterResponseDTO;
 import com.jets.chat.common.enums.Gender;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.sql.Date;
+import java.util.Base64;
 
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
@@ -15,8 +19,12 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.shape.SVGPath;
+import javafx.stage.FileChooser;
 
 import java.net.URL;
 import java.time.LocalDate;
@@ -65,7 +73,7 @@ public class RegisterController implements Initializable {
     private boolean passwordVisible = false;
     @FXML
     private TextField visiblePasswordField;
-    // Add with your other @FXML fields
+
     @FXML
     private PasswordField confirmPasswordField;
     @FXML
@@ -74,7 +82,24 @@ public class RegisterController implements Initializable {
     private SVGPath confirmEyeIcon;
     private boolean confirmPasswordVisible = false;
     @FXML
-    private TextField visibleConfirmPasswordField;  // Optional - only if you want toggle
+    private TextField visibleConfirmPasswordField;
+
+    // Profile picture fields
+    @FXML
+    private StackPane profilePicturePreview;
+    @FXML
+    private ImageView profileImageView;
+    @FXML
+    private ProgressIndicator uploadProgress;
+    @FXML
+    private Button uploadPictureBtn;
+    @FXML
+    private Button removePictureBtn;
+    @FXML
+    private Label fileNameLabel;
+
+    // Store the Base64 string
+    private String profilePictureBase64;
 
     private StringProperty passwordProperty = new SimpleStringProperty("");
     private StringProperty confirmPasswordProperty = new SimpleStringProperty("");
@@ -251,12 +276,84 @@ public class RegisterController implements Initializable {
     }
 
     @FXML
-    private void handleRegister() {
+    private void chooseProfilePicture() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Select Profile Picture");
 
-        if (!validateFields())
-            return;
+        // Set file filters
+        FileChooser.ExtensionFilter imageFilter = new FileChooser.ExtensionFilter("Image Files",
+                "*.jpg", "*.jpeg", "*.png");
+        fileChooser.getExtensionFilters().add(imageFilter);
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("All Files", "*.*"));
 
-        RegisterRequestDTO dto = new RegisterRequestDTO();
+        // Show dialog
+        File file = fileChooser.showOpenDialog(uploadPictureBtn.getScene().getWindow());
+
+        if (file != null) {
+            // Validate file size (5MB max)
+            long fileSize = file.length();
+            if (fileSize > 5 * 1024 * 1024) { // 5MB in bytes
+                showAlert(Alert.AlertType.ERROR, "File Too Large",
+                        "Please select an image smaller than 5MB.");
+                return;
+            }
+
+            // Show upload progress
+            uploadProgress.setVisible(true);
+
+            // Process in background thread to avoid UI freeze
+            new Thread(() -> {
+                try {
+                    // Read file and convert to Base64
+                    byte[] fileBytes = Files.readAllBytes(file.toPath());
+                    profilePictureBase64 = Base64.getEncoder().encodeToString(fileBytes);
+
+                    // Load image for preview
+                    Image image = new Image(file.toURI().toString(), 80, 80, true, true);
+
+                    Platform.runLater(() -> {
+                        // Update UI on JavaFX thread
+                        profileImageView.setImage(image);
+                        profileImageView.setVisible(true);
+                        uploadProgress.setVisible(false);
+
+                        // Show file name
+                        fileNameLabel.setText(file.getName());
+                        fileNameLabel.setVisible(true);
+
+                        // Show remove button
+                        removePictureBtn.setVisible(true);
+                    });
+
+                } catch (IOException e) {
+                    Platform.runLater(() -> {
+                        uploadProgress.setVisible(false);
+                        showAlert(Alert.AlertType.ERROR, "Error",
+                                "Could not load image: " + e.getMessage());
+                    });
+                } catch (Exception e) {
+                    Platform.runLater(() -> {
+                        uploadProgress.setVisible(false);
+                        showAlert(Alert.AlertType.ERROR, "Error",
+                                "An unexpected error occurred: " + e.getMessage());
+                    });
+                }
+            }).start();
+        }
+    }
+
+    @FXML
+    private void removeProfilePicture() {
+        // Reset everything
+        profilePictureBase64 = null;
+        profileImageView.setImage(null);
+        profileImageView.setVisible(false);
+        fileNameLabel.setVisible(false);
+        removePictureBtn.setVisible(false);
+    }
+
+    // NEW METHOD: Update DTO with all fields including profile picture
+    private void updateRegistrationDTO(RegisterRequestDTO dto) {
         dto.setDisplayName(fullNameField.getText().trim());
         dto.setEmail(emailField.getText().trim());
         dto.setPhoneNumber(phoneField.getText().trim());
@@ -266,6 +363,20 @@ public class RegisterController implements Initializable {
         dto.setDateOfBirth(Date.valueOf(dobPicker.getValue()));
         dto.setBio(bioTextArea.getText().trim());
 
+        // Add profile picture if selected (as Base64 string)
+        if (profilePictureBase64 != null && !profilePictureBase64.isEmpty()) {
+            dto.setProfilePicture(profilePictureBase64);
+        }
+    }
+
+    @FXML
+    private void handleRegister() {
+        if (!validateFields())
+            return;
+
+        RegisterRequestDTO dto = new RegisterRequestDTO();
+        updateRegistrationDTO(dto); // Use the new method that includes profile picture
+
         new Thread(() -> {
             try {
                 RegisterResponseDTO response = ClientManager.getInstance().getRemoteUserService()
@@ -274,7 +385,10 @@ public class RegisterController implements Initializable {
                 Platform.runLater(() -> {
                     if (response.isSuccess()) {
                         showAlert(Alert.AlertType.INFORMATION, "Success",
-                                "Account created successfully ");
+                                "Account created successfully!");
+                        // Optional: Clear form or navigate to login
+                        // clearForm();
+                        // navigateToLogin();
                     } else {
                         showAlert(Alert.AlertType.ERROR, "Registration Failed",
                                 response.getMessage());
@@ -382,5 +496,19 @@ public class RegisterController implements Initializable {
         dialogPane.lookup(".content.label").setStyle("-fx-text-fill: #fafafa;");
 
         alert.showAndWait();
+    }
+
+    // Optional: Clear form method
+    private void clearForm() {
+        fullNameField.clear();
+        emailField.clear();
+        phoneField.clear();
+        passwordProperty.set("");
+        confirmPasswordProperty.set("");
+        genderComboBox.getSelectionModel().clearSelection();
+        countryComboBox.getSelectionModel().clearSelection();
+        dobPicker.setValue(null);
+        bioTextArea.clear();
+        removeProfilePicture(); // Clear profile picture
     }
 }
