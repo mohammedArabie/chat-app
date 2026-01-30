@@ -5,14 +5,13 @@ import com.jets.chat.common.dto.LoginResult;
 import com.jets.chat.common.dto.RegisterRequestDTO;
 import com.jets.chat.common.dto.RegisterResponseDTO;
 import com.jets.chat.common.dto.UserDTO;
+import com.jets.chat.common.enums.UserStatus;
 
 import java.util.Optional;
 
 public interface UserService {
 
-    public RegisterResponseDTO register(RegisterRequestDTO dto);
-
-    public byte[] getProfilePicture(String picturePath);
+    RegisterResponseDTO register(RegisterRequestDTO dto);
 
     LoginResult login(String emailOrPhone, String password, ClientCallback callback);
 
@@ -20,8 +19,23 @@ public interface UserService {
 
     void logout(long userId, String sessionId);
 
-    public void clearOnlineUsers();
+    void clearOnlineUsers();
+
     boolean phoneNumberExists(String phoneNumber);
 
-    public Optional<UserDTO> getUserByEmail(String email);
+
+    Optional<UserDTO> findUserById(long id);
+
+    Optional<UserDTO> getUserByEmail(String email);
+
+    byte[] getProfilePicture(String picturePath);
+
+    boolean updateUser(UserDTO userDTO);
+
+    boolean updateUserPassword(long id, String passwordHash);
+
+
+    boolean updateUserStatus(long userId, UserStatus status);
+
+    UserStatus getUserStatus(long userId);
 }

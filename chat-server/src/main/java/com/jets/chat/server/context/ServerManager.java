@@ -42,37 +42,50 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ServerManager {
     private static volatile ServerManager instance;
+
+    // Services
     private final AnnouncementService announcementService;
     private final AdminService adminService;
     private final ServerStatisticsService statisticsService;
     private final UserService userService;
+    private final ContactsService contactsService;
+
+    // Remote Services (RMI)
     private final RemoteAnnouncementService remoteAnnouncementService;
     private final RemoteUserService remoteUserService;
-    private final Map<Long, ClientCallback> onlineClients = new ConcurrentHashMap<>();
     private final RemoteChatService remoteChatService;
-    private final RmiServiceManager rmiServiceManager;
-    private final ContactsService contactsService;
     private final RemoteContactsService remoteContactsService;
 
+    // Managers & Shared State
+    private final RmiServiceManager rmiServiceManager;
+    private final Map<Long, ClientCallback> onlineClients = new ConcurrentHashMap<>();
+
     private ServerManager() throws RemoteException {
+        // 1. Initialize DataSource
         HikariDataSource dataSource = DataSourceConfig.getDataSource();
+
+        // 2. Initialize DAOs
         AnnouncementDao announcementDao = new AnnouncementDaoImpl(dataSource);
         AdminDao adminDao = new AdminDaoImpl(dataSource);
         StatisticsDao statisticsDao = new StatisticsDaoImpl(dataSource);
         UserDao userDao = new UserDaoImpl(dataSource);
+        ContactsDao contactsDao = new ContactsDaoImpl(dataSource);
+
+        // 3. Initialize Services
         this.announcementService = new AnnouncementServiceImpl(announcementDao);
-        this.remoteAnnouncementService = new RemoteAnnouncementServiceImpl(announcementService);
-        this.remoteChatService = new RemoteChatServiceImpl();
         this.userService = new UserServiceImpl(userDao);
-        this.remoteUserService = new RemoteUserServiceImpl(userService);
         this.adminService = new AdminServiceImpl(adminDao);
         this.statisticsService = new ServerStatisticsServiceImpl(statisticsDao);
-        this.rmiServiceManager = new RmiServiceManager(this); // Inject self for delegation
-
-        // Initialize ContactsService
-        ContactsDao contactsDao = new ContactsDaoImpl(dataSource);
         this.contactsService = new ContactsServiceImpl(contactsDao, userDao);
+
+        // 4. Initialize Remote Services
+        this.remoteAnnouncementService = new RemoteAnnouncementServiceImpl(announcementService);
+        this.remoteUserService = new RemoteUserServiceImpl(userService);
+        this.remoteChatService = new RemoteChatServiceImpl();
         this.remoteContactsService = new RemoteContactsServiceImpl(contactsService);
+
+        // 5. Initialize RMI Manager (Delegation)
+        this.rmiServiceManager = new RmiServiceManager(this);
     }
 
     public static ServerManager getInstance() {
@@ -82,7 +95,7 @@ public class ServerManager {
                     try {
                         instance = new ServerManager();
                     } catch (RemoteException e) {
-                        System.out.println("Error Starting the server");
+                        System.err.println("Fatal Error: Could not initialize ServerManager");
                         throw new RuntimeException(e);
                     }
                 }
@@ -91,59 +104,71 @@ public class ServerManager {
         return instance;
     }
 
+    // --- Server Lifecycle Control ---
+
     public void startServer() throws RemoteException {
-        rmiServiceManager.startServices();
+        if (rmiServiceManager != null) {
+            rmiServiceManager.startServices();
+            System.out.println("Server services started successfully.");
+        }
     }
 
     public void stopServer() {
-        rmiServiceManager.stopServices();
-    }
-
-    public RemoteAnnouncementService getRemoteAnnouncementService() {
-        return remoteAnnouncementService;
-    }
-
-    public RmiServiceManager getRmiServiceManager() {
-        return rmiServiceManager;
+        if (rmiServiceManager != null) {
+            rmiServiceManager.stopServices();
+            System.out.println("Server services stopped.");
+        }
     }
 
     public boolean isServerRunning() {
-        return rmiServiceManager.isRunning();
+        return rmiServiceManager != null && rmiServiceManager.isRunning();
     }
+
+    // --- Getters ---
 
     public Map<Long, ClientCallback> getOnlineClients() {
         return onlineClients;
-    }
-
-    public AnnouncementService getAnnouncementService() {
-        return announcementService;
-    }
-
-    public AdminService getAdminService() {
-        return adminService;
-    }
-
-    public ServerStatisticsService getStatisticsService() {
-        return statisticsService;
     }
 
     public UserService getUserService() {
         return userService;
     }
 
-    public RemoteUserService getRemoteUserService() {
-        return remoteUserService;
+    public AdminService getAdminService() {
+        return adminService;
     }
 
-    public RemoteChatService getRemoteChatService() {
-        return remoteChatService;
+    public AnnouncementService getAnnouncementService() {
+        return announcementService;
     }
 
     public ContactsService getContactsService() {
         return contactsService;
     }
 
+    public ServerStatisticsService getStatisticsService() {
+        return statisticsService;
+    }
+
+    // --- RMI Getters ---
+
+    public RemoteUserService getRemoteUserService() {
+        return remoteUserService;
+    }
+
+    public RemoteAnnouncementService getRemoteAnnouncementService() {
+        return remoteAnnouncementService;
+    }
+
+    public RemoteChatService getRemoteChatService() {
+        return remoteChatService;
+    }
+
     public RemoteContactsService getRemoteContactsService() {
         return remoteContactsService;
+    }
+
+    public RmiServiceManager getRmiServiceManager() {
+        return rmiServiceManager;
     }
 }

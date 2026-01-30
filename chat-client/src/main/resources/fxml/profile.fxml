@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.jets.chat.client.controller.ProfileController"
+            prefHeight="750.0" prefWidth="420.0" minHeight="600.0" minWidth="420.0"
+            styleClass="root-pane">
+
+    <fx:include fx:id="header" source="header.fxml"/>
+
+    <ScrollPane AnchorPane.topAnchor="80" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="0"
+                styleClass="scroll-pane" fitToWidth="true" hbarPolicy="NEVER">
+        
+        <VBox alignment="TOP_CENTER" spacing="20" styleClass="content-box">
+            
+            <fx:include fx:id="avatar" source="avatar.fxml"/>
+            
+            <Separator styleClass="separator"/>
+            
+            <fx:include fx:id="status" source="status.fxml"/>
+            
+            <Separator styleClass="separator"/>
+            
+            <fx:include fx:id="info" source="info.fxml"/>
+            
+            <Region prefHeight="20"/>
+        </VBox>
+    </ScrollPane>
+</AnchorPane>

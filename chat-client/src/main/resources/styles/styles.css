@@ -1,0 +1,494 @@
+/* ===================================
+   Profile Page Styles
+   Dark Theme - Modern Design
+   =================================== */
+
+/* ===== Layout Containers ===== */
+.root-pane {
+    -fx-background-color: #000000;
+}
+
+.header-box {
+    -fx-background-color: #1a1a1a;
+    -fx-padding: 20;
+}
+
+.content-box {
+    -fx-padding: 20;
+    -fx-background-color: #000000;
+}
+
+.separator {
+    -fx-background-color: #2d2d2d;
+}
+
+/* ===== Typography ===== */
+.page-title {
+    -fx-fill: white;
+    -fx-font-size: 24;
+    -fx-font-weight: bold;
+}
+
+.avatar-text {
+    -fx-fill: white;
+    -fx-font-size: 48;
+    -fx-font-weight: bold;
+}
+
+.section-title {
+    -fx-fill: #808080;
+    -fx-font-size: 12;
+    -fx-font-weight: bold;
+}
+
+.icon-text {
+    -fx-fill: #808080;
+    -fx-font-size: 20;
+}
+
+.label-text {
+    -fx-fill: #808080;
+    -fx-font-size: 12;
+}
+
+.value-text {
+    -fx-fill: white;
+    -fx-font-size: 14;
+}
+
+/* ===== Input Fields Styling (Removed Inline) ===== */
+.combo-box-dark {
+    -fx-background-color: #2d2d2d;
+    -fx-text-fill: white;
+}
+
+.text-field-dark {
+    -fx-background-color: #2d2d2d;
+    -fx-text-fill: white;
+    -fx-background-radius: 5;
+    -fx-border-color: transparent;
+    -fx-padding: 8;
+}
+
+.date-picker-dark {
+    -fx-background-color: #2d2d2d;
+}
+
+.text-area-dark {
+    -fx-control-inner-background: #2d2d2d;
+    -fx-text-fill: white;
+    -fx-background-radius: 5;
+    -fx-padding: 8;
+}
+
+/* ===== ScrollPane Styles ===== */
+.scroll-pane {
+    -fx-background-color: #000000;
+    -fx-border-color: transparent;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: #000000;
+}
+
+.scroll-pane .content {
+    -fx-background-color: #000000;
+}
+
+.scroll-pane:focused {
+    -fx-background-color: #000000;
+    -fx-focus-color: transparent;
+}
+
+/* ===== ScrollBar Styles ===== */
+.scroll-bar {
+    -fx-background-color: #000000;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: #3d3d3d;
+    -fx-background-radius: 5;
+}
+
+.scroll-bar .thumb:hover {
+    -fx-background-color: #5d5d5d;
+}
+
+.scroll-bar .thumb:pressed {
+    -fx-background-color: #4d4d4d;
+}
+
+.scroll-bar .track {
+    -fx-background-color: #1a1a1a;
+}
+
+.scroll-bar .increment-button,
+.scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+}
+
+/* ===== Avatar Circle Enhancement ===== */
+.avatar-circle {
+    -fx-stroke: #0D9FFF;
+    -fx-stroke-width: 2;
+}
+
+/* ===== Button Styles ===== */
+.close-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #808080;
+    -fx-font-size: 20;
+    -fx-cursor: hand;
+    -fx-border-color: transparent;
+}
+
+.close-button:hover {
+    -fx-text-fill: #0D9FFF;
+    -fx-background-color: rgba(255, 85, 85, 0.1);
+}
+
+.camera-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-font-size: 14;
+    -fx-cursor: hand;
+    -fx-border-color: transparent;
+}
+
+.camera-button:hover {
+    -fx-scale-x: 1.1;
+    -fx-scale-y: 1.1;
+}
+
+.edit-icon-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #0D9FFF;
+    -fx-font-size: 14;
+    -fx-cursor: hand;
+    -fx-border-color: transparent;
+}
+
+.edit-icon-button:hover {
+    -fx-text-fill: #1DA1F2;
+}
+
+.custom-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #0D9FFF;
+    -fx-font-size: 14;
+    -fx-cursor: hand;
+    -fx-border-color: transparent;
+    -fx-padding: 5 10;
+}
+
+.custom-button:hover {
+    -fx-text-fill: #1DA1F2;
+    -fx-background-color: rgba(13, 159, 255, 0.1);
+}
+
+.save-button {
+    -fx-background-color: #0D9FFF;
+    -fx-text-fill: white;
+    -fx-font-size: 16;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+}
+
+.save-button:hover {
+    -fx-background-color: #1DA1F2;
+}
+
+.save-button:pressed {
+    -fx-background-color: #0B7DC7;
+}
+
+.save-button:disabled {
+    -fx-background-color: #2d2d2d;
+    -fx-text-fill: #808080;
+    -fx-opacity: 0.6;
+}
+
+/* ===== Name Field States ===== */
+.name-field-readonly {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-font-size: 20;
+    -fx-font-weight: bold;
+    -fx-alignment: center;
+    -fx-border-color: transparent;
+    -fx-max-width: 200;
+}
+
+.name-field-editing {
+    -fx-background-color: #2d2d2d;
+    -fx-text-fill: white;
+    -fx-font-size: 20;
+    -fx-font-weight: bold;
+    -fx-alignment: center;
+    -fx-border-color: #0D9FFF;
+    -fx-border-width: 2;
+    -fx-background-radius: 5;
+    -fx-padding: 5;
+    -fx-max-width: 200;
+}
+
+/* ===== Status Button Base Styles ===== */
+.status-button {
+    -fx-background-color: #2d2d2d;
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-cursor: hand;
+    -fx-font-size: 14px;
+    -fx-padding: 10;
+}
+
+.status-button:hover {
+    -fx-background-color: #3d3d3d;
+}
+
+.status-button:pressed {
+    -fx-background-color: #1d1d1d;
+}
+
+/* ===== Status-Specific Selected States ===== */
+.status-online {
+    -fx-background-color: #003d2e;
+    -fx-border-color: #00D100;
+    -fx-border-width: 2;
+}
+
+.status-online:hover {
+    -fx-background-color: #004d3e;
+}
+
+.status-away {
+    -fx-background-color: #4a3d00;
+    -fx-border-color: #FFA500;
+    -fx-border-width: 2;
+}
+
+.status-away:hover {
+    -fx-background-color: #5a4d10;
+}
+
+.status-dnd {
+    -fx-background-color: #4a0000;
+    -fx-border-color: #FF0000;
+    -fx-border-width: 2;
+}
+
+.status-dnd:hover {
+    -fx-background-color: #5a1010;
+}
+
+.status-offline {
+    -fx-background-color: #2d2d2d;
+    -fx-border-color: #808080;
+    -fx-border-width: 2;
+}
+
+.status-offline:hover {
+    -fx-background-color: #3d3d3d;
+}
+
+/* ===== ComboBox Styles ===== */
+.combo-box {
+    -fx-background-color: #2d2d2d;
+    -fx-background-radius: 5;
+}
+
+.combo-box:focused {
+    -fx-border-color: #0D9FFF;
+    -fx-border-width: 2;
+    -fx-border-radius: 5;
+}
+
+.combo-box:disabled {
+    -fx-opacity: 0.5;
+}
+
+.combo-box .list-cell {
+    -fx-background-color: #2d2d2d;
+    -fx-text-fill: white;
+}
+
+.combo-box .arrow-button {
+    -fx-background-color: #3d3d3d;
+}
+
+.combo-box .arrow {
+    -fx-background-color: white;
+}
+
+.combo-box-popup .list-view {
+    -fx-background-color: #2d2d2d;
+    -fx-border-color: #3d3d3d;
+    -fx-background-radius: 5;
+}
+
+.combo-box-popup .list-view .list-cell {
+    -fx-background-color: #2d2d2d;
+    -fx-text-fill: white;
+    -fx-padding: 8;
+}
+
+.combo-box-popup .list-view .list-cell:hover {
+    -fx-background-color: #3d3d3d;
+}
+
+.combo-box-popup .list-view .list-cell:selected {
+    -fx-background-color: #0D9FFF;
+    -fx-text-fill: white;
+}
+
+/* ===== DatePicker Styles ===== */
+.date-picker {
+    -fx-background-color: #2d2d2d;
+    -fx-background-radius: 5;
+}
+
+.date-picker:focused {
+    -fx-border-color: #0D9FFF;
+    -fx-border-width: 2;
+    -fx-border-radius: 5;
+}
+
+.date-picker:disabled {
+    -fx-opacity: 0.5;
+}
+
+.date-picker .text-field {
+    -fx-background-color: #2d2d2d;
+    -fx-text-fill: white;
+}
+
+.date-picker .arrow-button {
+    -fx-background-color: #3d3d3d;
+}
+
+.date-picker .arrow {
+    -fx-background-color: white;
+}
+
+.date-picker-popup {
+    -fx-background-color: #1a1a1a;
+    -fx-border-color: #3d3d3d;
+    -fx-background-radius: 5;
+}
+
+.date-picker-popup .calendar-grid {
+    -fx-background-color: #1a1a1a;
+}
+
+.date-picker-popup .day-cell {
+    -fx-background-color: #2d2d2d;
+    -fx-text-fill: white;
+}
+
+.date-picker-popup .day-cell:hover {
+    -fx-background-color: #3d3d3d;
+}
+
+.date-picker-popup .selected {
+    -fx-background-color: #0D9FFF !important;
+    -fx-text-fill: white;
+}
+
+.date-picker-popup .today {
+    -fx-background-color: #003d5c;
+}
+
+.date-picker-popup .previous-month,
+.date-picker-popup .next-month {
+    -fx-text-fill: #808080;
+}
+
+.date-picker-popup .month-year-pane {
+    -fx-background-color: #1a1a1a;
+}
+
+.date-picker-popup .spinner {
+    -fx-background-color: #1a1a1a;
+}
+
+.date-picker-popup .spinner .button {
+    -fx-background-color: #2d2d2d;
+    -fx-text-fill: white;
+}
+
+.date-picker-popup .spinner .button:hover {
+    -fx-background-color: #3d3d3d;
+}
+
+.date-picker-popup .week-number-cell {
+    -fx-text-fill: #808080;
+}
+
+/* ===== TextField Styles ===== */
+.text-field {
+    -fx-prompt-text-fill: #808080;
+}
+
+.text-field:focused {
+    -fx-border-color: #0D9FFF;
+    -fx-border-width: 2;
+    -fx-border-radius: 5;
+}
+
+.text-field:disabled {
+    -fx-opacity: 0.5;
+}
+
+/* ===== TextArea Styles ===== */
+.text-area {
+    -fx-prompt-text-fill: #808080;
+}
+
+.text-area:focused {
+    -fx-border-color: #0D9FFF;
+    -fx-border-width: 2;
+    -fx-border-radius: 5;
+}
+
+.text-area:disabled {
+    -fx-opacity: 0.5;
+}
+
+.text-area .content {
+    -fx-background-color: #2d2d2d;
+}
+
+.text-area .scroll-pane {
+    -fx-background-color: #2d2d2d;
+}
+
+.text-area .scroll-pane .viewport {
+    -fx-background-color: #2d2d2d;
+}
+
+.text-area .scroll-pane .content {
+    -fx-background-color: #2d2d2d;
+}
+
+/* ===== Separator Styles ===== */
+.separator .line {
+    -fx-background-color: #2d2d2d;
+    -fx-border-color: #2d2d2d;
+    -fx-pref-height: 1;
+}
+
+/* ===== Focus Indicator ===== */
+.button:focused,
+.toggle-button:focused {
+    -fx-border-color: #0D9FFF;
+    -fx-border-width: 1;
+    -fx-border-radius: 5;
+}
+
+/* Remove default focus indicator */
+*:focused {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}

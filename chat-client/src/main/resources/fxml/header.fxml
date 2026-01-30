@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<HBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.jets.chat.client.controller.ProfileHeaderController"
+      alignment="CENTER_LEFT" spacing="10" styleClass="header-box"
+      AnchorPane.topAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+    <Text text="%header.title" styleClass="page-title"/>
+    <Region HBox.hgrow="ALWAYS"/>
+    <Button fx:id="closeButton" text="%btn.close" styleClass="close-button" onAction="#handleClose"/>
+</HBox>
