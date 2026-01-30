@@ -1,9 +1,20 @@
 package com.jets.chat.server.service;
 
-import com.jets.chat.common.dto.RegisterRequestDTO;
-import com.jets.chat.common.dto.RegisterResponseDTO;
+import com.jets.chat.common.dto.UserDTO;
+import com.jets.chat.common.enums.UserStatus;
+
+import java.util.Optional;
+
 public interface UserService {
 
-    public RegisterResponseDTO register(RegisterRequestDTO dto);
+    Optional<UserDTO> findUserById(long id);
+
+    boolean updateUser(UserDTO userDTO);
+
+    boolean updateUserPassword(long id, String passwordHash);
+
+    boolean updateUserStatus(long userId, UserStatus status);
+
+    UserStatus getUserStatus(long userId);
 
 }

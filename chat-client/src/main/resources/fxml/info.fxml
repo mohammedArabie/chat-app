@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.SVGPath?>
+<?import javafx.scene.text.Text?>
+
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.jets.chat.client.controller.ProfileInfoController"
+      spacing="20" style="-fx-padding: 0 10 0 10;">
+
+    <HBox alignment="CENTER_LEFT" spacing="10">
+        <Text text="%label.profile_info" styleClass="section-title"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="editButton" styleClass="edit-icon-button" onAction="#handleEdit">
+            <graphic>
+                <SVGPath fx:id="editIcon"
+                         content="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"
+                         fill="#0D9FFF" scaleX="0.8" scaleY="0.8"/>
+            </graphic>
+            <tooltip><Tooltip text="%btn.edit"/></tooltip>
+        </Button>
+    </HBox>
+
+    <HBox alignment="CENTER_LEFT" spacing="15">
+        <StackPane prefWidth="24" prefHeight="24">
+            <SVGPath content="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" fill="#808080"/>
+        </StackPane>
+        <VBox spacing="5" HBox.hgrow="ALWAYS">
+            <Text text="%label.email" styleClass="label-text"/>
+            <Text fx:id="emailText" text="%default.email" styleClass="value-text"/>
+        </VBox>
+    </HBox>
+
+    <HBox alignment="CENTER_LEFT" spacing="15">
+        <StackPane prefWidth="24" prefHeight="24">
+            <SVGPath content="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.75-.25 1.02l-2.2 2.2z" fill="#808080"/>
+        </StackPane>
+        <VBox spacing="5" HBox.hgrow="ALWAYS">
+            <Text text="%label.phone" styleClass="label-text"/>
+            <Text fx:id="phoneText" text="%default.phone" styleClass="value-text"/>
+        </VBox>
+    </HBox>
+
+    <HBox alignment="CENTER_LEFT" spacing="15">
+        <StackPane prefWidth="24" prefHeight="24">
+            <SVGPath content="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" fill="#808080"/>
+        </StackPane>
+        <VBox spacing="5" HBox.hgrow="ALWAYS">
+            <Text text="%label.password" styleClass="label-text"/>
+            <StackPane alignment="CENTER_RIGHT">
+                <PasswordField fx:id="passwordField" prefWidth="350" styleClass="text-field-dark" promptText="%prompt.password"/>
+                <TextField fx:id="passwordTextField" prefWidth="350" styleClass="text-field-dark" managed="false" visible="false"/>
+                <Button onAction="#togglePasswordVisibility" styleClass="edit-icon-button" style="-fx-padding: 0 10 0 0;">
+                    <graphic>
+                        <SVGPath fx:id="eyeIcon" content="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" fill="#808080" scaleX="0.7" scaleY="0.7"/>
+                    </graphic>
+                </Button>
+            </StackPane>
+        </VBox>
+    </HBox>
+
+    <HBox alignment="CENTER_LEFT" spacing="15">
+        <Text text="⚥" styleClass="icon-text"/>
+        <VBox spacing="5" HBox.hgrow="ALWAYS">
+            <Text text="%label.gender" styleClass="label-text"/>
+            <ComboBox fx:id="genderComboBox" prefWidth="350" styleClass="combo-box-dark" promptText="%prompt.gender"/>
+        </VBox>
+    </HBox>
+
+    <HBox alignment="CENTER_LEFT" spacing="15">
+        <Text text="🌍" styleClass="icon-text"/>
+        <VBox spacing="5" HBox.hgrow="ALWAYS">
+            <Text text="%label.country" styleClass="label-text"/>
+            <TextField fx:id="countryField" prefWidth="350" styleClass="text-field-dark" promptText="%prompt.country"/>
+        </VBox>
+    </HBox>
+
+    <HBox alignment="CENTER_LEFT" spacing="15">
+        <Text text="🎂" styleClass="icon-text"/>
+        <VBox spacing="5" HBox.hgrow="ALWAYS">
+            <Text text="%label.dob" styleClass="label-text"/>
+            <DatePicker fx:id="dobPicker" prefWidth="350" styleClass="date-picker-dark" promptText="%prompt.dob"/>
+        </VBox>
+    </HBox>
+
+    <HBox alignment="TOP_LEFT" spacing="15">
+        <Text text="📝" styleClass="icon-text"/>
+        <VBox spacing="5" HBox.hgrow="ALWAYS">
+            <Text text="%label.bio" styleClass="label-text"/>
+            <TextArea fx:id="bioArea" prefRowCount="4" prefWidth="350" wrapText="true" styleClass="text-area-dark" promptText="%prompt.bio"/>
+        </VBox>
+    </HBox>
+
+    <Button fx:id="saveButton" text="%btn.save" prefWidth="380" prefHeight="45" styleClass="save-button" onAction="#handleSave"/>
+</VBox>
