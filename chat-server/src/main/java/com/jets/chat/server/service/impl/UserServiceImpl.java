@@ -19,7 +19,6 @@ import java.nio.file.Paths;
 import java.util.Base64;
 import java.util.UUID;
 
-
 public class UserServiceImpl implements UserService {
 
     private final UserDao userDao;
@@ -33,9 +32,8 @@ public class UserServiceImpl implements UserService {
 
     static {
         String userHome = System.getProperty("user.home");
-        UPLOAD_BASE_DIR = userHome + File.separator +
-                ProjectConstants.UPLOAD_FOLDER_NAME + File.separator +
-                ProjectConstants.PROFILES_SUBFOLDER + File.separator;
+        UPLOAD_BASE_DIR = userHome + File.separator + ProjectConstants.UPLOAD_FOLDER_NAME
+                + File.separator + ProjectConstants.PROFILES_SUBFOLDER + File.separator;
         System.out.println("Profile uploads directory: " + UPLOAD_BASE_DIR);
 
         // Initialize directory when class loads
@@ -94,18 +92,18 @@ public class UserServiceImpl implements UserService {
 
             if (image != null && imageBytes.length > 4) {
                 // PNG signature: 89 50 4E 47
-                if (imageBytes[0] == (byte) 0x89 && imageBytes[1] == 0x50 &&
-                        imageBytes[2] == 0x4E && imageBytes[3] == 0x47) {
+                if (imageBytes[0] == (byte) 0x89 && imageBytes[1] == 0x50 && imageBytes[2] == 0x4E
+                        && imageBytes[3] == 0x47) {
                     return "png";
                 }
                 // GIF signature: 47 49 46 38
-                if (imageBytes[0] == 0x47 && imageBytes[1] == 0x49 &&
-                        imageBytes[2] == 0x46 && imageBytes[3] == 0x38) {
+                if (imageBytes[0] == 0x47 && imageBytes[1] == 0x49 && imageBytes[2] == 0x46
+                        && imageBytes[3] == 0x38) {
                     return "gif";
                 }
                 // JPEG signature: FF D8 FF
-                if (imageBytes[0] == (byte) 0xFF && imageBytes[1] == (byte) 0xD8 &&
-                        imageBytes[2] == (byte) 0xFF) {
+                if (imageBytes[0] == (byte) 0xFF && imageBytes[1] == (byte) 0xD8
+                        && imageBytes[2] == (byte) 0xFF) {
                     return "jpg";
                 }
             }
@@ -131,12 +129,11 @@ public class UserServiceImpl implements UserService {
             String extension = detectImageFormat(imageBytes);
 
             // Generate unique filename with UUID to prevent collisions
-            String sanitizedEmail = userEmail.replace("@", "_")
-                    .replace(".", "_")
+            String sanitizedEmail = userEmail.replace("@", "_").replace(".", "_")
                     .replaceAll("[^a-zA-Z0-9_]", "");
             String uuid = UUID.randomUUID().toString().substring(0, 8);
-            String fileName = sanitizedEmail + "_" + uuid + "_" +
-                    System.currentTimeMillis() + "." + extension;
+            String fileName = sanitizedEmail + "_" + uuid + "_" + System.currentTimeMillis() + "."
+                    + extension;
 
             // FIXED: Use UPLOAD_BASE_DIR instead of UPLOAD_DIR
             String filePath = UPLOAD_BASE_DIR + fileName;
@@ -176,12 +173,12 @@ public class UserServiceImpl implements UserService {
 
     public RegisterResponseDTO register(RegisterRequestDTO dto) {
 
-        //  Check phone uniqueness
+        // Check phone uniqueness
         if (userDao.findByPhoneNumber(dto.getPhoneNumber()).isPresent()) {
             return new RegisterResponseDTO(false, "Phone number already registered", null);
         }
 
-        //  Create User entity
+        // Create User entity
         User user = new User();
         user.setPhoneNumber(dto.getPhoneNumber());
         user.setDisplayName(dto.getDisplayName());
@@ -191,7 +188,7 @@ public class UserServiceImpl implements UserService {
         user.setDateOfBirth(dto.getDateOfBirth());
         user.setBio(dto.getBio());
 
-        //  Hash password
+        // Hash password
         String hashedPassword = PasswordUtil.hash(dto.getPassword());
         user.setPasswordHash(hashedPassword);
 
