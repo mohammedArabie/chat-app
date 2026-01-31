@@ -38,6 +38,27 @@ public class AdminDaoImpl implements AdminDao {
         }
         return Optional.empty();
     }
+    @Override
+    public Optional<Admin> findById(Long adminId) {
+        String sql = "SELECT * FROM admins WHERE admin_id = ?";
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setLong(1, adminId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                Admin admin = new Admin();
+                admin.setAdminId(rs.getLong("admin_id"));
+                admin.setUsername(rs.getString("username"));
+                admin.setPasswordHash(rs.getString("password_hash"));
+                admin.setCreatedAt(rs.getTimestamp("created_at"));
+                admin.setLastLogin(rs.getTimestamp("last_login"));
+                return Optional.of(admin);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return Optional.empty();
+    }
 
     @Override
     public boolean createAdmin(String username, String passwordHash) {  // HASHED

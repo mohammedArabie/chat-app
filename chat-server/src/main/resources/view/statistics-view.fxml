@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.geometry.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.jets.chat.server.admin.controller.StatisticsController"
+      spacing="30" styleClass="content-area">
+
+    <Label text="Server Statistics" styleClass="section-title"/>
+
+    <!-- Stats Cards Row -->
+    <HBox spacing="20" alignment="CENTER">
+        <VBox styleClass="stats-card" alignment="CENTER" spacing="10">
+            <Label text="Online Users" styleClass="stats-label"/>
+            <Label fx:id="onlineCount" text="0" styleClass="stats-number online-count"/>
+        </VBox>
+        <VBox styleClass="stats-card" alignment="CENTER" spacing="10">
+            <Label text="Offline Users" styleClass="stats-label"/>
+            <Label fx:id="offlineCount" text="0" styleClass="stats-number offline-count"/>
+        </VBox>
+        <VBox styleClass="stats-card" alignment="CENTER" spacing="10">
+            <Label text="Total Users" styleClass="stats-label"/>
+            <Label fx:id="totalCount" text="0" styleClass="stats-number total-count"/>
+        </VBox>
+        <VBox styleClass="stats-card" alignment="CENTER" spacing="10">
+            <Label text="Total Messages" styleClass="stats-label"/>
+            <Label fx:id="messageCount" text="0" styleClass="stats-number messages-count"/>
+        </VBox>
+        <VBox styleClass="stats-card" alignment="CENTER" spacing="10">
+            <Label text="Total Chats" styleClass="stats-label"/>
+            <Label fx:id="chatCount" text="0" styleClass="stats-number total-count"/>
+        </VBox>
+    </HBox>
+
+    <!-- Charts Row -->
+    <HBox spacing="35" alignment="CENTER">
+        <!-- Gender Chart -->
+        <VBox spacing="15" HBox.hgrow="ALWAYS" maxWidth="450">
+            <Label text="User Gender Distribution" styleClass="chart-title"/>
+            <PieChart fx:id="genderChart" prefHeight="320"
+                      style="-fx-font-size: 14px; -fx-padding: 10px; -fx-legend-side: bottom; -fx-legend-visible: true;"/>
+        </VBox>
+
+        <!-- Country Chart -->
+        <VBox spacing="15" HBox.hgrow="ALWAYS" maxWidth="450">
+            <Label text="Top User Countries" styleClass="chart-title"/>
+            <BarChart fx:id="countryChart" prefHeight="320"
+                      style="-fx-font-size: 13px; -fx-category-gap: 15px;">
+                <xAxis>
+                    <CategoryAxis label="Country"
+                                  style="-fx-tick-label-font-size: 12px; -fx-tick-label-fill: #2c3e50;"/>
+
+                </xAxis>
+                <yAxis>
+                    <NumberAxis label="Number of Users"
+                                style="-fx-tick-label-font-size: 12px; -fx-tick-label-fill: #2c3e50;"/>
+                </yAxis>
+            </BarChart>
+        </VBox>
+    </HBox>
+
+    <HBox spacing="20" alignment="CENTER">
+        <Button text="↺ Refresh Statistics" onAction="#refreshStatistics"
+                style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-size: 16px; -fx-padding: 14px 35px; -fx-background-radius: 12px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 8, 0.5, 0, 3);"/>
+        <Label fx:id="lastUpdated" text="Last updated: Just now"
+               style="-fx-text-fill: #7f8c8d; -fx-font-size: 14px; -fx-padding: 18px 0 0 0;"/>
+    </HBox>
+
+</VBox>

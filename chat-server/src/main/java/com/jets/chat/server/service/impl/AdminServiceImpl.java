@@ -31,6 +31,7 @@ public class AdminServiceImpl implements AdminService {
         return Optional.empty();
     }
 
+
     @Override
     public boolean createAdmin(String username, String password) {
         //  HASH BEFORE STORAGE
@@ -40,7 +41,21 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public boolean changePassword(Long adminId, String currentPassword, String newPassword) {
+        // 1. Fetch admin by ID
+        Optional<Admin> adminOpt = adminDao.findById(adminId);
+        if (!adminOpt.isPresent()) {
+            return false;
+        }
 
+        Admin admin = adminOpt.get();
+
+        // 2. Verify current password matches stored hash
+        String currentPasswordHash = PasswordUtil.hash(currentPassword);
+        if (!currentPasswordHash.equals(admin.getPasswordHash())) {
+            return false; // Current password incorrect
+        }
+
+        // 3. Update with new password hash
         String newPasswordHash = PasswordUtil.hash(newPassword);
         return adminDao.updatePassword(adminId, newPasswordHash);
     }
