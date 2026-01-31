@@ -35,7 +35,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class ServerManager {
     private static volatile ServerManager instance;
     private final AnnouncementService announcementService;
-    private final RemoteAnnouncementService remoteAnnouncementService;
+    private RemoteAnnouncementService remoteAnnouncementService;
     private final AdminService adminService;
     private final ServerStatisticsService statisticsService;
     private final RemoteUserService remoteUserService;
@@ -44,6 +44,8 @@ public class ServerManager {
 
     private Registry registry;
     private final AtomicBoolean isRunning = new AtomicBoolean(false);
+    private boolean isExported = false;
+
     public static ServerManager getInstance() throws RemoteException {
         if (instance == null) {
             synchronized (ServerManager.class) {
@@ -64,6 +66,7 @@ public class ServerManager {
         HikariDataSource dataSource = DataSourceConfig.getDataSource();
         AnnouncementDao announcementDao = new AnnouncementDaoImpl(dataSource);
         AdminDao adminDao = new AdminDaoImpl(dataSource);
+        StatisticsDao statisticsDao = new StatisticsDaoImpl(dataSource);
         StatisticsDao statisticsDao = new StatisticsDaoImpl(dataSource);  // NEW
         UserDao userDao = new UserDaoImpl(dataSource);
         this.announcementService = new AnnouncementServiceImpl(announcementDao);
@@ -81,9 +84,48 @@ public class ServerManager {
             return;
         }
 
-        registry = LocateRegistry.createRegistry(ProjectConstants.RMI_SERVICE_PORT);
-        registry.rebind(ProjectConstants.ANNOUNCEMENT_SERVICE, remoteAnnouncementService);
-        isRunning.set(true);
+        if (isExported) {
+            try {
+                UnicastRemoteObject.unexportObject(remoteAnnouncementService, true);
+            } catch (Exception e) {
+            }
+            remoteAnnouncementService = null;
+            isExported = false;
+        }
+
+        try {
+            RemoteAnnouncementServiceImpl serviceImpl = new RemoteAnnouncementServiceImpl(announcementService);
+            remoteAnnouncementService = serviceImpl;
+
+            try {
+                UnicastRemoteObject.exportObject(remoteAnnouncementService, 0);
+                isExported = true;
+            } catch (java.rmi.server.ExportException e) {
+                remoteAnnouncementService = (RemoteAnnouncementService) UnicastRemoteObject.toStub(remoteAnnouncementService);
+                isExported = true;
+            }
+
+            try {
+                registry = LocateRegistry.getRegistry(ProjectConstants.RMI_SERVICE_PORT);
+                registry.list();
+            } catch (Exception e) {
+                registry = LocateRegistry.createRegistry(ProjectConstants.RMI_SERVICE_PORT);
+            }
+
+            registry.rebind(ProjectConstants.ANNOUNCEMENT_SERVICE, remoteAnnouncementService);
+            isRunning.set(true);
+
+        } catch (RemoteException e) {
+            if (remoteAnnouncementService != null && isExported) {
+                try {
+                    UnicastRemoteObject.unexportObject(remoteAnnouncementService, true);
+                } catch (Exception ex) {
+                }
+                remoteAnnouncementService = null;
+                isExported = false;
+            }
+            throw e;
+        }
     }
 
     public synchronized void stopServer() {
@@ -93,16 +135,31 @@ public class ServerManager {
         }
 
         try {
-            registry.unbind(ProjectConstants.ANNOUNCEMENT_SERVICE);
-           // UnicastRemoteObject.unexportObject(registry, true);
+            if (registry != null) {
+                try {
+                    registry.unbind(ProjectConstants.ANNOUNCEMENT_SERVICE);
+                } catch (Exception e) {
+                }
+            }
+
+            if (remoteAnnouncementService != null && isExported) {
+                try {
+                    UnicastRemoteObject.unexportObject(remoteAnnouncementService, true);
+                } catch (Exception e) {
+                }
+                remoteAnnouncementService = null;
+                isExported = false;
+            }
+
             isRunning.set(false);
 
-
         } catch (Exception e) {
-            System.err.println("Error during server shutdown: " + e.getMessage());
-            isRunning.set(false); // Force state update
+            isRunning.set(false);
+            remoteAnnouncementService = null;
+            isExported = false;
         }
     }
+
     public boolean isServerRunning() {
         return isRunning.get();
     }
@@ -115,8 +172,13 @@ public class ServerManager {
         return remoteAnnouncementService;
     }
 
-    public AdminService getAdminService() { return adminService; }
+    public AdminService getAdminService() {
+        return adminService;
+    }
 
+    public ServerStatisticsService getStatisticsService() {
+        return statisticsService;
+    }
     public ServerStatisticsService getStatisticsService() { return statisticsService; }
 
     public UserService getUserService() {

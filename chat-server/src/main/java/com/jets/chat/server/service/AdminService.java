@@ -8,4 +8,5 @@ public interface AdminService {
     boolean createAdmin(String username, String password);  // HASHES BEFORE STORAGE
     boolean changePassword(Long adminId, String currentPassword, String newPassword);  // HASHES NEW PASSWORD
     String generateRandomPassword();
+
 }

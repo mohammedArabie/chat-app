@@ -9,4 +9,5 @@ public interface AdminDao {
     boolean updatePassword(Long adminId, String newPasswordHash);  // STORE HASH
     boolean updateLastLogin(Long adminId);
     String generateRandomPassword(int length);
+    Optional<Admin> findById(Long adminId);
 }
