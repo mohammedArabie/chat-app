@@ -12,6 +12,8 @@ public interface UserDao {
 
     Optional<User> findByPhoneNumber(String phoneNumber);
 
+    Optional<User> findByEmail(String email);
+
     boolean update(User user);
 
     boolean updatePassword(long id, String passwordHash);
@@ -23,4 +25,6 @@ public interface UserDao {
     boolean createSession(String sessionId, long userId);
 
     boolean deleteSession(String sessionId);
+
+    boolean isSessionValid(long userId, String sessionId);
 }

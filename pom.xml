@@ -21,7 +21,7 @@
         <maven.compiler.target>21</maven.compiler.target>
         <javafx.version>21</javafx.version>
         <mysql.version>8.0.33</mysql.version>
-        <h2.version>2.2.224</h2.version>  <!-- ADD THIS -->
+        <h2.version>2.2.224</h2.version>
     </properties>
 
     <dependencyManagement>

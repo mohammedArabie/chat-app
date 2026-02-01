@@ -1,12 +1,17 @@
 package com.jets.chat.server.service.impl;
 
+import com.jets.chat.common.callback.ClientCallback;
+import com.jets.chat.common.dto.LoginResult;
 import com.jets.chat.common.dto.RegisterRequestDTO;
 import com.jets.chat.common.dto.RegisterResponseDTO;
+import com.jets.chat.common.dto.UserDTO;
 import com.jets.chat.common.enums.UserStatus;
 import com.jets.chat.common.util.ProjectConstants;
+import com.jets.chat.server.context.ServerManager;
 import com.jets.chat.server.dao.UserDao;
 import com.jets.chat.server.entity.User;
 import com.jets.chat.server.service.UserService;
+import com.jets.chat.server.util.DtoMapper;
 import com.jets.chat.server.util.PasswordUtil;
 
 import javax.imageio.ImageIO;
@@ -17,6 +22,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Base64;
+import java.util.Optional;
 import java.util.UUID;
 
 public class UserServiceImpl implements UserService {
@@ -36,7 +42,6 @@ public class UserServiceImpl implements UserService {
                 + File.separator + ProjectConstants.PROFILES_SUBFOLDER + File.separator;
         System.out.println("Profile uploads directory: " + UPLOAD_BASE_DIR);
 
-        // Initialize directory when class loads
         initializeUploadDirectory();
     }
 
@@ -56,16 +61,13 @@ public class UserServiceImpl implements UserService {
 
     private boolean isValidImage(String base64Image) {
         try {
-            // Decode Base64
             byte[] imageBytes = Base64.getDecoder().decode(base64Image);
 
-            // Check file size (max 5MB)
             if (imageBytes.length > 5 * 1024 * 1024) {
                 System.err.println("Image too large: " + imageBytes.length + " bytes");
                 return false;
             }
 
-            // Try to read as image using ImageIO
             ByteArrayInputStream bis = new ByteArrayInputStream(imageBytes);
             BufferedImage image = ImageIO.read(bis);
 
@@ -116,7 +118,6 @@ public class UserServiceImpl implements UserService {
 
     private String saveProfilePicture(String base64Image, String userEmail) {
         try {
-            // Validate that it's actually an image
             if (!isValidImage(base64Image)) {
                 System.err.println("Invalid image file for user: " + userEmail);
                 return null;
@@ -172,13 +173,9 @@ public class UserServiceImpl implements UserService {
     }
 
     public RegisterResponseDTO register(RegisterRequestDTO dto) {
-
-        // Check phone uniqueness
         if (userDao.findByPhoneNumber(dto.getPhoneNumber()).isPresent()) {
             return new RegisterResponseDTO(false, "Phone number already registered", null);
         }
-
-        // Create User entity
         User user = new User();
         user.setPhoneNumber(dto.getPhoneNumber());
         user.setDisplayName(dto.getDisplayName());
@@ -188,7 +185,6 @@ public class UserServiceImpl implements UserService {
         user.setDateOfBirth(dto.getDateOfBirth());
         user.setBio(dto.getBio());
 
-        // Hash password
         String hashedPassword = PasswordUtil.hash(dto.getPassword());
         user.setPasswordHash(hashedPassword);
 
@@ -201,12 +197,79 @@ public class UserServiceImpl implements UserService {
             }
         }
 
-        // Save user
         User savedUser = userDao.save(user);
 
-        // Initialize status
         userDao.updateStatus(savedUser.getUserId(), UserStatus.OFFLINE);
 
         return new RegisterResponseDTO(true, "Registration successful", savedUser.getUserId());
+    }
+
+    @Override
+    public LoginResult login(String input, String password, ClientCallback callback) {
+        Optional<User> userOpt;
+        if (input.contains("@")) {
+            userOpt = userDao.findByEmail(input);
+        } else {
+            userOpt = userDao.findByPhoneNumber(input);
+        }
+
+        if (userOpt.isEmpty()) {
+            return new LoginResult("User not found");
+        }
+
+        User user = userOpt.get();
+
+        String incomingHash = PasswordUtil.hash(password);
+        if (!user.getPasswordHash().equals(incomingHash)) {
+            return new LoginResult("Invalid credentials");
+        }
+
+        String sessionId = UUID.randomUUID().toString();
+        boolean sessionCreated = userDao.createSession(sessionId, user.getUserId());
+
+        if (!sessionCreated) {
+            return new LoginResult("Server error: Could not create session");
+        }
+
+        userDao.updateStatus(user.getUserId(), UserStatus.AVAILABLE);
+        ServerManager.getInstance().getOnlineClients().put(user.getUserId(), callback);
+
+        System.out.println("User logged in: " + user.getDisplayName());
+
+        UserDTO dto = DtoMapper.toUserDTO(user);
+
+        return new LoginResult(dto, sessionId);
+    }
+
+    @Override
+    public UserDTO reconnect(long userId, String sessionId, ClientCallback callback) {
+        if (!userDao.isSessionValid(userId, sessionId)) {
+            System.out.println("Reconnection failed: Invalid session for user " + userId);
+            return null;
+        }
+
+        Optional<User> userOpt = userDao.findById(userId);
+
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+            ServerManager.getInstance().getOnlineClients().put(userId, callback);
+
+            userDao.updateStatus(userId, UserStatus.AVAILABLE);
+
+            System.out.println("User reconnected: " + user.getDisplayName());
+
+            UserDTO dto = DtoMapper.toUserDTO(user);
+            dto.setStatus(UserStatus.AVAILABLE);
+            return dto;
+        }
+
+        return null;
+    }
+
+    @Override
+    public void logout(long userId, String sessionId) {
+        ServerManager.getInstance().getOnlineClients().remove(userId);
+        userDao.deleteSession(sessionId);
+        userDao.updateStatus(userId, UserStatus.OFFLINE);
     }
 }

@@ -25,7 +25,8 @@
 
 <HBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.jets.chat.client.controller.RegisterController"
-      styleClass="root-container" prefWidth="1200" prefHeight="800">
+      styleClass="root-container" prefWidth="1200" prefHeight="800"
+      stylesheets="@/styles/register-styles.css">
 
     <!-- Left Side - Branding Panel -->
     <VBox styleClass="branding-panel" prefWidth="600" HBox.hgrow="ALWAYS">
@@ -33,14 +34,15 @@
         <!-- Background decorative circles -->
         <StackPane styleClass="branding-content">
             <!-- Decorative circles -->
-            <Circle styleClass="decorative-circle-1" radius="160" />
-            <Circle styleClass="decorative-circle-2" radius="144" />
+            <Circle styleClass="decorative-circle-1" radius="160"/>
+            <Circle styleClass="decorative-circle-2" radius="144"/>
 
             <VBox styleClass="branding-inner" spacing="40">
                 <!-- Logo -->
                 <HBox styleClass="logo-container" spacing="12" alignment="CENTER_LEFT">
                     <StackPane styleClass="logo-icon">
-                        <SVGPath styleClass="logo-svg" content="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+                        <SVGPath styleClass="logo-svg"
+                                 content="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
                     </StackPane>
                     <Label styleClass="logo-text" text="ChatApp"/>
                 </HBox>
@@ -51,7 +53,9 @@
                 <!-- Content -->
                 <VBox spacing="20">
                     <Label styleClass="branding-title" text="Join millions of users around the world" wrapText="true"/>
-                    <Label styleClass="branding-subtitle" text="Create your account today and start connecting with friends, family, and colleagues in real-time." wrapText="true"/>
+                    <Label styleClass="branding-subtitle"
+                           text="Create your account today and start connecting with friends, family, and colleagues in real-time."
+                           wrapText="true"/>
 
                     <!-- Stats -->
                     <HBox styleClass="stats-container" spacing="40">
@@ -97,7 +101,8 @@
                     <VBox styleClass="field-group" spacing="8">
                         <Label styleClass="field-label" text="Full name"/>
                         <StackPane styleClass="input-container">
-                            <SVGPath styleClass="input-icon" content="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"/>
+                            <SVGPath styleClass="input-icon"
+                                     content="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"/>
                             <TextField fx:id="fullNameField" styleClass="text-input" promptText="Enter your full name"/>
                         </StackPane>
                     </VBox>
@@ -106,7 +111,8 @@
                     <VBox styleClass="field-group" spacing="8">
                         <Label styleClass="field-label" text="Email address"/>
                         <StackPane styleClass="input-container">
-                            <SVGPath styleClass="input-icon" content="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2zM22 6l-10 7L2 6"/>
+                            <SVGPath styleClass="input-icon"
+                                     content="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2zM22 6l-10 7L2 6"/>
                             <TextField fx:id="emailField" styleClass="text-input" promptText="Enter your email"/>
                         </StackPane>
                     </VBox>
@@ -115,7 +121,8 @@
                     <VBox styleClass="field-group" spacing="8">
                         <Label styleClass="field-label" text="Phone number"/>
                         <StackPane styleClass="input-container">
-                            <SVGPath styleClass="input-icon" content="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                            <SVGPath styleClass="input-icon"
+                                     content="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
                             <TextField fx:id="phoneField" styleClass="text-input" promptText="Enter your phone number"/>
                         </StackPane>
                     </VBox>
@@ -125,11 +132,16 @@
                         <Label styleClass="field-label" text="Password"/>
 
                         <HBox styleClass="input-container" alignment="CENTER_LEFT" spacing="8">
-                            <PasswordField fx:id="passwordField" styleClass="text-input password-input" promptText="Create a password" HBox.hgrow="ALWAYS"/>
-                            <TextField fx:id="visiblePasswordField" styleClass="text-input password-input" promptText="Create a password" visible="false" managed="false" HBox.hgrow="ALWAYS"/>
-                            <Button fx:id="togglePasswordBtn" styleClass="toggle-password-btn" onAction="#togglePasswordVisibility">
+                            <PasswordField fx:id="passwordField" styleClass="text-input password-input"
+                                           promptText="Create a password" HBox.hgrow="ALWAYS"/>
+                            <TextField fx:id="visiblePasswordField" styleClass="text-input password-input"
+                                       promptText="Create a password" visible="false" managed="false"
+                                       HBox.hgrow="ALWAYS"/>
+                            <Button fx:id="togglePasswordBtn" styleClass="toggle-password-btn"
+                                    onAction="#togglePasswordVisibility">
                                 <graphic>
-                                    <SVGPath fx:id="eyeIcon" styleClass="eye-icon" content="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8zM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/>
+                                    <SVGPath fx:id="eyeIcon" styleClass="eye-icon"
+                                             content="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8zM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/>
                                 </graphic>
                             </Button>
                         </HBox>
@@ -212,7 +224,8 @@
                         <!-- Country Field -->
                         <VBox styleClass="field-group" spacing="8" HBox.hgrow="ALWAYS">
                             <Label styleClass="field-label" text="Country"/>
-                            <ComboBox fx:id="countryComboBox" styleClass="combo-input" promptText="Select country" maxWidth="Infinity"/>
+                            <ComboBox fx:id="countryComboBox" styleClass="combo-input" promptText="Select country"
+                                      maxWidth="Infinity"/>
                         </VBox>
                     </HBox>
 
@@ -220,8 +233,10 @@
                     <VBox styleClass="field-group" spacing="8">
                         <Label styleClass="field-label" text="Date of birth"/>
                         <StackPane styleClass="input-container">
-                            <SVGPath styleClass="input-icon" content="M19 4H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zM16 2v4M8 2v4M3 10h18"/>
-                            <DatePicker fx:id="dobPicker" styleClass="date-input" promptText="Select date" maxWidth="Infinity"/>
+                            <SVGPath styleClass="input-icon"
+                                     content="M19 4H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zM16 2v4M8 2v4M3 10h18"/>
+                            <DatePicker fx:id="dobPicker" styleClass="date-input" promptText="Select date"
+                                        maxWidth="Infinity"/>
                         </StackPane>
                     </VBox>
 
@@ -229,8 +244,10 @@
                     <VBox styleClass="field-group" spacing="8">
                         <Label styleClass="field-label" text="Bio"/>
                         <StackPane styleClass="textarea-container">
-                            <SVGPath styleClass="textarea-icon" content="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6M16 13H8M16 17H8M10 9H8"/>
-                            <TextArea fx:id="bioTextArea" styleClass="textarea-input" promptText="Tell us a little about yourself..." wrapText="true" prefRowCount="3"/>
+                            <SVGPath styleClass="textarea-icon"
+                                     content="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6M16 13H8M16 17H8M10 9H8"/>
+                            <TextArea fx:id="bioTextArea" styleClass="textarea-input"
+                                      promptText="Tell us a little about yourself..." wrapText="true" prefRowCount="3"/>
                         </StackPane>
                         <Label fx:id="bioCharCount" styleClass="char-count" text="0/200"/>
                     </VBox>
@@ -302,7 +319,8 @@
                     </VBox>
 
                     <!-- Submit Button -->
-                    <Button fx:id="registerBtn" styleClass="submit-btn" text="Create account" onAction="#handleRegister" maxWidth="Infinity">
+                    <Button fx:id="registerBtn" styleClass="submit-btn" text="Create account" onAction="#handleRegister"
+                            maxWidth="Infinity">
                         <graphic>
                             <SVGPath styleClass="btn-arrow" content="M5 12h14M12 5l7 7-7 7"/>
                         </graphic>

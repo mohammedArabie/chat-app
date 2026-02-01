@@ -59,7 +59,6 @@ public final class ContactsDaoImpl implements ContactsDao {
             statement.setLong(1, contact.getOwnerId());
             statement.setLong(2, contact.getContactId());
 
-            // MySQL ENUM values are sent/received as Strings in JDBC
             statement.setString(3, contact.getStatus().name());
 
             statement.setString(4, contact.getCategory());

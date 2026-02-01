@@ -1,16 +1,10 @@
 package com.jets.chat.client.controller;
 
 import com.jets.chat.client.util.ClientManager;
+import com.jets.chat.client.util.SceneManager;
 import com.jets.chat.common.dto.RegisterRequestDTO;
 import com.jets.chat.common.dto.RegisterResponseDTO;
 import com.jets.chat.common.enums.Gender;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.sql.Date;
-import java.util.Base64;
-
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -26,8 +20,13 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.shape.SVGPath;
 import javafx.stage.FileChooser;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.sql.Date;
 import java.time.LocalDate;
+import java.util.Base64;
 import java.util.ResourceBundle;
 
 public class RegisterController implements Initializable {
@@ -40,11 +39,18 @@ public class RegisterController implements Initializable {
     private TextField phoneField;
     @FXML
     private PasswordField passwordField;
+    @FXML
+    private PasswordField confirmPasswordField;
 
     @FXML
     private Button togglePasswordBtn;
     @FXML
     private SVGPath eyeIcon;
+    @FXML
+    private Button toggleConfirmPasswordBtn;
+    @FXML
+    private SVGPath confirmEyeIcon;
+
     @FXML
     private HBox passwordStrengthContainer;
     @FXML
@@ -55,6 +61,7 @@ public class RegisterController implements Initializable {
     private SVGPath checkNumber;
     @FXML
     private SVGPath checkSpecial;
+
     @FXML
     private ComboBox<String> genderComboBox;
     @FXML
@@ -71,20 +78,13 @@ public class RegisterController implements Initializable {
     private Hyperlink signinLink;
 
     private boolean passwordVisible = false;
-    @FXML
-    private TextField visiblePasswordField;
+    private boolean confirmPasswordVisible = false;
 
     @FXML
-    private PasswordField confirmPasswordField;
-    @FXML
-    private Button toggleConfirmPasswordBtn;
-    @FXML
-    private SVGPath confirmEyeIcon;
-    private boolean confirmPasswordVisible = false;
+    private TextField visiblePasswordField;
     @FXML
     private TextField visibleConfirmPasswordField;
 
-    // Profile picture fields
     @FXML
     private StackPane profilePicturePreview;
     @FXML
@@ -101,6 +101,7 @@ public class RegisterController implements Initializable {
     // Store the Base64 string
     private String profilePictureBase64;
 
+    // Password properties for bidirectional binding
     private StringProperty passwordProperty = new SimpleStringProperty("");
     private StringProperty confirmPasswordProperty = new SimpleStringProperty("");
 
@@ -112,32 +113,11 @@ public class RegisterController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        // Initialize country list
         initializeCountries();
-
-        // Setup password strength listener
+        setupPasswordBindings();
         setupPasswordStrengthListener();
-
-        // Bind both fields to the same property
-        passwordField.textProperty().bindBidirectional(passwordProperty);
-        visiblePasswordField.textProperty().bindBidirectional(passwordProperty);
-
-        confirmPasswordField.textProperty().bindBidirectional(confirmPasswordProperty);
-        visibleConfirmPasswordField.textProperty().bindBidirectional(confirmPasswordProperty);
-
-        // Setup bio character counter
         setupBioCharacterCounter();
-
-        dobPicker.setEditable(false);
-
-        // Set date picker constraints
-        dobPicker.setDayCellFactory(picker -> new DateCell() {
-            @Override
-            public void updateItem(LocalDate date, boolean empty) {
-                super.updateItem(date, empty);
-                setDisable(empty || date.isAfter(LocalDate.now().minusYears(13)));
-            }
-        });
+        setupDatePicker();
     }
 
     private void initializeCountries() {
@@ -148,6 +128,14 @@ public class RegisterController implements Initializable {
                 "Belgium", "Poland", "Portugal", "Ireland", "New Zealand", "Singapore", "Malaysia",
                 "Thailand", "Vietnam");
         countryComboBox.setItems(countries);
+    }
+
+    private void setupPasswordBindings() {
+        passwordField.textProperty().bindBidirectional(passwordProperty);
+        visiblePasswordField.textProperty().bindBidirectional(passwordProperty);
+
+        confirmPasswordField.textProperty().bindBidirectional(confirmPasswordProperty);
+        visibleConfirmPasswordField.textProperty().bindBidirectional(confirmPasswordProperty);
     }
 
     private void setupPasswordStrengthListener() {
@@ -166,19 +154,15 @@ public class RegisterController implements Initializable {
     }
 
     private void updatePasswordStrength(String password) {
-        // Check minimum length (8+ characters)
         boolean hasMinLength = password.length() >= 8;
         updateStrengthIndicator(checkMinLength, hasMinLength);
 
-        // Check uppercase letter
         boolean hasUppercase = password.matches(".*[A-Z].*");
         updateStrengthIndicator(checkUppercase, hasUppercase);
 
-        // Check number
         boolean hasNumber = password.matches(".*[0-9].*");
         updateStrengthIndicator(checkNumber, hasNumber);
 
-        // Check special character
         boolean hasSpecial = password.matches(".*[!@#$%^&*].*");
         updateStrengthIndicator(checkSpecial, hasSpecial);
     }
@@ -188,7 +172,6 @@ public class RegisterController implements Initializable {
             if (!icon.getStyleClass().contains("valid")) {
                 icon.getStyleClass().add("valid");
             }
-            // updating the parent label
             if (icon.getParent() instanceof HBox hbox) {
                 hbox.getChildren().stream().filter(node -> node instanceof Label).forEach(node -> {
                     if (!node.getStyleClass().contains("valid")) {
@@ -217,31 +200,37 @@ public class RegisterController implements Initializable {
         });
     }
 
+    private void setupDatePicker() {
+        dobPicker.setEditable(false);
+
+        dobPicker.setDayCellFactory(picker -> new DateCell() {
+            @Override
+            public void updateItem(LocalDate date, boolean empty) {
+                super.updateItem(date, empty);
+                setDisable(empty || date.isAfter(LocalDate.now().minusYears(13)));
+            }
+        });
+    }
+
     @FXML
     private void togglePasswordVisibility() {
         passwordVisible = !passwordVisible;
 
         if (passwordVisible) {
-
             visiblePasswordField.setVisible(true);
             visiblePasswordField.setManaged(true);
-
             passwordField.setVisible(false);
             passwordField.setManaged(false);
-
             eyeIcon.setContent(EYE_CLOSED);
             Platform.runLater(() -> {
                 visiblePasswordField.requestFocus();
                 updatePasswordStrength(passwordProperty.get());
             });
         } else {
-
             passwordField.setVisible(true);
             passwordField.setManaged(true);
-
             visiblePasswordField.setVisible(false);
             visiblePasswordField.setManaged(false);
-
             eyeIcon.setContent(EYE_OPEN);
             Platform.runLater(() -> {
                 passwordField.requestFocus();
@@ -255,22 +244,18 @@ public class RegisterController implements Initializable {
         confirmPasswordVisible = !confirmPasswordVisible;
 
         if (confirmPasswordVisible) {
-            // Show visible field, hide password field
             visibleConfirmPasswordField.setVisible(true);
             visibleConfirmPasswordField.setManaged(true);
             confirmPasswordField.setVisible(false);
             confirmPasswordField.setManaged(false);
             confirmEyeIcon.setContent(EYE_CLOSED);
-
             Platform.runLater(() -> visibleConfirmPasswordField.requestFocus());
         } else {
-            // Show password field, hide visible field
             confirmPasswordField.setVisible(true);
             confirmPasswordField.setManaged(true);
             visibleConfirmPasswordField.setVisible(false);
             visibleConfirmPasswordField.setManaged(false);
             confirmEyeIcon.setContent(EYE_OPEN);
-
             Platform.runLater(() -> confirmPasswordField.requestFocus());
         }
     }
@@ -280,17 +265,14 @@ public class RegisterController implements Initializable {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Select Profile Picture");
 
-        // Set file filters
         FileChooser.ExtensionFilter imageFilter = new FileChooser.ExtensionFilter("Image Files",
                 "*.jpg", "*.jpeg", "*.png");
         fileChooser.getExtensionFilters().add(imageFilter);
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("All Files", "*.*"));
 
-        // Show dialog
         File file = fileChooser.showOpenDialog(uploadPictureBtn.getScene().getWindow());
 
         if (file != null) {
-            // Validate file size (5MB max)
             long fileSize = file.length();
             if (fileSize > 5 * 1024 * 1024) { // 5MB in bytes
                 showAlert(Alert.AlertType.ERROR, "File Too Large",
@@ -298,30 +280,24 @@ public class RegisterController implements Initializable {
                 return;
             }
 
-            // Show upload progress
             uploadProgress.setVisible(true);
 
             // Process in background thread to avoid UI freeze
             new Thread(() -> {
                 try {
-                    // Read file and convert to Base64
                     byte[] fileBytes = Files.readAllBytes(file.toPath());
                     profilePictureBase64 = Base64.getEncoder().encodeToString(fileBytes);
 
-                    // Load image for preview
                     Image image = new Image(file.toURI().toString(), 80, 80, true, true);
 
                     Platform.runLater(() -> {
-                        // Update UI on JavaFX thread
                         profileImageView.setImage(image);
                         profileImageView.setVisible(true);
                         uploadProgress.setVisible(false);
 
-                        // Show file name
                         fileNameLabel.setText(file.getName());
                         fileNameLabel.setVisible(true);
 
-                        // Show remove button
                         removePictureBtn.setVisible(true);
                     });
 
@@ -344,7 +320,6 @@ public class RegisterController implements Initializable {
 
     @FXML
     private void removeProfilePicture() {
-        // Reset everything
         profilePictureBase64 = null;
         profileImageView.setImage(null);
         profileImageView.setVisible(false);
@@ -352,7 +327,6 @@ public class RegisterController implements Initializable {
         removePictureBtn.setVisible(false);
     }
 
-    // NEW METHOD: Update DTO with all fields including profile picture
     private void updateRegistrationDTO(RegisterRequestDTO dto) {
         dto.setDisplayName(fullNameField.getText().trim());
         dto.setEmail(emailField.getText().trim());
@@ -371,11 +345,13 @@ public class RegisterController implements Initializable {
 
     @FXML
     private void handleRegister() {
-        if (!validateFields())
+        if (!validateFields()) {
             return;
+        }
+        registerBtn.setDisable(true);
 
         RegisterRequestDTO dto = new RegisterRequestDTO();
-        updateRegistrationDTO(dto); // Use the new method that includes profile picture
+        updateRegistrationDTO(dto);
 
         new Thread(() -> {
             try {
@@ -383,12 +359,13 @@ public class RegisterController implements Initializable {
                         .register(dto);
 
                 Platform.runLater(() -> {
+                    registerBtn.setDisable(false);
+
                     if (response.isSuccess()) {
                         showAlert(Alert.AlertType.INFORMATION, "Success",
-                                "Account created successfully!");
-                        // Optional: Clear form or navigate to login
-                        // clearForm();
-                        // navigateToLogin();
+                                "Account created successfully! 🎉\n\nYou can now sign in with your credentials.");
+
+                        navigateToLogin();
                     } else {
                         showAlert(Alert.AlertType.ERROR, "Registration Failed",
                                 response.getMessage());
@@ -397,8 +374,11 @@ public class RegisterController implements Initializable {
 
             } catch (Exception e) {
                 e.printStackTrace();
-                Platform.runLater(() -> showAlert(Alert.AlertType.ERROR, "Server Error",
-                        "Server is not running or unreachable"));
+                Platform.runLater(() -> {
+                    registerBtn.setDisable(false);
+                    showAlert(Alert.AlertType.ERROR, "Server Error",
+                            "Server is not running or unreachable.\nPlease try again later.");
+                });
             }
         }).start();
     }
@@ -406,6 +386,7 @@ public class RegisterController implements Initializable {
     private boolean validateFields() {
         StringBuilder errors = new StringBuilder();
 
+        String password = passwordProperty.get();
         String confirmPassword = confirmPasswordProperty.get();
 
         if (fullNameField.getText().trim().isEmpty()) {
@@ -424,7 +405,6 @@ public class RegisterController implements Initializable {
             errors.append("- Phone number must contain only digits (10-15 digits)\n");
         }
 
-        String password = passwordProperty.get();
         if (password.isEmpty()) {
             errors.append("- Password is required\n");
         } else {
@@ -480,8 +460,8 @@ public class RegisterController implements Initializable {
 
     @FXML
     private void navigateToLogin() {
-        // TODO: Implement navigation to login page
-        System.out.println("Navigate to login page");
+        System.out.println("Navigating to login page");
+        SceneManager.getInstance().showLoginScreen();
     }
 
     private void showAlert(Alert.AlertType type, String title, String content) {
@@ -490,7 +470,6 @@ public class RegisterController implements Initializable {
         alert.setHeaderText(null);
         alert.setContentText(content);
 
-        // Style the alert dialog
         DialogPane dialogPane = alert.getDialogPane();
         dialogPane.setStyle("-fx-background-color: #1a1a1a;");
         dialogPane.lookup(".content.label").setStyle("-fx-text-fill: #fafafa;");
@@ -498,7 +477,6 @@ public class RegisterController implements Initializable {
         alert.showAndWait();
     }
 
-    // Optional: Clear form method
     private void clearForm() {
         fullNameField.clear();
         emailField.clear();
@@ -509,6 +487,6 @@ public class RegisterController implements Initializable {
         countryComboBox.getSelectionModel().clearSelection();
         dobPicker.setValue(null);
         bioTextArea.clear();
-        removeProfilePicture(); // Clear profile picture
+        removeProfilePicture();
     }
 }
