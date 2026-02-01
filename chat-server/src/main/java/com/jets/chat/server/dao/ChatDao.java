@@ -19,6 +19,8 @@ public interface ChatDao {
 
     List<Chat> findChatsByUser(long userId);
 
+    Optional<String> findGroupNameByChatId(long chatId);
+
     // Participants
     boolean addParticipant(long chatId, long userId);
 

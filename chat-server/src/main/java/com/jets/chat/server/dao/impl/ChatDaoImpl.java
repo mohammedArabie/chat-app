@@ -64,6 +64,22 @@ public final class ChatDaoImpl implements ChatDao {
         }
     }
 
+    public Optional<String> findGroupNameByChatId(long chatId) {
+        String sql = "SELECT group_name FROM chat_groups WHERE chat_id = ?";
+
+        try (Connection connection = dataSource.getConnection();
+                PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setLong(1, chatId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return Optional.of(rs.getString("group_name"));
+            }
+            return Optional.empty();
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to insert chat group", e);
+        }
+    }
+
     // ================== CHAT RETRIEVAL ==================
     @Override
     public Optional<Chat> findById(long chatId) {
