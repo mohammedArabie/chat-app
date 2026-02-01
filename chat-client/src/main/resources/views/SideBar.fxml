@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.control.Button?>
+<VBox fx:id="sideBarRoot" prefWidth="300.0" spacing="10.0" styleClass="sidebar"
+      stylesheets="@../styles/main.css" xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.jets.chat.client.ui.controllers.SideBarController">
+    <children>
+        <!-- User Profile Header -->
+        <HBox alignment="CENTER_LEFT" spacing="12.0">
+            <children>
+                <Circle fill="#0084ff" radius="18.0" stroke="TRANSPARENT" />
+                <VBox alignment="CENTER_LEFT">
+                    <children>
+                        <Label styleClass="text-bold" text="You" style="-fx-text-fill: white;" />
+                        <Label styleClass="text-green" text="● Online" style="-fx-font-size: 10;" />
+                    </children>
+                </VBox>
+
+                <!-- This spacer pushes the buttons to the far right -->
+                <Region HBox.hgrow="ALWAYS" />
+
+                <HBox spacing="8.0" alignment="CENTER_RIGHT">
+                    <children>
+                        <Button onAction="#onAddContactClicked" styleClass="icon-btn-small" text="💬+" />
+                        <Button onAction="#onSettingsClicked" styleClass="icon-btn-small" text="⚙" />
+                    </children>
+                </HBox>
+            </children>
+            <padding>
+                <Insets bottom="10.0" left="5.0" right="5.0" top="5.0" />
+            </padding>
+        </HBox>
+
+        <!-- Search Field -->
+        <TextField fx:id="searchField" promptText="Search conversations..." styleClass="search-bar">
+            <VBox.margin>
+                <Insets bottom="5.0" top="5.0" />
+            </VBox.margin>
+        </TextField>
+
+        <!-- Section Label -->
+        <Label styleClass="section-header" text="MESSAGES">
+            <VBox.margin>
+                <Insets left="5.0" top="10.0" />
+            </VBox.margin>
+        </Label>
+
+        <!-- Contact List -->
+        <ListView fx:id="contactListView" VBox.vgrow="ALWAYS" styleClass="custom-list-view" />
+
+    </children>
+    <padding>
+        <Insets bottom="10.0" left="15.0" right="15.0" top="15.0" />
+    </padding>
+</VBox>
