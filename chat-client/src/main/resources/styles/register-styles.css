@@ -1,0 +1,736 @@
+/* ========================================
+   ChatApp Register Page Styles
+   JavaFX CSS
+   ======================================== */
+
+/* ----------------------------------------
+   Color Variables (as comments for reference)
+   --background: #0a0a0a
+   --foreground: #fafafa
+   --primary: #3b82f6
+   --primary-foreground: #ffffff
+   --secondary: #1a1a1a
+   --muted-foreground: #a1a1aa
+   --border: #27272a
+   --accent: #22c55e
+   --sidebar: #0f0f0f
+   ---------------------------------------- */
+
+/* ----------------------------------------
+   Root Container
+   ---------------------------------------- */
+.root-container {
+    -fx-background-color: #0a0a0a;
+}
+
+/* ----------------------------------------
+   Left Side - Branding Panel
+   ---------------------------------------- */
+.branding-panel {
+    -fx-background-color: #0f0f0f;
+    -fx-padding: 48;
+}
+
+.branding-content {
+    -fx-alignment: center-left;
+    -fx-pref-width: infinity;
+    -fx-pref-height: infinity;
+}
+
+.branding-inner {
+    -fx-padding: 0;
+    -fx-alignment: top-left;
+    -fx-pref-width: infinity;
+    -fx-pref-height: infinity;
+}
+
+/* Decorative circles */
+.decorative-circle-1 {
+    -fx-fill: #3b82f6;
+    -fx-opacity: 0.05;
+    -fx-translate-x: 200;
+    -fx-translate-y: -100;
+}
+
+.decorative-circle-2 {
+    -fx-fill: #22c55e;
+    -fx-opacity: 0.05;
+    -fx-translate-x: -100;
+    -fx-translate-y: 150;
+}
+
+/* Logo */
+.logo-container {
+    -fx-alignment: center-left;
+}
+
+.logo-icon {
+    -fx-background-color: #3b82f6;
+    -fx-background-radius: 12;
+    -fx-pref-width: 48;
+    -fx-pref-height: 48;
+    -fx-alignment: center;
+}
+
+.logo-svg {
+    -fx-fill: #ffffff;
+    -fx-scale-x: 0.8;
+    -fx-scale-y: 0.8;
+}
+
+.logo-text {
+    -fx-font-family: "System";
+    -fx-font-size: 24;
+    -fx-font-weight: bold;
+    -fx-text-fill: #fafafa;
+}
+
+/* Branding Content */
+.branding-title {
+    -fx-font-family: "System";
+    -fx-font-size: 36;
+    -fx-font-weight: bold;
+    -fx-text-fill: #fafafa;
+    -fx-wrap-text: true;
+    -fx-max-width: 450;
+}
+
+.branding-subtitle {
+    -fx-font-family: "System";
+    -fx-font-size: 16;
+    -fx-text-fill: #a1a1aa;
+    -fx-wrap-text: true;
+    -fx-max-width: 400;
+}
+
+/* Stats */
+.stats-container {
+    -fx-padding: 16 0 0 0;
+}
+
+.stat-item {
+    -fx-spacing: 4;
+}
+
+.stat-value {
+    -fx-font-family: "System";
+    -fx-font-size: 28;
+    -fx-font-weight: bold;
+}
+
+.stat-primary {
+    -fx-text-fill: #3b82f6;
+}
+
+.stat-accent {
+    -fx-text-fill: #22c55e;
+}
+
+.stat-label {
+    -fx-font-family: "System";
+    -fx-font-size: 13;
+    -fx-text-fill: #a1a1aa;
+}
+
+.branding-footer {
+    -fx-font-family: "System";
+    -fx-font-size: 13;
+    -fx-text-fill: #a1a1aa;
+}
+
+/* ----------------------------------------
+   Right Side - Form Panel
+   ---------------------------------------- */
+.form-scroll-pane {
+    -fx-background-color: #0a0a0a;
+    -fx-background: #0a0a0a;
+    -fx-border-color: transparent;
+}
+
+.form-scroll-pane > .viewport {
+    -fx-background-color: #0a0a0a;
+}
+
+.form-scroll-pane .scroll-bar:vertical,
+.form-scroll-pane .scroll-bar:horizontal {
+    -fx-background-color: transparent;
+}
+
+.form-scroll-pane .scroll-bar:vertical .thumb,
+.form-scroll-pane .scroll-bar:horizontal .thumb {
+    -fx-background-color: #27272a;
+    -fx-background-radius: 4;
+}
+
+.form-scroll-pane .scroll-bar:vertical .thumb:hover,
+.form-scroll-pane .scroll-bar:horizontal .thumb:hover {
+    -fx-background-color: #3f3f46;
+}
+
+.form-scroll-pane .scroll-bar .increment-button,
+.form-scroll-pane .scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.form-scroll-pane .scroll-bar .increment-arrow,
+.form-scroll-pane .scroll-bar .decrement-arrow {
+    -fx-shape: "";
+    -fx-padding: 0;
+}
+
+.form-panel {
+    -fx-background-color: #0a0a0a;
+    -fx-padding: 48 32;
+    -fx-alignment: center;
+}
+
+.form-container {
+    -fx-alignment: top-left;
+}
+
+/* Form Header */
+.form-header {
+    -fx-alignment: top-left;
+}
+
+.form-title {
+    -fx-font-family: "System";
+    -fx-font-size: 28;
+    -fx-font-weight: bold;
+    -fx-text-fill: #fafafa;
+}
+
+.form-subtitle {
+    -fx-font-family: "System";
+    -fx-font-size: 14;
+    -fx-text-fill: #a1a1aa;
+}
+
+/* ----------------------------------------
+   Form Fields
+   ---------------------------------------- */
+.form-fields {
+    -fx-alignment: top-left;
+}
+
+.field-group {
+    -fx-alignment: top-left;
+}
+
+.field-label {
+    -fx-font-family: "System";
+    -fx-font-size: 13;
+    -fx-font-weight: bold;
+    -fx-text-fill: #fafafa;
+}
+
+/* Input Container */
+.input-container {
+    -fx-alignment: center-left;
+}
+
+.input-icon {
+    -fx-fill: #a1a1aa;
+    -fx-scale-x: 0.7;
+    -fx-scale-y: 0.7;
+    -fx-translate-x: 12;
+}
+
+.textarea-container {
+    -fx-alignment: top-left;
+}
+
+.textarea-icon {
+    -fx-fill: #a1a1aa;
+    -fx-scale-x: 0.7;
+    -fx-scale-y: 0.7;
+    -fx-translate-x: 12;
+    -fx-translate-y: 12;
+}
+
+/* Text Input */
+.text-input {
+    -fx-background-color: #1a1a1a;
+    -fx-background-radius: 8;
+    -fx-border-color: #27272a;
+    -fx-border-radius: 8;
+    -fx-border-width: 1;
+    -fx-padding: 12 12 12 12;
+    -fx-pref-height: 48;
+    -fx-font-family: "System";
+    -fx-font-size: 14;
+    -fx-text-fill: #fafafa;
+    -fx-prompt-text-fill: #71717a;
+}
+
+.text-input:focused {
+    -fx-border-color: #3b82f6;
+    -fx-background-color: #1a1a1a;
+}
+
+.password-input {
+    -fx-padding: 12 48 12 40;
+}
+
+/* Password Strength */
+.password-strength-container {
+    -fx-padding: 8 0 0 0;
+}
+
+.strength-item {
+    -fx-alignment: center-left;
+}
+
+.check-icon {
+    -fx-fill: #a1a1aa;
+    -fx-scale-x: 0.5;
+    -fx-scale-y: 0.5;
+    -fx-opacity: 0.3;
+}
+
+.check-icon.valid {
+    -fx-fill: #22c55e;
+    -fx-opacity: 1.0;
+}
+
+.strength-text {
+    -fx-font-family: "System";
+    -fx-font-size: 11;
+    -fx-text-fill: #a1a1aa;
+}
+
+.strength-text.valid {
+    -fx-text-fill: #22c55e;
+}
+
+/* ComboBox */
+.combo-input {
+    -fx-background-color: #1a1a1a;
+    -fx-background-radius: 8;
+    -fx-border-color: #27272a;
+    -fx-border-radius: 8;
+    -fx-border-width: 1;
+    -fx-pref-height: 48;
+    -fx-font-family: "System";
+    -fx-font-size: 14;
+}
+
+.combo-input .list-cell {
+    -fx-text-fill: #fafafa;
+    -fx-background-color: transparent;
+    -fx-padding: 8 12;
+}
+
+.combo-input .list-cell:empty {
+    -fx-text-fill: #71717a;
+}
+
+.combo-input:focused {
+    -fx-border-color: #3b82f6;
+}
+
+.combo-input .arrow-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0 12 0 0;
+}
+
+.combo-input .arrow {
+    -fx-background-color: #a1a1aa;
+    -fx-shape: "M7 10l5 5 5-5z";
+}
+
+.combo-input-popup .list-view {
+    -fx-background-color: #1a1a1a;
+    -fx-border-color: #27272a;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+
+.combo-input-popup .list-cell {
+    -fx-text-fill: #fafafa;
+    -fx-background-color: #1a1a1a;
+    -fx-padding: 10 12;
+}
+
+.combo-input-popup .list-cell:hover {
+    -fx-background-color: #27272a;
+}
+
+.combo-input-popup .list-cell:selected {
+    -fx-background-color: #3b82f6;
+    -fx-text-fill: #ffffff;
+}
+
+/* DatePicker */
+.date-input {
+    -fx-background-color: #1a1a1a;
+    -fx-background-radius: 8;
+    -fx-border-color: #27272a;
+    -fx-border-radius: 8;
+    -fx-border-width: 1;
+    -fx-pref-height: 48;
+}
+
+.date-input > .text-field {
+    -fx-background-color: transparent;
+    -fx-text-fill: #fafafa;
+    -fx-font-family: "System";
+    -fx-font-size: 14;
+    -fx-padding: 0 0 0 28;
+    -fx-prompt-text-fill: #71717a;
+}
+
+.date-input:focused {
+    -fx-border-color: #3b82f6;
+}
+
+.date-input > .arrow-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0 12 0 0;
+}
+
+.date-input > .arrow-button > .arrow {
+    -fx-background-color: #a1a1aa;
+}
+
+.date-input-popup {
+    -fx-background-color: #1a1a1a;
+    -fx-border-color: #27272a;
+    -fx-border-radius: 8;
+}
+
+.date-input-popup > .month-year-pane {
+    -fx-background-color: #1a1a1a;
+}
+
+.date-input-popup > .month-year-pane > .spinner > .button {
+    -fx-background-color: transparent;
+}
+
+.date-input-popup > .month-year-pane > .spinner > .button > .left-arrow,
+.date-input-popup > .month-year-pane > .spinner > .button > .right-arrow {
+    -fx-background-color: #a1a1aa;
+}
+
+.date-input-popup > .month-year-pane > .spinner > .label {
+    -fx-text-fill: #fafafa;
+}
+
+.date-input-popup > .calendar-grid {
+    -fx-background-color: #1a1a1a;
+}
+
+.date-input-popup > .calendar-grid > .day-name-cell {
+    -fx-text-fill: #a1a1aa;
+}
+
+.date-input-popup > .calendar-grid > .day-cell {
+    -fx-text-fill: #fafafa;
+    -fx-background-color: transparent;
+}
+
+.date-input-popup > .calendar-grid > .day-cell:hover {
+    -fx-background-color: #27272a;
+}
+
+.date-input-popup > .calendar-grid > .selected {
+    -fx-background-color: #3b82f6;
+    -fx-text-fill: #ffffff;
+}
+
+/* TextArea */
+.textarea-input {
+    -fx-background-color: #1a1a1a;
+    -fx-background-radius: 8;
+    -fx-border-color: #27272a;
+    -fx-border-radius: 8;
+    -fx-border-width: 1;
+    -fx-padding: 12 12 12 12;
+    -fx-font-family: "System";
+    -fx-font-size: 14;
+    -fx-text-fill: #fafafa;
+    -fx-prompt-text-fill: #71717a;
+    -fx-pref-height: 80;
+}
+
+.textarea-input:focused {
+    -fx-border-color: #3b82f6;
+    -fx-background-color: #1a1a1a;
+}
+
+.textarea-input .content {
+    -fx-background-color: transparent;
+}
+
+.char-count {
+    -fx-font-family: "System";
+    -fx-font-size: 11;
+    -fx-text-fill: #a1a1aa;
+    -fx-alignment: center-right;
+}
+
+/* ----------------------------------------
+   Submit Button
+   ---------------------------------------- */
+.submit-btn {
+    -fx-background-color: #3b82f6;
+    -fx-background-radius: 8;
+    -fx-text-fill: #ffffff;
+    -fx-font-family: "System";
+    -fx-font-size: 14;
+    -fx-font-weight: bold;
+    -fx-padding: 14 24;
+    -fx-pref-height: 48;
+    -fx-cursor: hand;
+    -fx-content-display: right;
+    -fx-graphic-text-gap: 8;
+}
+
+.submit-btn:hover {
+    -fx-background-color: #2563eb;
+}
+
+.submit-btn:pressed {
+    -fx-background-color: #1d4ed8;
+}
+
+.btn-arrow {
+    -fx-fill: #ffffff;
+    -fx-scale-x: 0.6;
+    -fx-scale-y: 0.6;
+}
+
+/* ----------------------------------------
+   Sign In Link
+   ---------------------------------------- */
+.signin-link-container {
+    -fx-padding: 8 0 0 0;
+}
+
+.signin-text {
+    -fx-font-family: "System";
+    -fx-font-size: 13;
+    -fx-text-fill: #a1a1aa;
+}
+
+.signin-link {
+    -fx-font-family: "System";
+    -fx-font-size: 13;
+    -fx-text-fill: #3b82f6;
+    -fx-border-color: transparent;
+    -fx-underline: false;
+}
+
+.signin-link:hover {
+    -fx-text-fill: #60a5fa;
+    -fx-underline: true;
+}
+
+.signin-link:visited {
+    -fx-text-fill: #3b82f6;
+}
+
+/* ----------------------------------------
+   General Overrides
+   ---------------------------------------- */
+.scroll-pane {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+/* Focus ring removal for cleaner look */
+.focus-indicator {
+    -fx-border-color: transparent;
+}
+
+* {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+/* ComboBox main text */
+.combo-box,
+.combo-box-base {
+    -fx-background-color: #1f1f1f;
+    -fx-text-fill: #fafafa;
+}
+
+/* Selected item text */
+.combo-box .text {
+    -fx-fill: #fafafa;
+}
+
+/* Dropdown list */
+.combo-box-popup .list-view {
+    -fx-background-color: #1f1f1f;
+}
+
+/* Each item */
+.combo-box-popup .list-cell {
+    -fx-background-color: #1f1f1f;
+    -fx-text-fill: #fafafa;
+}
+
+/* Hover effect */
+.combo-box-popup .list-cell:hover {
+    -fx-background-color: #333333;
+}
+
+/* Selected item */
+.combo-box-popup .list-cell:selected {
+    -fx-background-color: #444444;
+}
+.input-container {
+    -fx-alignment: CENTER_LEFT;
+}
+
+.toggle-password-btn {
+    -fx-background-color: transparent;
+    -fx-cursor: hand;
+    -fx-padding: 0 12 0 0;
+}
+
+.toggle-password-btn {
+    -fx-background-color: transparent;
+    -fx-cursor: hand;
+    -fx-padding: 0 12 0 0;
+}
+
+.eye-icon {
+    -fx-fill: #a1a1aa;
+    -fx-scale-x: 0.7;
+    -fx-scale-y: 0.7;
+}
+
+.toggle-password-btn:hover .eye-icon {
+    -fx-fill: #ffffff;
+}
+/* ========================================
+   Profile Picture Styles
+   ======================================== */
+
+/* Profile Picture Container */
+.profile-picture-container {
+    -fx-alignment: center-left;
+}
+
+/* Profile Picture Preview Area */
+.profile-picture-preview {
+    -fx-background-color: #1a1a1a;
+    -fx-background-radius: 40;
+    -fx-border-color: #27272a;
+    -fx-border-radius: 40;
+    -fx-border-width: 2;
+    -fx-pref-width: 80;
+    -fx-pref-height: 80;
+    -fx-alignment: center;
+}
+
+/* Default Avatar (shown when no picture) */
+.default-avatar {
+    -fx-fill: #a1a1aa;
+    -fx-scale-x: 0.8;
+    -fx-scale-y: 0.8;
+}
+
+/* Uploaded Profile Image */
+.profile-image {
+    -fx-border-radius: 40;
+    -fx-background-radius: 40;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 8, 0, 0, 2);
+}
+
+/* Upload Progress Indicator */
+.upload-progress {
+    -fx-progress-color: #3b82f6;
+    -fx-pref-width: 40;
+    -fx-pref-height: 40;
+}
+
+/* Upload Controls Container */
+.upload-controls {
+    -fx-alignment: top-left;
+}
+
+/* Upload Button */
+.upload-btn {
+    -fx-background-color: #27272a;
+    -fx-background-radius: 6;
+    -fx-text-fill: #fafafa;
+    -fx-font-family: "System";
+    -fx-font-size: 13;
+    -fx-font-weight: bold;
+    -fx-padding: 8 16;
+    -fx-cursor: hand;
+    -fx-content-display: left;
+    -fx-graphic-text-gap: 8;
+}
+
+.upload-btn:hover {
+    -fx-background-color: #3f3f46;
+}
+
+.upload-btn:pressed {
+    -fx-background-color: #52525b;
+}
+
+/* Upload Icon */
+.upload-icon {
+    -fx-fill: #a1a1aa;
+    -fx-scale-x: 0.6;
+    -fx-scale-y: 0.6;
+}
+
+/* Remove Button */
+.remove-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: #ef4444;
+    -fx-font-family: "System";
+    -fx-font-size: 12;
+    -fx-font-weight: normal;
+    -fx-padding: 4 0;
+    -fx-cursor: hand;
+    -fx-border-color: transparent;
+    -fx-underline: false;
+    -fx-content-display: left;
+    -fx-graphic-text-gap: 6;
+}
+
+.remove-btn:hover {
+    -fx-text-fill: #dc2626;
+    -fx-underline: true;
+}
+
+/* Remove Icon */
+.remove-icon {
+    -fx-fill: #ef4444;
+    -fx-scale-x: 0.5;
+    -fx-scale-y: 0.5;
+}
+
+.remove-btn:hover .remove-icon {
+    -fx-fill: #dc2626;
+}
+
+/* File Name Label */
+.file-name {
+    -fx-font-family: "System";
+    -fx-font-size: 11;
+    -fx-text-fill: #a1a1aa;
+    -fx-font-style: italic;
+    -fx-wrap-text: true;
+    -fx-max-width: 180;
+}
+
+/* File Hint Text */
+.file-hint {
+    -fx-font-family: "System";
+    -fx-font-size: 11;
+    -fx-text-fill: #71717a;
+    -fx-font-style: italic;
+    -fx-padding: 4 0 0 0;
+}
+

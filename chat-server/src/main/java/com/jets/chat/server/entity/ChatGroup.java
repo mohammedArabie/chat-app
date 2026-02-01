@@ -3,7 +3,7 @@ package com.jets.chat.server.entity;
 public class ChatGroup {
     private long chatId; // Same as Chat.chatId
     private String groupName;
-    private long ownerId; // User who created the group
+    private long ownerId;
 
     public ChatGroup() {
     }

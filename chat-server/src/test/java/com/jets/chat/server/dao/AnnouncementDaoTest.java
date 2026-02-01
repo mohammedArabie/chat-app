@@ -58,8 +58,7 @@ public class AnnouncementDaoTest {
         for (Long id : createdIds) {
             try {
                 dao.deleteById(id);
-            } catch (Exception e) {
-                // Ignore cleanup errors
+            } catch (Exception ignored) {
             }
         }
         if (dataSource != null) {
