@@ -20,6 +20,8 @@ public class Server {
 
             registry.rebind(ProjectConstants.ANNOUNCEMENT_SERVICE, remoteAnnouncementService);
 
+            registry.rebind(ProjectConstants.CHAT_SERVICE, serverManager.getRemoteChatService());
+
             System.out.println("Server Running");
 
             // Needed when using exec:java to run the server
