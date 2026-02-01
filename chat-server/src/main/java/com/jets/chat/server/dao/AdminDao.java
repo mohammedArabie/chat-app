@@ -5,8 +5,8 @@ import java.util.Optional;
 
 public interface AdminDao {
     Optional<Admin> findByUsername(String username);
-    boolean createAdmin(String username, String passwordHash);  // STORE HASH
-    boolean updatePassword(Long adminId, String newPasswordHash);  // STORE HASH
+    boolean createAdmin(String username, String passwordHash); // STORE HASH
+    boolean updatePassword(Long adminId, String newPasswordHash); // STORE HASH
     boolean updateLastLogin(Long adminId);
     String generateRandomPassword(int length);
     Optional<Admin> findById(Long adminId);

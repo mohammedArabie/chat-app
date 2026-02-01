@@ -8,7 +8,6 @@ import com.jets.chat.server.entity.User;
 import com.zaxxer.hikari.HikariDataSource;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -27,20 +26,25 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 
 public class UserManagementController {
-    @FXML private TableView<User> usersTable;
-    @FXML private TextField searchField;
-    @FXML private Label totalUsersLabel;
+    @FXML
+    private TableView<User> usersTable;
+    @FXML
+    private TextField searchField;
+    @FXML
+    private Label totalUsersLabel;
 
     private ServerManager serverManager;
     private UserDao userDao;
     private ObservableList<User> allUsers = FXCollections.observableArrayList();
-    private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm",
+            Locale.getDefault());
 
     public void init(ServerManager serverManager) {
         this.serverManager = serverManager;
 
         try {
-            HikariDataSource dataSource = com.jets.chat.server.config.DataSourceConfig.getDataSource();
+            HikariDataSource dataSource = com.jets.chat.server.config.DataSourceConfig
+                    .getDataSource();
             this.userDao = new UserDaoImpl(dataSource);
         } catch (Exception e) {
             e.printStackTrace();
@@ -58,23 +62,28 @@ public class UserManagementController {
         idCol.setCellValueFactory(new PropertyValueFactory<>("userId"));
 
         // Display Name Column
-        TableColumn<User, String> nameCol = (TableColumn<User, String>) usersTable.getColumns().get(1);
+        TableColumn<User, String> nameCol = (TableColumn<User, String>) usersTable.getColumns()
+                .get(1);
         nameCol.setCellValueFactory(new PropertyValueFactory<>("displayName"));
 
         // Phone Column
-        TableColumn<User, String> phoneCol = (TableColumn<User, String>) usersTable.getColumns().get(2);
+        TableColumn<User, String> phoneCol = (TableColumn<User, String>) usersTable.getColumns()
+                .get(2);
         phoneCol.setCellValueFactory(new PropertyValueFactory<>("phoneNumber"));
 
         // Email Column
-        TableColumn<User, String> emailCol = (TableColumn<User, String>) usersTable.getColumns().get(3);
+        TableColumn<User, String> emailCol = (TableColumn<User, String>) usersTable.getColumns()
+                .get(3);
         emailCol.setCellValueFactory(new PropertyValueFactory<>("email"));
 
         // Country Column
-        TableColumn<User, String> countryCol = (TableColumn<User, String>) usersTable.getColumns().get(4);
+        TableColumn<User, String> countryCol = (TableColumn<User, String>) usersTable.getColumns()
+                .get(4);
         countryCol.setCellValueFactory(new PropertyValueFactory<>("country"));
 
         // Gender Column (with proper enum handling)
-        TableColumn<User, String> genderCol = (TableColumn<User, String>) usersTable.getColumns().get(5);
+        TableColumn<User, String> genderCol = (TableColumn<User, String>) usersTable.getColumns()
+                .get(5);
         genderCol.setCellValueFactory(cellData -> {
             Gender gender = cellData.getValue().getGender(); // This returns Gender enum
             if (gender == null) {
@@ -88,13 +97,14 @@ public class UserManagementController {
             }
 
             // Format: First letter uppercase, rest lowercase
-            String formattedGender = genderString.substring(0, 1).toUpperCase() +
-                    genderString.substring(1).toLowerCase();
+            String formattedGender = genderString.substring(0, 1).toUpperCase()
+                    + genderString.substring(1).toLowerCase();
             return new SimpleStringProperty(formattedGender);
         });
 
         // Status Column (with badge styling)
-        TableColumn<User, String> statusCol = (TableColumn<User, String>) usersTable.getColumns().get(6);
+        TableColumn<User, String> statusCol = (TableColumn<User, String>) usersTable.getColumns()
+                .get(6);
         statusCol.setCellValueFactory(cellData -> {
             // Get actual status from database
             try {
@@ -124,7 +134,8 @@ public class UserManagementController {
                     setGraphic(null);
                 } else {
                     // Remove all status classes
-                    badge.getStyleClass().removeAll("status-online", "status-offline", "status-busy", "status-away");
+                    badge.getStyleClass().removeAll("status-online", "status-offline",
+                            "status-busy", "status-away");
 
                     // Add appropriate status class based on actual status
                     String statusClass = "status-" + status.toLowerCase();
@@ -137,7 +148,8 @@ public class UserManagementController {
         });
 
         // Last Seen Column (formatted date)
-        TableColumn<User, Timestamp> lastSeenCol = (TableColumn<User, Timestamp>) usersTable.getColumns().get(7);
+        TableColumn<User, Timestamp> lastSeenCol = (TableColumn<User, Timestamp>) usersTable
+                .getColumns().get(7);
         lastSeenCol.setCellValueFactory(cellData -> {
             Timestamp timestamp = cellData.getValue().getCreatedAt();
             return new javafx.beans.property.SimpleObjectProperty<>(timestamp);
@@ -187,14 +199,13 @@ public class UserManagementController {
             return;
         }
 
-        ObservableList<User> filtered = allUsers.stream()
-                .filter(user ->
-                        user.getDisplayName().toLowerCase().contains(query) ||
-                                user.getPhoneNumber().toLowerCase().contains(query) ||
-                                (user.getEmail() != null && user.getEmail().toLowerCase().contains(query)) ||
-                                (user.getCountry() != null && user.getCountry().toLowerCase().contains(query)) ||
-                                (user.getGender() != null && user.getGender().name().toLowerCase().contains(query))
-                )
+        ObservableList<User> filtered = allUsers.stream().filter(user -> user.getDisplayName()
+                .toLowerCase().contains(query)
+                || user.getPhoneNumber().toLowerCase().contains(query)
+                || (user.getEmail() != null && user.getEmail().toLowerCase().contains(query))
+                || (user.getCountry() != null && user.getCountry().toLowerCase().contains(query))
+                || (user.getGender() != null
+                        && user.getGender().name().toLowerCase().contains(query)))
                 .collect(Collectors.toCollection(FXCollections::observableArrayList));
 
         usersTable.setItems(filtered);
@@ -204,8 +215,7 @@ public class UserManagementController {
     private void showError(String message) {
         Platform.runLater(() -> {
             javafx.scene.control.Alert alert = new javafx.scene.control.Alert(
-                    javafx.scene.control.Alert.AlertType.ERROR
-            );
+                    javafx.scene.control.Alert.AlertType.ERROR);
             alert.setTitle("User Management Error");
             alert.setHeaderText(null);
             alert.setContentText(message);

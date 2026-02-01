@@ -31,10 +31,9 @@ public class AdminServiceImpl implements AdminService {
         return Optional.empty();
     }
 
-
     @Override
     public boolean createAdmin(String username, String password) {
-        //  HASH BEFORE STORAGE
+        // HASH BEFORE STORAGE
         String passwordHash = PasswordUtil.hash(password);
         return adminDao.createAdmin(username, passwordHash);
     }

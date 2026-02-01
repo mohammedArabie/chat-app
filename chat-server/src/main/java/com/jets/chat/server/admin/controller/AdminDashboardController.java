@@ -20,16 +20,24 @@ import java.io.IOException;
 public class AdminDashboardController {
 
     // ===== TOP BAR =====
-    @FXML private Label serverStatus;          // ● dot
-    @FXML private Label serverStatusLabel;     // Running / Stopped
-    @FXML private Button serverControlBtn;
-    @FXML private Label adminInfo;
+    @FXML
+    private Label serverStatus; // ● dot
+    @FXML
+    private Label serverStatusLabel; // Running / Stopped
+    @FXML
+    private Button serverControlBtn;
+    @FXML
+    private Label adminInfo;
+    @FXML private Button announceBtn;
 
     // ===== NAV =====
-    @FXML private Button statsBtn, userMgmtBtn, addAdminBtn, pwdBtn;
+    @FXML
+    private Button statsBtn, userMgmtBtn, addAdminBtn, pwdBtn;
+
 
     // ===== CONTENT =====
-    @FXML private StackPane contentArea;
+    @FXML
+    private StackPane contentArea;
 
     private ServerManager serverManager;
     private Admin currentAdmin;
@@ -111,12 +119,16 @@ public class AdminDashboardController {
         loadView("/view/change-password.fxml", pwdBtn);
     }
 
+    @FXML // ✅ ADD THIS METHOD (new navigation handler)
+    private void showAnnouncement() {
+        loadView("/view/announcement-view.fxml", announceBtn);
+    }
+
     // ================= LOGOUT =================
     @FXML
     private void handleLogout() {
         try {
-            FXMLLoader loader =
-                    new FXMLLoader(getClass().getResource("/view/admin-login.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/admin-login.fxml"));
             loader.load();
 
             Stage stage = (Stage) serverStatus.getScene().getWindow();
@@ -136,6 +148,7 @@ public class AdminDashboardController {
         userMgmtBtn.getStyleClass().remove("selected");
         addAdminBtn.getStyleClass().remove("selected");
         pwdBtn.getStyleClass().remove("selected");
+        announceBtn.getStyleClass().remove("selected");
 
         activeButton.getStyleClass().add("selected");
 
@@ -152,6 +165,8 @@ public class AdminDashboardController {
                 c.init(serverManager, currentAdmin);
             } else if (controller instanceof ChangePasswordController c) {
                 c.init(serverManager, currentAdmin);
+            } else if (controller instanceof AnnouncementController c) {
+                c.init(serverManager);
             }
 
             contentArea.getChildren().setAll(view);

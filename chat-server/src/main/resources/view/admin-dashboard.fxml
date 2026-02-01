@@ -97,6 +97,8 @@
                     fx:id="pwdBtn"
                     onAction="#showChangePassword"
                     styleClass="nav-button"/>
+            <Button text="📢 Send Announcement" onAction="#showAnnouncement"
+                    styleClass="nav-button" fx:id="announceBtn"/>
 
             <Region VBox.vgrow="ALWAYS"/>
 

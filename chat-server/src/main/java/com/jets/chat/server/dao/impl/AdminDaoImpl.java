@@ -19,7 +19,7 @@ public class AdminDaoImpl implements AdminDao {
     public Optional<Admin> findByUsername(String username) {
         String sql = "SELECT * FROM admins WHERE username = ?";
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, username);
             ResultSet rs = stmt.executeQuery();
@@ -28,7 +28,7 @@ public class AdminDaoImpl implements AdminDao {
                 Admin admin = new Admin();
                 admin.setAdminId(rs.getLong("admin_id"));
                 admin.setUsername(rs.getString("username"));
-                admin.setPasswordHash(rs.getString("password_hash"));  // HASHED
+                admin.setPasswordHash(rs.getString("password_hash")); // HASHED
                 admin.setCreatedAt(rs.getTimestamp("created_at"));
                 admin.setLastLogin(rs.getTimestamp("last_login"));
                 return Optional.of(admin);
@@ -42,7 +42,7 @@ public class AdminDaoImpl implements AdminDao {
     public Optional<Admin> findById(Long adminId) {
         String sql = "SELECT * FROM admins WHERE admin_id = ?";
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setLong(1, adminId);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
@@ -61,12 +61,12 @@ public class AdminDaoImpl implements AdminDao {
     }
 
     @Override
-    public boolean createAdmin(String username, String passwordHash) {  // HASHED
+    public boolean createAdmin(String username, String passwordHash) { // HASHED
         String sql = "INSERT INTO admins (username, password_hash) VALUES (?, ?)";
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, username);
-            stmt.setString(2, passwordHash);  // STORE HASH (NOT PLAIN TEXT)
+            stmt.setString(2, passwordHash); // STORE HASH (NOT PLAIN TEXT)
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -75,11 +75,11 @@ public class AdminDaoImpl implements AdminDao {
     }
 
     @Override
-    public boolean updatePassword(Long adminId, String newPasswordHash) {  // HASHED
+    public boolean updatePassword(Long adminId, String newPasswordHash) { // HASHED
         String sql = "UPDATE admins SET password_hash = ? WHERE admin_id = ?";
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, newPasswordHash);  // STORE HASH
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, newPasswordHash); // STORE HASH
             stmt.setLong(2, adminId);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -92,7 +92,7 @@ public class AdminDaoImpl implements AdminDao {
     public boolean updateLastLogin(Long adminId) {
         String sql = "UPDATE admins SET last_login = CURRENT_TIMESTAMP WHERE admin_id = ?";
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setLong(1, adminId);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {

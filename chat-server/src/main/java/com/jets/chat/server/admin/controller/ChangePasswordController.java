@@ -7,8 +7,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 
 public class ChangePasswordController {
-    @FXML private PasswordField currentPasswordField, newPasswordField, confirmPasswordField;
-    @FXML private Label statusLabel;
+    @FXML
+    private PasswordField currentPasswordField, newPasswordField, confirmPasswordField;
+    @FXML
+    private Label statusLabel;
 
     private ServerManager serverManager;
     private Admin currentAdmin;
@@ -40,14 +42,17 @@ public class ChangePasswordController {
             return;
         }
 
-        // Change password (note: current implementation doesn't verify current password for simplicity)
-        // In production, you'd need to fetch admin and verify current password hash first
-        boolean success = serverManager.getAdminService().changePassword(
-                currentAdmin.getAdminId(), current, newPassword
-        );
+        // Change password (note: current implementation doesn't verify current password
+        // for simplicity)
+        // In production, you'd need to fetch admin and verify current password hash
+        // first
+        boolean success = serverManager.getAdminService().changePassword(currentAdmin.getAdminId(),
+                current, newPassword);
 
         if (success) {
-            showStatus("Password changed successfully! Please use your new password for next login.", true);
+            showStatus(
+                    "Password changed successfully! Please use your new password for next login.",
+                    true);
             clearFields();
         } else {
             showStatus("Failed to change password. Current password is incorrect.", false);
@@ -70,9 +75,11 @@ public class ChangePasswordController {
     private void showStatus(String message, boolean success) {
         statusLabel.setText(message);
         if (success) {
-            statusLabel.setStyle("-fx-background-color: #d4edda; -fx-text-fill: #155724; -fx-border-color: #c3e6cb; -fx-border-width: 1px;");
+            statusLabel.setStyle(
+                    "-fx-background-color: #d4edda; -fx-text-fill: #155724; -fx-border-color: #c3e6cb; -fx-border-width: 1px;");
         } else {
-            statusLabel.setStyle("-fx-background-color: #f8d7da; -fx-text-fill: #721c24; -fx-border-color: #f5c6cb; -fx-border-width: 1px;");
+            statusLabel.setStyle(
+                    "-fx-background-color: #f8d7da; -fx-text-fill: #721c24; -fx-border-color: #f5c6cb; -fx-border-width: 1px;");
         }
         statusLabel.setVisible(true);
     }

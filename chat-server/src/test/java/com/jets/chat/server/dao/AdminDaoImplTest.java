@@ -1,6 +1,5 @@
 package com.jets.chat.server.dao;
 
-import com.jets.chat.server.dao.AdminDao;
 import com.jets.chat.server.dao.impl.AdminDaoImpl;
 import com.jets.chat.server.entity.Admin;
 import com.zaxxer.hikari.HikariConfig;
@@ -10,7 +9,6 @@ import org.junit.jupiter.api.*;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -39,15 +37,13 @@ public class AdminDaoImplTest {
 
         // Create admins table
         try (Connection conn = dataSource.getConnection();
-             Statement stmt = conn.createStatement()) {
+                Statement stmt = conn.createStatement()) {
 
-            stmt.execute("CREATE TABLE admins (" +
-                    "admin_id BIGINT AUTO_INCREMENT PRIMARY KEY, " +
-                    "username VARCHAR(50) UNIQUE NOT NULL, " +
-                    "password_hash VARCHAR(255) NOT NULL, " +
-                    "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
-                    "last_login TIMESTAMP" +
-                    ")");
+            stmt.execute("CREATE TABLE admins (" + "admin_id BIGINT AUTO_INCREMENT PRIMARY KEY, "
+                    + "username VARCHAR(50) UNIQUE NOT NULL, "
+                    + "password_hash VARCHAR(255) NOT NULL, "
+                    + "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " + "last_login TIMESTAMP"
+                    + ")");
         }
 
         dao = new AdminDaoImpl(dataSource);
@@ -254,7 +250,8 @@ public class AdminDaoImplTest {
 
         } catch (Exception e) {
             // Exception is also acceptable (e.g., SQL constraint violation)
-            System.out.println("INFO: Database threw exception for empty username: " + e.getMessage());
+            System.out.println(
+                    "INFO: Database threw exception for empty username: " + e.getMessage());
         }
 
         // For this test, we'll just verify it doesn't crash
@@ -318,7 +315,7 @@ public class AdminDaoImplTest {
     void cleanupTestData() {
         // Clean up test admins (except our main test admin)
         try (Connection conn = dataSource.getConnection();
-             Statement stmt = conn.createStatement()) {
+                Statement stmt = conn.createStatement()) {
 
             // Delete all admins except our main test admin
             stmt.execute("DELETE FROM admins WHERE username NOT LIKE 'testadmin'");

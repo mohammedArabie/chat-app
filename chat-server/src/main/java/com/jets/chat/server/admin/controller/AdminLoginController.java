@@ -15,13 +15,16 @@ import java.io.IOException;
 import java.rmi.RemoteException;
 
 /**
- * Admin login screen controller
- * Handles authentication and navigation to dashboard
+ * Admin login screen controller Handles authentication and navigation to
+ * dashboard
  */
 public class AdminLoginController {
-    @FXML private TextField usernameField;
-    @FXML private PasswordField passwordField;
-    @FXML private Label errorLabel;
+    @FXML
+    private TextField usernameField;
+    @FXML
+    private PasswordField passwordField;
+    @FXML
+    private Label errorLabel;
 
     private ServerManager serverManager;
 
@@ -68,8 +71,7 @@ public class AdminLoginController {
         try {
             // Load dashboard FXML
             FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/view/admin-dashboard.fxml")
-            );
+                    getClass().getResource("/view/admin-dashboard.fxml"));
             Parent root = loader.load();
 
             // Initialize dashboard controller with dependencies
@@ -100,14 +102,14 @@ public class AdminLoginController {
         errorLabel.setVisible(true);
 
         // Auto-hide after 5 seconds
-        errorLabel.getScene().getRoot().getScene().getWindow()
-                .getScene()
-                .getRoot()
-                .requestFocus(); // Ensure focus for auto-hide timer
+        errorLabel.getScene().getRoot().getScene().getWindow().getScene().getRoot().requestFocus(); // Ensure
+                                                                                                    // focus
+                                                                                                    // for
+                                                                                                    // auto-hide
+                                                                                                    // timer
 
         javafx.animation.PauseTransition pause = new javafx.animation.PauseTransition(
-                javafx.util.Duration.seconds(5)
-        );
+                javafx.util.Duration.seconds(5));
         pause.setOnFinished(event -> errorLabel.setVisible(false));
         pause.play();
     }

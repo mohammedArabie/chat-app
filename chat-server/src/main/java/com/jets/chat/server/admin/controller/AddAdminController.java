@@ -8,9 +8,12 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
 public class AddAdminController {
-    @FXML private TextField usernameField, passwordField;
-    @FXML private Label statusLabel;
-    @FXML private Button createBtn, regenerateBtn;
+    @FXML
+    private TextField usernameField, passwordField;
+    @FXML
+    private Label statusLabel;
+    @FXML
+    private Button createBtn, regenerateBtn;
 
     private ServerManager serverManager;
     private Admin currentAdmin;
@@ -24,7 +27,8 @@ public class AddAdminController {
     @FXML
     private void regeneratePassword() {
         passwordField.setText(serverManager.getAdminService().generateRandomPassword());
-        regenerateBtn.setStyle("-fx-background-color: #2980b9; -fx-text-fill: white; -fx-font-size: 15px; -fx-padding: 10px 18px; -fx-background-radius: 8px;");
+        regenerateBtn.setStyle(
+                "-fx-background-color: #2980b9; -fx-text-fill: white; -fx-font-size: 15px; -fx-padding: 10px 18px; -fx-background-radius: 8px;");
     }
 
     @FXML
@@ -45,8 +49,7 @@ public class AddAdminController {
         if (serverManager.getAdminService().createAdmin(username, password)) {
             String message = String.format(
                     "✓ Admin '%s' created successfully!\nTemporary password: %s\nAdmin should change password after first login.",
-                    username, password
-            );
+                    username, password);
             showStatus(message, true);
             usernameField.clear();
             regeneratePassword();
@@ -65,11 +68,13 @@ public class AddAdminController {
     private void showStatus(String message, boolean success) {
         statusLabel.setText(message);
         if (success) {
-            statusLabel.setStyle("-fx-background-color: #d4edda; -fx-text-fill: #155724; -fx-border-color: #c3e6cb; " +
-                    "-fx-border-width: 1px; -fx-border-radius: 8px; -fx-padding: 12px; -fx-font-size: 15px;");
+            statusLabel.setStyle(
+                    "-fx-background-color: #d4edda; -fx-text-fill: #155724; -fx-border-color: #c3e6cb; "
+                            + "-fx-border-width: 1px; -fx-border-radius: 8px; -fx-padding: 12px; -fx-font-size: 15px;");
         } else {
-            statusLabel.setStyle("-fx-background-color: #f8d7da; -fx-text-fill: #721c24; -fx-border-color: #f5c6cb; " +
-                    "-fx-border-width: 1px; -fx-border-radius: 8px; -fx-padding: 12px; -fx-font-size: 15px;");
+            statusLabel.setStyle(
+                    "-fx-background-color: #f8d7da; -fx-text-fill: #721c24; -fx-border-color: #f5c6cb; "
+                            + "-fx-border-width: 1px; -fx-border-radius: 8px; -fx-padding: 12px; -fx-font-size: 15px;");
         }
         statusLabel.setVisible(true);
     }
