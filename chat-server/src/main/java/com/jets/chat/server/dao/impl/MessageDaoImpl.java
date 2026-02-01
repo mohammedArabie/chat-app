@@ -136,8 +136,6 @@ public class MessageDaoImpl implements MessageDao {
     @Override
     public Optional<Message> deleteById(long id) {
         Optional<Message> existing = findById(id);
-        if (existing.isEmpty())
-            return Optional.empty();
 
         String sql = "DELETE FROM messages WHERE message_id = ?";
 
@@ -154,6 +152,22 @@ public class MessageDaoImpl implements MessageDao {
         }
     }
 
+    public Optional<Message> findLatest(long chatId) {
+        String sql = "SELECT * FROM messages WHERE chat_id = ? ORDER BY sent_at DESC LIMIT 1";
+        try (Connection connection = dataSource.getConnection();
+                PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setLong(1, chatId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return Optional.of(mapRowToEntity(rs));
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return Optional.empty();
+    }
+
     private Message mapRowToEntity(ResultSet rs) throws SQLException {
         Message m = new Message();
         m.setMessageId(rs.getLong("message_id"));
@@ -168,7 +182,7 @@ public class MessageDaoImpl implements MessageDao {
         m.setItalic(rs.getBoolean("is_italic"));
         m.setUnderline(rs.getBoolean("is_underline"));
         m.setBackgroundColor(rs.getString("background_color"));
-        m.setSentAt(rs.getTimestamp("sent_at"));
+        m.setSentAt(rs.getTimestamp("sent_at").toLocalDateTime());
         return m;
     }
 }
