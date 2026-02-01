@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.shape.SVGPath?>
+<?import javafx.scene.text.Font?>
+
+<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="600.0" minWidth="900.0" prefHeight="700.0"
+      prefWidth="1440.0" style="-fx-font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;"
+      xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.jets.chat.client.controller.LoginController">
+    <children>
+        <!-- Left Side - Welcome Section -->
+        <VBox alignment="TOP_LEFT" prefHeight="700.0" prefWidth="700.0" spacing="30.0"
+              style="-fx-background-color: #0a0a0a;" HBox.hgrow="ALWAYS">
+            <padding>
+                <Insets top="60.0" left="80.0" right="80.0" bottom="60.0"/>
+            </padding>
+            <children>
+                <!-- Logo and App Name -->
+                <HBox alignment="CENTER_LEFT" spacing="12.0">
+                    <children>
+                        <StackPane prefHeight="40.0" prefWidth="40.0"
+                                   style="-fx-background-color: #0ea5e9; -fx-background-radius: 20;">
+                            <children>
+                                <SVGPath content="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"
+                                         fill="WHITE" scaleX="0.7" scaleY="0.7"/>
+                            </children>
+                        </StackPane>
+                        <Label text="ChatApp" textFill="WHITE">
+                            <font>
+                                <Font name="System Bold" size="24.0"/>
+                            </font>
+                        </Label>
+                    </children>
+                    <VBox.margin>
+                        <Insets bottom="20.0"/>
+                    </VBox.margin>
+                </HBox>
+
+                <!-- Main Heading -->
+                <VBox spacing="0.0">
+                    <children>
+                        <Label text="Connect with friends" textFill="WHITE" wrapText="true">
+                            <font>
+                                <Font name="System Bold" size="48.0"/>
+                            </font>
+                        </Label>
+                        <Label text="and colleagues instantly" textFill="WHITE" wrapText="true">
+                            <font>
+                                <Font name="System Bold" size="48.0"/>
+                            </font>
+                        </Label>
+                    </children>
+                </VBox>
+
+                <!-- Description -->
+                <Label lineSpacing="6.0" maxWidth="500.0"
+                       text="Experience seamless messaging with real-time updates, group chats, and more. Stay connected wherever you are."
+                       textFill="#9ca3af" wrapText="true">
+                    <font>
+                        <Font size="16.0"/>
+                    </font>
+                </Label>
+
+                <!-- Features List -->
+                <VBox spacing="16.0">
+                    <padding>
+                        <Insets top="20.0"/>
+                    </padding>
+                    <children>
+                        <!-- Feature 1: End-to-end encryption -->
+                        <HBox alignment="CENTER_LEFT" spacing="12.0">
+                            <children>
+                                <Circle fill="#0ea5e9" radius="4.0" stroke="TRANSPARENT" strokeType="INSIDE"/>
+                                <Label text="End-to-end encryption" textFill="#d1d5db">
+                                    <font>
+                                        <Font size="16.0"/>
+                                    </font>
+                                </Label>
+                            </children>
+                        </HBox>
+
+                        <!-- Feature 2: Real-time messaging -->
+                        <HBox alignment="CENTER_LEFT" spacing="12.0">
+                            <children>
+                                <Circle fill="#10b981" radius="4.0" stroke="TRANSPARENT" strokeType="INSIDE"/>
+                                <Label text="Real-time messaging" textFill="#d1d5db">
+                                    <font>
+                                        <Font size="16.0"/>
+                                    </font>
+                                </Label>
+                            </children>
+                        </HBox>
+
+                        <!-- Feature 3: Group conversations -->
+                        <HBox alignment="CENTER_LEFT" spacing="12.0">
+                            <children>
+                                <Circle fill="#0ea5e9" radius="4.0" stroke="TRANSPARENT" strokeType="INSIDE"/>
+                                <Label text="Group conversations" textFill="#d1d5db">
+                                    <font>
+                                        <Font size="16.0"/>
+                                    </font>
+                                </Label>
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+
+                <!-- Spacer -->
+                <Region VBox.vgrow="ALWAYS"/>
+
+                <!-- Footer Text -->
+                <Label text="Trusted by millions of users worldwide" textFill="#6b7280">
+                    <font>
+                        <Font size="14.0"/>
+                    </font>
+                </Label>
+            </children>
+        </VBox>
+
+        <!-- Right Side - Login Form -->
+        <VBox alignment="TOP_CENTER" prefHeight="700.0" prefWidth="560.0" style="-fx-background-color: #0a0a0a;"
+              HBox.hgrow="ALWAYS">
+            <padding>
+                <Insets top="120.0" left="80.0" right="80.0" bottom="60.0"/>
+            </padding>
+            <children>
+                <!-- Welcome Back Header -->
+                <VBox spacing="8.0" alignment="TOP_LEFT" maxWidth="Infinity">
+                    <children>
+                        <Label text="Welcome back" textFill="WHITE">
+                            <font>
+                                <Font name="System Bold" size="36.0"/>
+                            </font>
+                        </Label>
+                        <Label text="Sign in to continue to your account" textFill="#9ca3af">
+                            <font>
+                                <Font size="16.0"/>
+                            </font>
+                        </Label>
+                    </children>
+                    <VBox.margin>
+                        <Insets bottom="40.0"/>
+                    </VBox.margin>
+                </VBox>
+
+                <!-- Email Input -->
+                <VBox spacing="8.0" maxWidth="Infinity">
+                    <children>
+                        <Label text="Email address" textFill="WHITE">
+                            <font>
+                                <Font name="System Bold" size="14.0"/>
+                            </font>
+                        </Label>
+                        <HBox alignment="CENTER_LEFT"
+                              style="-fx-background-color: #1a1a1a; -fx-border-color: #2a2a2a; -fx-border-radius: 6; -fx-background-radius: 6;">
+                            <padding>
+                                <Insets top="12.0" right="16.0" bottom="12.0" left="16.0"/>
+                            </padding>
+                            <children>
+                                <SVGPath
+                                        content="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"
+                                        fill="#6b7280" scaleX="0.75" scaleY="0.75">
+                                    <HBox.margin>
+                                        <Insets right="12.0"/>
+                                    </HBox.margin>
+                                </SVGPath>
+                                <TextField promptText="Enter your email"
+                                           style="-fx-background-color: transparent; -fx-text-fill: white; -fx-prompt-text-fill: #6b7280; -fx-border-width: 0; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;"
+                                           HBox.hgrow="ALWAYS"
+                                           fx:id="emailField">
+                                    <font>
+                                        <Font size="14.0"/>
+                                    </font>
+                                </TextField>
+                            </children>
+                        </HBox>
+                    </children>
+                    <VBox.margin>
+                        <Insets bottom="20.0"/>
+                    </VBox.margin>
+                </VBox>
+
+                <!-- Password Input -->
+                <VBox spacing="8.0" maxWidth="Infinity">
+                    <children>
+                        <Label text="Password" textFill="WHITE">
+                            <font>
+                                <Font name="System Bold" size="14.0"/>
+                            </font>
+                        </Label>
+                        <HBox alignment="CENTER_LEFT"
+                              style="-fx-background-color: #1a1a1a; -fx-border-color: #2a2a2a; -fx-border-radius: 6; -fx-background-radius: 6;">
+                            <padding>
+                                <Insets top="12.0" right="16.0" bottom="12.0" left="16.0"/>
+                            </padding>
+                            <children>
+                                <SVGPath
+                                        content="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3 3.1-3 1.71 0 3.1 1.29 3.1 3v2z"
+                                        fill="#6b7280" scaleX="0.75" scaleY="0.75">
+                                    <HBox.margin>
+                                        <Insets right="12.0"/>
+                                    </HBox.margin>
+                                </SVGPath>
+                                <PasswordField fx:id="passwordField" promptText="Enter your password"
+                                               style="-fx-background-color: transparent; -fx-text-fill: white; -fx-prompt-text-fill: #6b7280; -fx-border-width: 0; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;"
+                                               HBox.hgrow="ALWAYS">
+                                    <font>
+                                        <Font size="14.0"/>
+                                    </font>
+                                </PasswordField>
+                                <TextField fx:id="passwordTextField" promptText="Enter your password"
+                                           style="-fx-background-color: transparent; -fx-text-fill: white; -fx-prompt-text-fill: #6b7280; -fx-border-width: 0; -fx-focus-color: transparent; -fx-faint-focus-color: transparent;"
+                                           HBox.hgrow="ALWAYS"
+                                           visible="false"
+                                           managed="false">
+                                    <font>
+                                        <Font size="14.0"/>
+                                    </font>
+                                </TextField>
+                                <SVGPath fx:id="togglePasswordVisibility"
+                                         content="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"
+                                         fill="#6b7280" opacity="0.7" scaleX="0.75" scaleY="0.75"
+                                         style="-fx-cursor: hand;">
+                                    <HBox.margin>
+                                        <Insets left="8.0"/>
+                                    </HBox.margin>
+                                </SVGPath>
+                            </children>
+                        </HBox>
+                    </children>
+                    <VBox.margin>
+                        <Insets bottom="12.0"/>
+                    </VBox.margin>
+                </VBox>
+
+                <!-- Error Message -->
+                <Label fx:id="errorLabel"
+                       text=""
+                       wrapText="true"
+                       visible="false"
+                       maxWidth="Infinity"
+                       style="-fx-text-fill: #ef4444;">
+                    <VBox.margin>
+                        <Insets bottom="12.0"/>
+                    </VBox.margin>
+                </Label>
+
+                <!-- Remember Me and Forgot Password -->
+                <HBox alignment="CENTER_LEFT" maxWidth="Infinity">
+                    <children>
+                        <CheckBox fx:id="rememberMeCheckbox" mnemonicParsing="false" text="Remember me"
+                                  textFill="#d1d5db"
+                                  style="-fx-text-fill: #d1d5db;">
+                            <font>
+                                <Font size="14.0"/>
+                            </font>
+                        </CheckBox>
+                        <Region HBox.hgrow="ALWAYS"/>
+                    </children>
+                    <VBox.margin>
+                        <Insets bottom="24.0"/>
+                    </VBox.margin>
+                </HBox>
+
+                <!-- Sign In Button -->
+                <Button fx:id="signInButton" maxWidth="Infinity" mnemonicParsing="false"
+                        style="-fx-background-color: #0ea5e9; -fx-text-fill: white; -fx-background-radius: 6; -fx-cursor: hand; -fx-graphic-text-gap: 10;"
+                        text="Sign in">
+                    <font>
+                        <Font name="System Bold" size="16.0"/>
+                    </font>
+                    <padding>
+                        <Insets top="14.0" bottom="14.0"/>
+                    </padding>
+                    <graphic>
+                        <SVGPath content="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" fill="WHITE"
+                                 scaleX="0.8" scaleY="0.8"/>
+                    </graphic>
+                </Button>
+
+                <!-- Spacer -->
+                <Region VBox.vgrow="ALWAYS"/>
+
+                <!-- Sign Up Link -->
+                <HBox alignment="CENTER" spacing="6.0">
+                    <children>
+                        <Label text="Don't have an account?" textFill="#9ca3af">
+                            <font>
+                                <Font size="14.0"/>
+                            </font>
+                        </Label>
+                        <Hyperlink text="Sign up" textFill="#0ea5e9" style="-fx-border-width: 0;"
+                                   onAction="#navigateToRegister">
+                            <font>
+                                <Font name="System Bold" size="14.0"/>
+                            </font>
+                        </Hyperlink>
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+    </children>
+</HBox>

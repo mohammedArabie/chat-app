@@ -25,7 +25,7 @@ public class UserDaoImpl implements UserDao {
     private static final String FIND_BY_ID_SQL = "SELECT * FROM users WHERE user_id = ?";
 
     private static final String FIND_BY_PHONE_SQL = "SELECT * FROM users WHERE phone_number = ?";
-
+    private static final String FIND_BY_EMAIL_SQL = "SELECT * FROM users WHERE email = ?";
     private static final String UPDATE_USER_SQL = "UPDATE users SET display_name = ?, email = ?, gender = ?, country = ?, date_of_birth = ?, bio = ?, picture_path = ?, chatbot_enabled = ? "
             + "WHERE user_id = ?";
 
@@ -38,6 +38,8 @@ public class UserDaoImpl implements UserDao {
     private static final String INSERT_SESSION_SQL = "INSERT INTO user_sessions (session_id, user_id) VALUES (?, ?)";
 
     private static final String DELETE_SESSION_SQL = "DELETE FROM user_sessions WHERE session_id = ?";
+
+    private static final String VALIDATE_SESSION_SQL = "SELECT 1 FROM user_sessions WHERE user_id = ? AND session_id = ?";
 
     @Override
     public User save(User user) {
@@ -129,6 +131,23 @@ public class UserDaoImpl implements UserDao {
                 PreparedStatement stmt = conn.prepareStatement(FIND_BY_PHONE_SQL)) {
 
             stmt.setString(1, phoneNumber);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return Optional.of(mapRowToUser(rs));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<User> findByEmail(String email) {
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(FIND_BY_EMAIL_SQL)) {
+
+            stmt.setString(1, email);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     return Optional.of(mapRowToUser(rs));
@@ -235,6 +254,21 @@ public class UserDaoImpl implements UserDao {
 
             stmt.setString(1, sessionId);
             return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public boolean isSessionValid(long userId, String sessionId) {
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(VALIDATE_SESSION_SQL)) {
+            stmt.setLong(1, userId);
+            stmt.setString(2, sessionId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next();
+            }
         } catch (SQLException e) {
             e.printStackTrace();
             return false;

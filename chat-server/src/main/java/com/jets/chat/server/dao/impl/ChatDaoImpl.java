@@ -16,12 +16,10 @@ public final class ChatDaoImpl implements ChatDao {
 
     private final DataSource dataSource;
 
-    // ================== CONSTRUCTOR ==================
     public ChatDaoImpl(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
-    // ================== CHAT CREATION ==================
     @Override
     public long insertChat(ChatType type) {
         String sql = "INSERT INTO chats (chat_type) VALUES (?)";
@@ -64,7 +62,6 @@ public final class ChatDaoImpl implements ChatDao {
         }
     }
 
-    // ================== CHAT RETRIEVAL ==================
     @Override
     public Optional<Chat> findById(long chatId) {
         String sql = "SELECT chat_id, chat_type, created_at FROM chats WHERE chat_id = ?";
@@ -116,7 +113,6 @@ public final class ChatDaoImpl implements ChatDao {
         return chats;
     }
 
-    // ================== PARTICIPANTS ==================
     @Override
     public boolean addParticipant(long chatId, long userId) {
         try (Connection connection = dataSource.getConnection()) {
@@ -180,7 +176,6 @@ public final class ChatDaoImpl implements ChatDao {
         return participants;
     }
 
-    // ================== GROUP OPERATIONS ==================
     @Override
     public Optional<ChatGroup> getGroupInfo(long chatId) {
         String sql = "SELECT chat_id, group_name, owner_id FROM chat_groups WHERE chat_id = ?";

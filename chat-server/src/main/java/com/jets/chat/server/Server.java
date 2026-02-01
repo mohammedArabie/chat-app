@@ -1,6 +1,7 @@
 package com.jets.chat.server;
 
 import com.jets.chat.common.rmi.RemoteAnnouncementService;
+import com.jets.chat.common.rmi.RemoteUserService;
 import com.jets.chat.common.util.ProjectConstants;
 import com.jets.chat.server.context.ServerManager;
 
@@ -16,9 +17,13 @@ public class Server {
             RemoteAnnouncementService remoteAnnouncementService = serverManager
                     .getRemoteAnnouncementService();
 
+            RemoteUserService remoteUserService = serverManager.getRemoteUserService();
+
             Registry registry = LocateRegistry.createRegistry(ProjectConstants.RMI_SERVICE_PORT);
 
             registry.rebind(ProjectConstants.ANNOUNCEMENT_SERVICE, remoteAnnouncementService);
+
+            registry.rebind(ProjectConstants.USER_SERVICE, remoteUserService);
 
             System.out.println("Server Running");
 
