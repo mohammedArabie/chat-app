@@ -8,10 +8,8 @@ import java.util.Optional;
 
 public interface ContactsDao {
 
-    // Create / Send friend request or add contact
     Contact save(Contact contact);
 
-    // Read
     Optional<Contact> findByIds(long ownerId, long contactId);
 
     List<Contact> findAllContactsByOwnerId(long ownerId);
@@ -20,16 +18,13 @@ public interface ContactsDao {
 
     List<Contact> findAllContactsByOwnerIdAndCategory(long ownerId, String category);
 
-    // Update (status/category)
     boolean update(Contact contact);
 
     boolean updateStatus(long ownerId, long contactId, ContactStatus status);
 
     boolean updateCategory(long ownerId, long contactId, String category);
 
-    // Delete / Remove contact
     boolean deleteByIds(long ownerId, long contactId);
 
-    // Helpers
     boolean exists(long ownerId, long contactId);
 }

@@ -1,5 +1,6 @@
 package com.jets.chat.server.context;
 
+import com.jets.chat.common.callback.ClientCallback;
 import com.jets.chat.common.rmi.RemoteAnnouncementService;
 import com.jets.chat.common.rmi.RemoteUserService;
 import com.jets.chat.server.config.DataSourceConfig;
@@ -16,6 +17,8 @@ import com.jets.chat.server.service.impl.UserServiceImpl;
 import com.zaxxer.hikari.HikariDataSource;
 
 import java.rmi.RemoteException;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ServerManager {
     private static volatile ServerManager instance;
@@ -23,12 +26,18 @@ public class ServerManager {
     private final RemoteAnnouncementService remoteAnnouncementService;
     private final RemoteUserService remoteUserService;
     private final UserService userService;
+    private final Map<Long, ClientCallback> onlineClients = new ConcurrentHashMap<>();
 
-    public static ServerManager getInstance() throws RemoteException {
+    public static ServerManager getInstance() {
         if (instance == null) {
             synchronized (ServerManager.class) {
                 if (instance == null) {
-                    instance = new ServerManager();
+                    try {
+                        instance = new ServerManager();
+                    } catch (RemoteException e) {
+                        System.out.println("Error Starting the server");
+                        throw new RuntimeException(e);
+                    }
                 }
             }
         }
@@ -60,5 +69,9 @@ public class ServerManager {
 
     public RemoteUserService getRemoteUserService() {
         return remoteUserService;
+    }
+
+    public Map<Long, ClientCallback> getOnlineClients() {
+        return onlineClients;
     }
 }

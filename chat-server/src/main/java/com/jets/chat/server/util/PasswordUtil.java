@@ -8,7 +8,6 @@ import java.nio.charset.StandardCharsets;
 public class PasswordUtil {
 
     private PasswordUtil() {
-        // prevent creating objects
     }
 
     public static String hash(String password) {

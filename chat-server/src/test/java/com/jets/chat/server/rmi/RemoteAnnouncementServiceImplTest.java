@@ -32,7 +32,6 @@ class RemoteAnnouncementServiceImplTest {
 
     @BeforeEach
     void setUp() throws RemoteException {
-        // Create mock announcements
         AnnouncementDTO dto1 = new AnnouncementDTO(1L, "Announcement 1",
                 Timestamp.valueOf(LocalDateTime.now().minusHours(2)), "#000000", "Normal", true,
                 false);
@@ -43,8 +42,6 @@ class RemoteAnnouncementServiceImplTest {
 
         mockAnnouncements = Arrays.asList(dto1, dto2);
 
-        // Create the remote service instance manually since constructor throws
-        // RemoteException
         remoteAnnouncementService = new RemoteAnnouncementServiceImpl(announcementService);
     }
 

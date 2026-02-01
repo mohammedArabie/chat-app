@@ -9,24 +9,20 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ChatDao {
-    // Chat creation
     long insertChat(ChatType type);
 
     boolean insertGroup(long chatId, String groupName, long ownerId);
 
-    // Chat retrieval
     Optional<Chat> findById(long chatId);
 
     List<Chat> findChatsByUser(long userId);
 
-    // Participants
     boolean addParticipant(long chatId, long userId);
 
     boolean removeParticipant(long chatId, long userId);
 
     List<ChatParticipant> getParticipants(long chatId);
 
-    // Group operations
     Optional<ChatGroup> getGroupInfo(long chatId);
 
     boolean renameGroup(long chatId, String newName);
