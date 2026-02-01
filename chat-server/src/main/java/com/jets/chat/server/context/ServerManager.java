@@ -94,14 +94,16 @@ public class ServerManager {
         }
 
         try {
-            RemoteAnnouncementServiceImpl serviceImpl = new RemoteAnnouncementServiceImpl(announcementService);
+            RemoteAnnouncementServiceImpl serviceImpl = new RemoteAnnouncementServiceImpl(
+                    announcementService);
             remoteAnnouncementService = serviceImpl;
 
             try {
                 UnicastRemoteObject.exportObject(remoteAnnouncementService, 0);
                 isExported = true;
             } catch (java.rmi.server.ExportException e) {
-                remoteAnnouncementService = (RemoteAnnouncementService) UnicastRemoteObject.toStub(remoteAnnouncementService);
+                remoteAnnouncementService = (RemoteAnnouncementService) UnicastRemoteObject
+                        .toStub(remoteAnnouncementService);
                 isExported = true;
             }
 
@@ -133,7 +135,7 @@ public class ServerManager {
             System.out.println("Server not running");
             return;
         }
-
+        announcementService.clearCallbacks();
         try {
             if (registry != null) {
                 try {
@@ -152,7 +154,7 @@ public class ServerManager {
             }
 
             isRunning.set(false);
-
+            System.out.println("✓✓✓ ANNOUNCEMENTS STOPPED ✓✓✓");
         } catch (Exception e) {
             isRunning.set(false);
             remoteAnnouncementService = null;

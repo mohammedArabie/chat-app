@@ -9,8 +9,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 
-import java.rmi.RemoteException;
-
 public class AdminApplication extends Application {
     private ServerManager serverManager;
 
@@ -25,13 +23,10 @@ public class AdminApplication extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         // Load login UI FIRST (don't auto-start server yet)
-        FXMLLoader loader = new FXMLLoader(
-                getClass().getResource("/view/admin-login.fxml")
-        );
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/admin-login.fxml"));
         Scene scene = new Scene(loader.load());
-        scene.getStylesheets().add(
-                getClass().getResource("/style/admin-style.css").toExternalForm()
-        );
+        scene.getStylesheets()
+                .add(getClass().getResource("/style/admin-style.css").toExternalForm());
 
         stage.setTitle("Chat Server Admin Login");
         stage.setScene(scene);
@@ -53,7 +48,8 @@ public class AdminApplication extends Application {
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
         confirm.setTitle("Exit Admin Dashboard");
         confirm.setHeaderText("Stop server and exit?");
-        confirm.setContentText("Do you want to stop the chat server and close the admin dashboard?");
+        confirm.setContentText(
+                "Do you want to stop the chat server and close the admin dashboard?");
 
         confirm.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {

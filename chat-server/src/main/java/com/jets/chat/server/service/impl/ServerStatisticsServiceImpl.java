@@ -8,7 +8,7 @@ import java.util.Map;
 // ✅ CORRECT: Service layer contains NO database code
 // ✅ Delegates ALL data operations to DAO
 public class ServerStatisticsServiceImpl implements ServerStatisticsService {
-    private final StatisticsDao statisticsDao;  // Injected DAO dependency
+    private final StatisticsDao statisticsDao; // Injected DAO dependency
 
     // Constructor injection - service knows NOTHING about DataSource
     public ServerStatisticsServiceImpl(StatisticsDao statisticsDao) {
