@@ -374,3 +374,15 @@
 .stopped {
     -fx-text-fill: #c0392b;
 }
+/* Status badges */
+.status-badge {
+    -fx-padding: 4px 10px;
+    -fx-border-radius: 12px;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.status-online { -fx-background-color: #27ae60; -fx-text-fill: white; } /* Green */
+.status-offline { -fx-background-color: #e74c3c; -fx-text-fill: white; } /* Red */
+.status-busy { -fx-background-color: #e67e22; -fx-text-fill: white; } /* Orange */
+.status-away { -fx-background-color: #f39c12; -fx-text-fill: #2c3e50; } /* Yellow */
