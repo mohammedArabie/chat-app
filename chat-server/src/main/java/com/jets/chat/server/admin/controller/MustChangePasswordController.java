@@ -11,10 +11,14 @@ import javafx.scene.control.PasswordField;
 import javafx.stage.Stage;
 import java.io.IOException;
 public class MustChangePasswordController {
-    @FXML private PasswordField currentPasswordField;
-    @FXML private PasswordField newPasswordField;
-    @FXML private PasswordField confirmPasswordField;
-    @FXML private Label statusLabel;
+    @FXML
+    private PasswordField currentPasswordField;
+    @FXML
+    private PasswordField newPasswordField;
+    @FXML
+    private PasswordField confirmPasswordField;
+    @FXML
+    private Label statusLabel;
 
     private ServerManager serverManager;
     private Admin currentAdmin;
@@ -41,9 +45,8 @@ public class MustChangePasswordController {
             return;
         }
 
-        boolean success = serverManager.getAdminService().changePassword(
-                currentAdmin.getAdminId(), current, newPwd
-        );
+        boolean success = serverManager.getAdminService().changePassword(currentAdmin.getAdminId(),
+                current, newPwd);
 
         if (success) {
             navigateToDashboard();
@@ -73,7 +76,8 @@ public class MustChangePasswordController {
 
     private void navigateToDashboard() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/admin-dashboard.fxml"));
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/view/admin-dashboard.fxml"));
             Parent root = loader.load();
 
             AdminDashboardController dashboardController = loader.getController();

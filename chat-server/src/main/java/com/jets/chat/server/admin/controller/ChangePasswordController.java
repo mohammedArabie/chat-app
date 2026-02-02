@@ -7,8 +7,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 
 public class ChangePasswordController {
-    @FXML private PasswordField currentPasswordField, newPasswordField, confirmPasswordField;
-    @FXML private Label statusLabel;
+    @FXML
+    private PasswordField currentPasswordField, newPasswordField, confirmPasswordField;
+    @FXML
+    private Label statusLabel;
 
     private ServerManager serverManager;
     private Admin currentAdmin;
@@ -37,9 +39,8 @@ public class ChangePasswordController {
             return;
         }
 
-        boolean success = serverManager.getAdminService().changePassword(
-                currentAdmin.getAdminId(), current, newPassword
-        );
+        boolean success = serverManager.getAdminService().changePassword(currentAdmin.getAdminId(),
+                current, newPassword);
 
         if (success) {
             showStatus("✓ Password changed successfully!", true);
@@ -68,12 +69,10 @@ public class ChangePasswordController {
 
         if (success) {
             statusLabel.setStyle(
-                    "-fx-background-color: #d4edda; -fx-text-fill: #155724; -fx-border-color: #c3e6cb; -fx-border-width: 1px;"
-            );
+                    "-fx-background-color: #d4edda; -fx-text-fill: #155724; -fx-border-color: #c3e6cb; -fx-border-width: 1px;");
         } else {
             statusLabel.setStyle(
-                    "-fx-background-color: #f8d7da; -fx-text-fill: #721c24; -fx-border-color: #f5c6cb; -fx-border-width: 1px;"
-            );
+                    "-fx-background-color: #f8d7da; -fx-text-fill: #721c24; -fx-border-color: #f5c6cb; -fx-border-width: 1px;");
         }
     }
 }

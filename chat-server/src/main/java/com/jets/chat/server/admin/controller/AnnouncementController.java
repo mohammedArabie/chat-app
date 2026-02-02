@@ -10,25 +10,32 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AnnouncementController {
-    @FXML private TextArea announcementText;
-    @FXML private ComboBox<String> fontCombo, colorCombo;
-    @FXML private CheckBox boldCheck, italicCheck;
-    @FXML private Label previewText;
-    @FXML private VBox root;
+    @FXML
+    private TextArea announcementText;
+    @FXML
+    private ComboBox<String> fontCombo, colorCombo;
+    @FXML
+    private CheckBox boldCheck, italicCheck;
+    @FXML
+    private Label previewText;
+    @FXML
+    private VBox root;
 
     private ServerManager serverManager;
 
     // ✅ HUMAN-READABLE COLOR MAPPING (display name → hex code)
-    private final Map<String, String> colorMap = new HashMap<>() {{
-        put("Black", "#000000");
-        put("Dark Gray", "#2c3e50");
-        put("Blue", "#3498db");
-        put("Green", "#27ae60");
-        put("Red", "#e74c3c");
-        put("Purple", "#9b59b6");
-        put("Orange", "#f39c12");
-        put("Teal", "#1abc9c");
-    }};
+    private final Map<String, String> colorMap = new HashMap<>() {
+        {
+            put("Black", "#000000");
+            put("Dark Gray", "#2c3e50");
+            put("Blue", "#3498db");
+            put("Green", "#27ae60");
+            put("Red", "#e74c3c");
+            put("Purple", "#9b59b6");
+            put("Orange", "#f39c12");
+            put("Teal", "#1abc9c");
+        }
+    };
 
     public void init(ServerManager serverManager) {
         this.serverManager = serverManager;
@@ -37,7 +44,8 @@ public class AnnouncementController {
 
     private void setupForm() {
         // Font options
-        fontCombo.getItems().addAll("Arial", "Helvetica", "Times New Roman", "Courier New", "Verdana");
+        fontCombo.getItems().addAll("Arial", "Helvetica", "Times New Roman", "Courier New",
+                "Verdana");
         fontCombo.setValue("Arial");
 
         // ✅ HUMAN-READABLE COLOR OPTIONS (display names only)
@@ -67,11 +75,9 @@ public class AnnouncementController {
         previewText.setText(text);
         previewText.setStyle(String.format(
                 "-fx-font-family: '%s'; -fx-font-size: 17px; -fx-text-fill: %s; %s %s",
-                fontCombo.getValue(),
-                hexColor,  // Use hex code for actual styling
+                fontCombo.getValue(), hexColor, // Use hex code for actual styling
                 boldCheck.isSelected() ? "-fx-font-weight: bold;" : "",
-                italicCheck.isSelected() ? "-fx-font-style: italic;" : ""
-        ));
+                italicCheck.isSelected() ? "-fx-font-style: italic;" : ""));
     }
 
     @FXML
@@ -98,9 +104,7 @@ public class AnnouncementController {
             int activeUsers = serverManager.getAnnouncementService().getActiveCallbackCount();
             showSuccess(String.format(
                     "✓ Announcement sent successfully!\nDelivered to %d online user%s.",
-                    activeUsers,
-                    activeUsers == 1 ? "" : "s"
-            ));
+                    activeUsers, activeUsers == 1 ? "" : "s"));
 
             // Clear form
             announcementText.clear();
@@ -126,8 +130,7 @@ public class AnnouncementController {
     private void handleLogout() {
         try {
             javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(
-                    getClass().getResource("/view/admin-login.fxml")
-            );
+                    getClass().getResource("/view/admin-login.fxml"));
             javafx.scene.Parent root = loader.load();
 
             javafx.stage.Stage stage = (javafx.stage.Stage) this.root.getScene().getWindow();

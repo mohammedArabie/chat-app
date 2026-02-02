@@ -15,9 +15,12 @@ import java.io.IOException;
 import java.rmi.RemoteException;
 
 public class AdminLoginController {
-    @FXML private TextField usernameField;
-    @FXML private PasswordField passwordField;
-    @FXML private Label errorLabel;
+    @FXML
+    private TextField usernameField;
+    @FXML
+    private PasswordField passwordField;
+    @FXML
+    private Label errorLabel;
 
     private ServerManager serverManager;
 
@@ -50,7 +53,8 @@ public class AdminLoginController {
             Admin admin = adminOpt.get();
 
             // ✅ CRITICAL: Pass firstLogin flag to dashboard
-            boolean mustChange = serverManager.getAdminService().mustChangePassword(admin.getAdminId());
+            boolean mustChange = serverManager.getAdminService()
+                    .mustChangePassword(admin.getAdminId());
 
             if (mustChange) {
                 loadMustChangePassword(admin); // New Gatekeeper Screen
@@ -65,7 +69,8 @@ public class AdminLoginController {
     }
     private void loadMustChangePassword(Admin admin) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/must-change-password.fxml"));
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/view/must-change-password.fxml"));
             Parent root = loader.load();
 
             MustChangePasswordController controller = loader.getController();
@@ -83,8 +88,7 @@ public class AdminLoginController {
     private void loadDashboard(Admin admin, boolean firstLogin) {
         try {
             FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/view/admin-dashboard.fxml")
-            );
+                    getClass().getResource("/view/admin-dashboard.fxml"));
             Parent root = loader.load();
 
             AdminDashboardController dashboardController = loader.getController();
@@ -112,8 +116,7 @@ public class AdminLoginController {
         errorLabel.setVisible(true);
 
         javafx.animation.PauseTransition pause = new javafx.animation.PauseTransition(
-                javafx.util.Duration.seconds(5)
-        );
+                javafx.util.Duration.seconds(5));
         pause.setOnFinished(event -> errorLabel.setVisible(false));
         pause.play();
     }

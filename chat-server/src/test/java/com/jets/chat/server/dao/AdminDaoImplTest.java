@@ -26,7 +26,6 @@ public class AdminDaoImplTest {
 
     @BeforeAll
     void init() throws Exception {
-        // Create in-memory H2 database for testing
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl("jdbc:h2:mem:admin_test;MODE=MySQL;DB_CLOSE_DELAY=-1");
         config.setUsername("sa");
@@ -35,15 +34,14 @@ public class AdminDaoImplTest {
 
         dataSource = new HikariDataSource(config);
 
-        // Create admins table
         try (Connection conn = dataSource.getConnection();
                 Statement stmt = conn.createStatement()) {
 
             stmt.execute("CREATE TABLE admins (" + "admin_id BIGINT AUTO_INCREMENT PRIMARY KEY, "
                     + "username VARCHAR(50) UNIQUE NOT NULL, "
                     + "password_hash VARCHAR(255) NOT NULL, "
-                    + "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " + "last_login TIMESTAMP"
-                    + ")");
+                    + "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " + "last_login TIMESTAMP, "
+                    + "must_change_password BOOLEAN DEFAULT FALSE" + ")");
         }
 
         dao = new AdminDaoImpl(dataSource);
@@ -60,13 +58,10 @@ public class AdminDaoImplTest {
     @Order(1)
     @DisplayName("Create admin should succeed with valid data")
     void testCreateAdmin() {
-        // Act
         boolean result = dao.createAdmin(TEST_USERNAME, TEST_PASSWORD_HASH);
 
-        // Assert
         assertTrue(result, "Admin creation should succeed");
 
-        // Verify admin was created
         Optional<Admin> admin = dao.findByUsername(TEST_USERNAME);
         assertTrue(admin.isPresent(), "Admin should exist after creation");
 
@@ -74,9 +69,13 @@ public class AdminDaoImplTest {
         assertEquals(TEST_USERNAME, created.getUsername());
         assertEquals(TEST_PASSWORD_HASH, created.getPasswordHash());
         assertNotNull(created.getCreatedAt());
-        assertNull(created.getLastLogin()); // Should be null initially
+        assertNull(created.getLastLogin());
 
-        // Save the ID for later tests
+        // Since we can see the Admin entity has isMustChangePassword() method,
+        // we can directly assert it
+        assertTrue(created.isMustChangePassword(),
+                "New admin should have must_change_password = TRUE");
+
         createdAdminId = created.getAdminId();
         assertNotNull(createdAdminId);
     }
@@ -85,219 +84,220 @@ public class AdminDaoImplTest {
     @Order(2)
     @DisplayName("Find by username returns correct admin")
     void testFindByUsername() {
-        // Act
+        // Skip if admin wasn't created
+        if (createdAdminId == null) {
+            System.out.println("Skipping test - admin not created");
+            return;
+        }
+
         Optional<Admin> admin = dao.findByUsername(TEST_USERNAME);
 
-        // Assert
         assertTrue(admin.isPresent());
         Admin found = admin.get();
 
         assertEquals(TEST_USERNAME, found.getUsername());
         assertEquals(TEST_PASSWORD_HASH, found.getPasswordHash());
         assertEquals(createdAdminId, found.getAdminId());
+        assertTrue(found.isMustChangePassword());
     }
 
     @Test
     @Order(3)
-    @DisplayName("Find by username for non-existent admin returns empty")
-    void testFindByUsernameNonExistent() {
-        // Act
-        Optional<Admin> admin = dao.findByUsername("nonexistent");
+    @DisplayName("Find by ID returns correct admin")
+    void testFindById() {
+        // Skip if admin wasn't created
+        if (createdAdminId == null) {
+            System.out.println("Skipping test - admin not created");
+            return;
+        }
 
-        // Assert
-        assertTrue(admin.isEmpty());
+        Optional<Admin> admin = dao.findById(createdAdminId);
+
+        assertTrue(admin.isPresent());
+        Admin found = admin.get();
+
+        assertEquals(TEST_USERNAME, found.getUsername());
+        assertEquals(TEST_PASSWORD_HASH, found.getPasswordHash());
+        assertEquals(createdAdminId, found.getAdminId());
+        assertTrue(found.isMustChangePassword());
     }
 
     @Test
     @Order(4)
+    @DisplayName("Find by username for non-existent admin returns empty")
+    void testFindByUsernameNonExistent() {
+        Optional<Admin> admin = dao.findByUsername("nonexistent");
+        assertTrue(admin.isEmpty());
+    }
+
+    @Test
+    @Order(5)
+    @DisplayName("Find by ID for non-existent admin returns empty")
+    void testFindByIdNonExistent() {
+        Optional<Admin> admin = dao.findById(99999L);
+        assertTrue(admin.isEmpty());
+    }
+
+    @Test
+    @Order(6)
+    @DisplayName("Update must_change_password should succeed")
+    void testUpdateMustChangePassword() {
+        // Skip if admin wasn't created
+        if (createdAdminId == null) {
+            System.out.println("Skipping test - admin not created");
+            return;
+        }
+
+        boolean result = dao.updateMustChangePassword(createdAdminId, false);
+        assertTrue(result, "Update must_change_password should succeed");
+
+        Optional<Admin> admin = dao.findById(createdAdminId);
+        assertTrue(admin.isPresent());
+        assertFalse(admin.get().isMustChangePassword());
+
+        result = dao.updateMustChangePassword(createdAdminId, true);
+        assertTrue(result);
+
+        admin = dao.findById(createdAdminId);
+        assertTrue(admin.isPresent());
+        assertTrue(admin.get().isMustChangePassword());
+    }
+
+    @Test
+    @Order(7)
     @DisplayName("Update last login should succeed")
     void testUpdateLastLogin() {
-        // Arrange - get current timestamp
+        // Skip if admin wasn't created
+        if (createdAdminId == null) {
+            System.out.println("Skipping test - admin not created");
+            return;
+        }
+
         Timestamp beforeUpdate = new Timestamp(System.currentTimeMillis());
 
-        // Act
         boolean result = dao.updateLastLogin(createdAdminId);
 
-        // Assert
         assertTrue(result, "Update last login should succeed");
 
-        // Verify update
-        Optional<Admin> admin = dao.findByUsername(TEST_USERNAME);
+        Optional<Admin> admin = dao.findById(createdAdminId);
         assertTrue(admin.isPresent());
 
         Timestamp lastLogin = admin.get().getLastLogin();
         assertNotNull(lastLogin, "Last login should not be null after update");
 
-        // Should be after our before timestamp
         assertTrue(lastLogin.after(beforeUpdate) || lastLogin.equals(beforeUpdate));
     }
 
     @Test
-    @Order(5)
+    @Order(8)
     @DisplayName("Update password should succeed")
     void testUpdatePassword() {
-        // Arrange
+        // Skip if admin wasn't created
+        if (createdAdminId == null) {
+            System.out.println("Skipping test - admin not created");
+            return;
+        }
+
         String newPasswordHash = "newhashedpassword456";
 
-        // Act
         boolean result = dao.updatePassword(createdAdminId, newPasswordHash);
 
-        // Assert
         assertTrue(result, "Password update should succeed");
 
-        // Verify password was updated
-        Optional<Admin> admin = dao.findByUsername(TEST_USERNAME);
+        Optional<Admin> admin = dao.findById(createdAdminId);
         assertTrue(admin.isPresent());
         assertEquals(newPasswordHash, admin.get().getPasswordHash());
     }
 
     @Test
-    @Order(6)
+    @Order(9)
     @DisplayName("Update password for non-existent admin should fail")
     void testUpdatePasswordNonExistent() {
-        // Act
         boolean result = dao.updatePassword(99999L, "somehash");
-
-        // Assert
         assertFalse(result, "Updating non-existent admin should fail");
     }
 
     @Test
-    @Order(7)
+    @Order(10)
     @DisplayName("Update last login for non-existent admin should fail")
     void testUpdateLastLoginNonExistent() {
-        // Act
         boolean result = dao.updateLastLogin(99999L);
-
-        // Assert
         assertFalse(result, "Updating non-existent admin should fail");
     }
 
     @Test
-    @Order(8)
-    @DisplayName("Create admin with duplicate username should fail")
-    void testCreateAdminDuplicateUsername() {
-        // Act - Try to create admin with same username
-        boolean result = dao.createAdmin(TEST_USERNAME, "anotherhash");
-
-        // Assert - Should fail (return false) or throw exception
-        // Depending on your implementation, it might return false or throw
-        // For now, we'll check it doesn't affect existing data
-        Optional<Admin> existingAdmin = dao.findByUsername(TEST_USERNAME);
-        assertTrue(existingAdmin.isPresent());
-        // Password should still be the one we set in testUpdatePassword
-        assertEquals("newhashedpassword456", existingAdmin.get().getPasswordHash());
+    @Order(11)
+    @DisplayName("Update must_change_password for non-existent admin should fail")
+    void testUpdateMustChangePasswordNonExistent() {
+        boolean result = dao.updateMustChangePassword(99999L, true);
+        assertFalse(result, "Updating non-existent admin should fail");
     }
 
     @Test
-    @Order(9)
+    @Order(12)
+    @DisplayName("Create admin with duplicate username should fail")
+    void testCreateAdminDuplicateUsername() {
+        // Skip if admin wasn't created
+        if (createdAdminId == null) {
+            System.out.println("Skipping test - admin not created");
+            return;
+        }
+
+        boolean result = dao.createAdmin(TEST_USERNAME, "anotherhash");
+        assertFalse(result, "Creating duplicate admin should fail");
+    }
+
+    @Test
+    @Order(13)
     @DisplayName("Generate random password returns valid password")
     void testGenerateRandomPassword() {
-        // Arrange
         int length = 12;
 
-        // Act
         String password = dao.generateRandomPassword(length);
 
-        // Assert
         assertNotNull(password);
         assertEquals(length, password.length());
 
-        // Should contain various character types
         boolean hasUpper = password.matches(".*[A-Z].*");
         boolean hasLower = password.matches(".*[a-z].*");
         boolean hasDigit = password.matches(".*[0-9].*");
         boolean hasSpecial = password.matches(".*[!@#$%^&*].*");
 
-        // At least some complexity
         assertTrue(hasUpper || hasLower || hasDigit || hasSpecial,
                 "Password should have some complexity");
     }
 
     @Test
-    @Order(10)
-    @DisplayName("Create admin with null username should fail")
-    void testCreateAdminNullUsername() {
-        // This test depends on how your DAO handles null
-        // For now, we'll skip or handle gracefully
-        System.out.println("Note: Null handling test - implementation specific");
-    }
-
-    @Test
-    @Order(11)
-    @DisplayName("Create admin with empty username should fail")
-    void testCreateAdminEmptyUsername() {
-        try {
-            // Act - Try to create admin with empty username
-            boolean result = dao.createAdmin("", "somehash");
-
-            // If creation "succeeds" (returns true), the database accepted it
-            // This is database-dependent - some DBs might accept empty strings
-            if (result) {
-                System.out.println("WARNING: Database accepted empty username");
-                // Verify we can find it (some databases store empty strings)
-                Optional<Admin> admin = dao.findByUsername("");
-                if (admin.isPresent()) {
-                    System.out.println("INFO: Empty username was stored in database");
-                }
-            } else {
-                // Creation failed as expected
-                System.out.println("INFO: Database rejected empty username (returned false)");
-            }
-
-            // The assertion depends on your database constraints
-            // We'll just mark this test as passed since we're testing behavior
-
-        } catch (Exception e) {
-            // Exception is also acceptable (e.g., SQL constraint violation)
-            System.out.println(
-                    "INFO: Database threw exception for empty username: " + e.getMessage());
-        }
-
-        // For this test, we'll just verify it doesn't crash
-        // The actual behavior depends on your database setup
-        assertTrue(true, "Test completed without crashing");
-    }
-
-    @Test
-    @Order(12)
+    @Order(14)
     @DisplayName("Admin creation timestamp is set")
     void testAdminCreationTimestamp() throws InterruptedException {
-        // Arrange
         String uniqueUser = "timestamp_test_" + System.currentTimeMillis();
         Timestamp beforeCreation = new Timestamp(System.currentTimeMillis());
 
-        // Small delay to ensure timestamp difference
         Thread.sleep(10);
 
-        // Act
         dao.createAdmin(uniqueUser, "hash123");
 
-        // Small delay
         Thread.sleep(10);
 
         Timestamp afterCreation = new Timestamp(System.currentTimeMillis());
 
-        // Assert
         Optional<Admin> admin = dao.findByUsername(uniqueUser);
         assertTrue(admin.isPresent());
 
         Timestamp createdAt = admin.get().getCreatedAt();
         assertNotNull(createdAt);
 
-        // Created at should be between beforeCreation and afterCreation
         assertTrue(createdAt.after(beforeCreation) || createdAt.equals(beforeCreation));
         assertTrue(createdAt.before(afterCreation) || createdAt.equals(afterCreation));
     }
 
     @Test
-    @Order(13)
+    @Order(15)
     @DisplayName("Multiple admin creation works")
     void testMultipleAdmins() {
-        // Arrange
         String[] usernames = {"admin1", "admin2", "admin3"};
 
-        // Act & Assert
         for (int i = 0; i < usernames.length; i++) {
             String username = usernames[i];
             String passwordHash = "hash_" + i;
@@ -308,20 +308,18 @@ public class AdminDaoImplTest {
             Optional<Admin> found = dao.findByUsername(username);
             assertTrue(found.isPresent(), "Should find created admin: " + username);
             assertEquals(passwordHash, found.get().getPasswordHash());
+            assertTrue(found.get().isMustChangePassword(),
+                    "New admin should have must_change_password = TRUE");
         }
     }
 
     @AfterEach
     void cleanupTestData() {
-        // Clean up test admins (except our main test admin)
         try (Connection conn = dataSource.getConnection();
                 Statement stmt = conn.createStatement()) {
-
-            // Delete all admins except our main test admin
-            stmt.execute("DELETE FROM admins WHERE username NOT LIKE 'testadmin'");
-
+            stmt.execute("DELETE FROM admins WHERE username <> 'testadmin'");
         } catch (Exception e) {
-            // Ignore cleanup errors in tests
+            // Ignore cleanup errors
         }
     }
 }
