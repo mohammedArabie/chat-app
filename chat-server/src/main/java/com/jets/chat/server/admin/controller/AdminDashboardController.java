@@ -15,9 +15,12 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class AdminDashboardController {
-    @FXML private Label serverStatus, serverStatusLabel, adminInfo;
-    @FXML private Button serverControlBtn, statsBtn, userMgmtBtn, addAdminBtn, pwdBtn, announceBtn;
-    @FXML private StackPane contentArea;
+    @FXML
+    private Label serverStatus, serverStatusLabel, adminInfo;
+    @FXML
+    private Button serverControlBtn, statsBtn, userMgmtBtn, addAdminBtn, pwdBtn, announceBtn;
+    @FXML
+    private StackPane contentArea;
 
     private ServerManager serverManager;
     private Admin currentAdmin;
@@ -55,7 +58,8 @@ public class AdminDashboardController {
         }
     }
 
-    @FXML private void toggleServer() {
+    @FXML
+    private void toggleServer() {
         try {
             if (serverManager.isServerRunning()) {
                 serverManager.stopServer();
@@ -69,11 +73,26 @@ public class AdminDashboardController {
         }
     }
 
-    @FXML private void showStatistics() { loadView("/view/statistics-view.fxml", statsBtn); }
-    @FXML private void showUserManagement() { loadView("/view/user-management.fxml", userMgmtBtn); }
-    @FXML private void showAddAdmin() { loadView("/view/add-admin.fxml", addAdminBtn); }
-    @FXML private void showChangePassword() { loadView("/view/change-password.fxml", pwdBtn); }
-    @FXML private void showAnnouncement() { loadView("/view/announcement-view.fxml", announceBtn); }
+    @FXML
+    private void showStatistics() {
+        loadView("/view/statistics-view.fxml", statsBtn);
+    }
+    @FXML
+    private void showUserManagement() {
+        loadView("/view/user-management.fxml", userMgmtBtn);
+    }
+    @FXML
+    private void showAddAdmin() {
+        loadView("/view/add-admin.fxml", addAdminBtn);
+    }
+    @FXML
+    private void showChangePassword() {
+        loadView("/view/change-password.fxml", pwdBtn);
+    }
+    @FXML
+    private void showAnnouncement() {
+        loadView("/view/announcement-view.fxml", announceBtn);
+    }
 
     @FXML
     private void handleLogout() {
@@ -102,11 +121,16 @@ public class AdminDashboardController {
             Node view = loader.load();
             Object controller = loader.getController();
 
-            if (controller instanceof StatisticsController c) c.init(serverManager);
-            else if (controller instanceof UserManagementController c) c.init(serverManager);
-            else if (controller instanceof AddAdminController c) c.init(serverManager, currentAdmin);
-            else if (controller instanceof ChangePasswordController c) c.init(serverManager, currentAdmin);
-            else if (controller instanceof AnnouncementController c) c.init(serverManager);
+            if (controller instanceof StatisticsController c)
+                c.init(serverManager);
+            else if (controller instanceof UserManagementController c)
+                c.init(serverManager);
+            else if (controller instanceof AddAdminController c)
+                c.init(serverManager, currentAdmin);
+            else if (controller instanceof ChangePasswordController c)
+                c.init(serverManager, currentAdmin);
+            else if (controller instanceof AnnouncementController c)
+                c.init(serverManager);
 
             contentArea.getChildren().setAll(view);
         } catch (IOException e) {

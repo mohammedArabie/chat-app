@@ -31,6 +31,7 @@ public class AdminDaoImpl implements AdminDao {
                 admin.setPasswordHash(rs.getString("password_hash")); // HASHED
                 admin.setCreatedAt(rs.getTimestamp("created_at"));
                 admin.setLastLogin(rs.getTimestamp("last_login"));
+                admin.setMustChangePassword(rs.getBoolean("must_change_password"));
                 return Optional.of(admin);
             }
         } catch (SQLException e) {
@@ -117,7 +118,7 @@ public class AdminDaoImpl implements AdminDao {
     public boolean updateMustChangePassword(Long adminId, boolean mustChangePassword) {
         String sql = "UPDATE admins SET must_change_password = ? WHERE admin_id = ?";
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setBoolean(1, mustChangePassword);
             stmt.setLong(2, adminId);
             return stmt.executeUpdate() > 0;

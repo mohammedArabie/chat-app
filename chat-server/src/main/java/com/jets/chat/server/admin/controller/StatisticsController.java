@@ -32,7 +32,6 @@ public class StatisticsController {
     private boolean isInitialized = false;
     private boolean isFirstLoad = true;
 
-
     @FXML
     public void initialize() {
 
@@ -52,7 +51,6 @@ public class StatisticsController {
             xAxis.setTickLabelRotation(0);
             xAxis.setTickLabelGap(10);
 
-
             var series = new XYChart.Series<String, Number>();
             series.setName("Loading...");
             series.getData().add(new XYChart.Data<>("Please wait", 100));
@@ -60,12 +58,18 @@ public class StatisticsController {
         }
 
         // 初始化标签
-        if (onlineCount != null) onlineCount.setText("0");
-        if (offlineCount != null) offlineCount.setText("0");
-        if (totalCount != null) totalCount.setText("0");
-        if (messageCount != null) messageCount.setText("0");
-        if (chatCount != null) chatCount.setText("0");
-        if (lastUpdated != null) lastUpdated.setText("Last updated: --:--:--");
+        if (onlineCount != null)
+            onlineCount.setText("0");
+        if (offlineCount != null)
+            offlineCount.setText("0");
+        if (totalCount != null)
+            totalCount.setText("0");
+        if (messageCount != null)
+            messageCount.setText("0");
+        if (chatCount != null)
+            chatCount.setText("0");
+        if (lastUpdated != null)
+            lastUpdated.setText("Last updated: --:--:--");
 
         isInitialized = true;
     }
@@ -84,8 +88,8 @@ public class StatisticsController {
 
         Platform.runLater(() -> {
 
-            javafx.animation.PauseTransition initialDelay =
-                    new javafx.animation.PauseTransition(javafx.util.Duration.millis(100));
+            javafx.animation.PauseTransition initialDelay = new javafx.animation.PauseTransition(
+                    javafx.util.Duration.millis(100));
             initialDelay.setOnFinished(e -> refreshStatistics());
             initialDelay.play();
         });
@@ -98,7 +102,6 @@ public class StatisticsController {
             return;
         }
 
-
         Platform.runLater(() -> {
 
             animateLabelUpdate(onlineCount, "...");
@@ -106,7 +109,6 @@ public class StatisticsController {
             animateLabelUpdate(totalCount, "...");
             animateLabelUpdate(messageCount, "...");
             animateLabelUpdate(chatCount, "...");
-
 
             if (!isFirstLoad) {
 
@@ -122,7 +124,6 @@ public class StatisticsController {
             }
         });
 
-
         Thread loadThread = new Thread(() -> {
             try {
 
@@ -133,7 +134,6 @@ public class StatisticsController {
                 long chats = statsService.getTotalChats();
                 Map<String, Long> genderStats = statsService.getUserGenderStatistics();
                 Map<String, Long> countryStats = statsService.getUserCountryStatistics();
-
 
                 Platform.runLater(() -> {
                     try {
@@ -147,9 +147,7 @@ public class StatisticsController {
                         updateGenderChart(genderStats);
                         updateCountryChart(countryStats);
 
-
                         lastUpdated.setText("Last updated: " + timeFormat.format(new Date()));
-
 
                         isFirstLoad = false;
 
@@ -169,10 +167,9 @@ public class StatisticsController {
         loadThread.start();
     }
 
-
     private void animateLabelUpdate(Label label, String newValue) {
-        if (label == null) return;
-
+        if (label == null)
+            return;
 
         javafx.animation.ScaleTransition scaleOut = new javafx.animation.ScaleTransition(
                 javafx.util.Duration.millis(150), label);
@@ -188,7 +185,6 @@ public class StatisticsController {
         scaleIn.setToX(1.0);
         scaleIn.setToY(1.0);
 
-
         javafx.animation.FadeTransition fadeOut = new javafx.animation.FadeTransition(
                 javafx.util.Duration.millis(100), label);
         fadeOut.setFromValue(1.0);
@@ -198,7 +194,6 @@ public class StatisticsController {
                 javafx.util.Duration.millis(100), label);
         fadeIn.setFromValue(0.3);
         fadeIn.setToValue(1.0);
-
 
         scaleOut.setOnFinished(e1 -> {
             fadeOut.play();
@@ -213,10 +208,9 @@ public class StatisticsController {
         scaleOut.play();
     }
 
-
     private void updateGenderChart(Map<String, Long> genderStats) {
-        if (genderChart == null || genderStats == null) return;
-
+        if (genderChart == null || genderStats == null)
+            return;
 
         genderChart.setAnimated(true);
         genderChart.setTitle("Gender Distribution");
@@ -229,7 +223,6 @@ public class StatisticsController {
             return;
         }
 
-
         genderChart.getData().clear();
 
         genderStats.forEach((gender, count) -> {
@@ -237,29 +230,22 @@ public class StatisticsController {
             if (gender == null || gender.trim().isEmpty()) {
                 label = "Not Specified";
             } else {
-                label = gender.substring(0, 1).toUpperCase() +
-                        gender.substring(1).toLowerCase();
+                label = gender.substring(0, 1).toUpperCase() + gender.substring(1).toLowerCase();
             }
 
-            PieChart.Data slice = new PieChart.Data(
-                    String.format("%s (%d)", label, count),
-                    count
-            );
+            PieChart.Data slice = new PieChart.Data(String.format("%s (%d)", label, count), count);
             genderChart.getData().add(slice);
         });
-
 
         genderChart.layout();
     }
 
-
     private void updateCountryChart(Map<String, Long> countryStats) {
-        if (countryChart == null || countryStats == null) return;
-
+        if (countryChart == null || countryStats == null)
+            return;
 
         countryChart.setAnimated(true);
         countryChart.setTitle("Top Countries");
-
 
         CategoryAxis xAxis = (CategoryAxis) countryChart.getXAxis();
         xAxis.setTickLabelRotation(0);
@@ -278,32 +264,31 @@ public class StatisticsController {
 
             countryChart.getData().clear();
 
-
             countryStats.entrySet().stream()
                     .filter(e -> e.getKey() != null && !e.getKey().trim().isEmpty())
                     .sorted(Map.Entry.<String, Long>comparingByValue(Comparator.reverseOrder()))
-                    .limit(5)
-                    .forEach(entry -> {
-                        series.getData().add(
-                                new XYChart.Data<>(entry.getKey(), entry.getValue())
-                        );
+                    .limit(5).forEach(entry -> {
+                        series.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
                     });
 
             countryChart.getData().add(series);
         }
 
-
         countryChart.getYAxis().setAutoRanging(true);
         countryChart.layout();
     }
 
-
     private void showErrorState() {
-        if (onlineCount != null) onlineCount.setText("Error");
-        if (offlineCount != null) offlineCount.setText("Error");
-        if (totalCount != null) totalCount.setText("Error");
-        if (messageCount != null) messageCount.setText("Error");
-        if (chatCount != null) chatCount.setText("Error");
+        if (onlineCount != null)
+            onlineCount.setText("Error");
+        if (offlineCount != null)
+            offlineCount.setText("Error");
+        if (totalCount != null)
+            totalCount.setText("Error");
+        if (messageCount != null)
+            messageCount.setText("Error");
+        if (chatCount != null)
+            chatCount.setText("Error");
 
         if (genderChart != null) {
             genderChart.getData().clear();
