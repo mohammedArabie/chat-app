@@ -8,6 +8,7 @@ public class Admin {
     private String passwordHash; // SHA-256 hash (64 hex chars)
     private Timestamp createdAt;
     private Timestamp lastLogin;
+    private boolean mustChangePassword;
 
     // Getters & Setters
     public Long getAdminId() {
@@ -43,5 +44,13 @@ public class Admin {
     }
     public void setLastLogin(Timestamp lastLogin) {
         this.lastLogin = lastLogin;
+    }
+
+    public boolean isMustChangePassword() {
+        return mustChangePassword;
+    }
+
+    public void setMustChangePassword(boolean mustChangePassword) {
+        this.mustChangePassword = mustChangePassword;
     }
 }

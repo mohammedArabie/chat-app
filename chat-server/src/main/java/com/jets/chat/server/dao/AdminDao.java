@@ -10,4 +10,5 @@ public interface AdminDao {
     boolean updateLastLogin(Long adminId);
     String generateRandomPassword(int length);
     Optional<Admin> findById(Long adminId);
+    public boolean updateMustChangePassword(Long adminId, boolean mustChangePassword);
 }

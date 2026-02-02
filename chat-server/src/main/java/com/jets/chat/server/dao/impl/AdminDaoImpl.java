@@ -52,6 +52,7 @@ public class AdminDaoImpl implements AdminDao {
                 admin.setPasswordHash(rs.getString("password_hash"));
                 admin.setCreatedAt(rs.getTimestamp("created_at"));
                 admin.setLastLogin(rs.getTimestamp("last_login"));
+                admin.setMustChangePassword(rs.getBoolean("must_change_password"));
                 return Optional.of(admin);
             }
         } catch (SQLException e) {
@@ -62,7 +63,7 @@ public class AdminDaoImpl implements AdminDao {
 
     @Override
     public boolean createAdmin(String username, String passwordHash) { // HASHED
-        String sql = "INSERT INTO admins (username, password_hash) VALUES (?, ?)";
+        String sql = "INSERT INTO admins (username, password_hash, must_change_password) VALUES (?, ?, TRUE)";
         try (Connection conn = dataSource.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, username);
@@ -110,5 +111,19 @@ public class AdminDaoImpl implements AdminDao {
             password.append(chars.charAt(random.nextInt(chars.length())));
         }
         return password.toString();
+    }
+    // ADD THIS METHOD to AdminDaoImpl:
+    @Override
+    public boolean updateMustChangePassword(Long adminId, boolean mustChangePassword) {
+        String sql = "UPDATE admins SET must_change_password = ? WHERE admin_id = ?";
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setBoolean(1, mustChangePassword);
+            stmt.setLong(2, adminId);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

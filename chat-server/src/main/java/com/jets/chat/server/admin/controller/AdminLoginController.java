@@ -14,23 +14,15 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.rmi.RemoteException;
 
-/**
- * Admin login screen controller Handles authentication and navigation to
- * dashboard
- */
 public class AdminLoginController {
-    @FXML
-    private TextField usernameField;
-    @FXML
-    private PasswordField passwordField;
-    @FXML
-    private Label errorLabel;
+    @FXML private TextField usernameField;
+    @FXML private PasswordField passwordField;
+    @FXML private Label errorLabel;
 
     private ServerManager serverManager;
 
     public AdminLoginController() {
         try {
-            // Get singleton instance - will fail if server not started
             this.serverManager = ServerManager.getInstance();
         } catch (RemoteException e) {
             showError("Server unavailable. Please ensure the chat server is running.");
@@ -43,42 +35,61 @@ public class AdminLoginController {
         String username = usernameField.getText().trim();
         String password = passwordField.getText();
 
-        // Validation
         if (username.isEmpty()) {
             showError("Username cannot be empty");
             return;
         }
-
         if (password.isEmpty()) {
             showError("Password cannot be empty");
             return;
         }
 
-        // Authenticate using SHA-256 hashing
         var adminOpt = serverManager.getAdminService().authenticate(username, password);
 
         if (adminOpt.isPresent()) {
-            // Successful login - load dashboard
-            loadDashboard(adminOpt.get());
+            Admin admin = adminOpt.get();
+
+            // ✅ CRITICAL: Pass firstLogin flag to dashboard
+            boolean mustChange = serverManager.getAdminService().mustChangePassword(admin.getAdminId());
+
+            if (mustChange) {
+                loadMustChangePassword(admin); // New Gatekeeper Screen
+            } else {
+                loadDashboard(admin, false); // Normal Flow
+            }
+
         } else {
-            // Failed login
             showError("Invalid username or password");
-            passwordField.clear(); // Clear password field for security
+            passwordField.clear();
+        }
+    }
+    private void loadMustChangePassword(Admin admin) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/must-change-password.fxml"));
+            Parent root = loader.load();
+
+            MustChangePasswordController controller = loader.getController();
+            controller.init(serverManager, admin);
+
+            Stage stage = (Stage) usernameField.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.centerOnScreen();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
-    private void loadDashboard(Admin admin) {
+    // ✅ UPDATED: Accepts firstLogin flag
+    private void loadDashboard(Admin admin, boolean firstLogin) {
         try {
-            // Load dashboard FXML
             FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/view/admin-dashboard.fxml"));
+                    getClass().getResource("/view/admin-dashboard.fxml")
+            );
             Parent root = loader.load();
 
-            // Initialize dashboard controller with dependencies
             AdminDashboardController dashboardController = loader.getController();
-            dashboardController.init(serverManager, admin);
+            dashboardController.init(serverManager, admin, firstLogin); // ← PASS FLAG
 
-            // Switch scene
             Stage stage = (Stage) usernameField.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setTitle("Chat Server Admin Dashboard - " + admin.getUsername());
@@ -87,7 +98,6 @@ public class AdminLoginController {
             stage.centerOnScreen();
             stage.show();
 
-            // Clear credentials from memory
             usernameField.clear();
             passwordField.clear();
 
@@ -101,15 +111,9 @@ public class AdminLoginController {
         errorLabel.setText(message);
         errorLabel.setVisible(true);
 
-        // Auto-hide after 5 seconds
-        errorLabel.getScene().getRoot().getScene().getWindow().getScene().getRoot().requestFocus(); // Ensure
-                                                                                                    // focus
-                                                                                                    // for
-                                                                                                    // auto-hide
-                                                                                                    // timer
-
         javafx.animation.PauseTransition pause = new javafx.animation.PauseTransition(
-                javafx.util.Duration.seconds(5));
+                javafx.util.Duration.seconds(5)
+        );
         pause.setOnFinished(event -> errorLabel.setVisible(false));
         pause.play();
     }

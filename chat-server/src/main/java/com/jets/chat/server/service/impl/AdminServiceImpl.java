@@ -56,7 +56,20 @@ public class AdminServiceImpl implements AdminService {
 
         // 3. Update with new password hash
         String newPasswordHash = PasswordUtil.hash(newPassword);
-        return adminDao.updatePassword(adminId, newPasswordHash);
+        boolean updated = adminDao.updatePassword(adminId, newPasswordHash);
+
+        if (updated) {
+            adminDao.updateMustChangePassword(adminId, false);
+        }
+
+        return updated;
+    }
+
+    // ADD THIS METHOD:
+    @Override
+    public boolean mustChangePassword(Long adminId) {
+        Optional<Admin> adminOpt = adminDao.findById(adminId);
+        return adminOpt.isPresent() && adminOpt.get().isMustChangePassword();
     }
 
     @Override
