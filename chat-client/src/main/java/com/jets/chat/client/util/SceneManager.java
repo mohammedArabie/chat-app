@@ -97,4 +97,8 @@ public class SceneManager {
         fadeOut.setOnFinished(e -> fadeIn.play());
         fadeOut.play();
     }
+
+    public Stage getPrimaryStage() {
+        return primaryStage;
+    }
 }

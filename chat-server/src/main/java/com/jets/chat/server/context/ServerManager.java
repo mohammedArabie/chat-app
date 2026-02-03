@@ -2,23 +2,27 @@ package com.jets.chat.server.context;
 
 import com.jets.chat.common.callback.ClientCallback;
 import com.jets.chat.common.rmi.RemoteAnnouncementService;
-import com.jets.chat.common.rmi.RemoteUserService;
 import com.jets.chat.common.rmi.RemoteChatService;
+import com.jets.chat.common.rmi.RemoteUserService;
 import com.jets.chat.server.config.DataSourceConfig;
-import com.jets.chat.server.dao.*;
-import com.jets.chat.server.dao.impl.*;
-import com.jets.chat.server.service.*;
-import com.jets.chat.server.service.impl.*;
+import com.jets.chat.server.dao.AdminDao;
 import com.jets.chat.server.dao.AnnouncementDao;
+import com.jets.chat.server.dao.StatisticsDao;
 import com.jets.chat.server.dao.UserDao;
+import com.jets.chat.server.dao.impl.AdminDaoImpl;
 import com.jets.chat.server.dao.impl.AnnouncementDaoImpl;
+import com.jets.chat.server.dao.impl.StatisticsDaoImpl;
 import com.jets.chat.server.dao.impl.UserDaoImpl;
 import com.jets.chat.server.rmi.RemoteAnnouncementServiceImpl;
 import com.jets.chat.server.rmi.RemoteChatServiceImpl;
 import com.jets.chat.server.rmi.RemoteUserServiceImpl;
+import com.jets.chat.server.service.AdminService;
 import com.jets.chat.server.service.AnnouncementService;
+import com.jets.chat.server.service.ServerStatisticsService;
 import com.jets.chat.server.service.UserService;
+import com.jets.chat.server.service.impl.AdminServiceImpl;
 import com.jets.chat.server.service.impl.AnnouncementServiceImpl;
+import com.jets.chat.server.service.impl.ServerStatisticsServiceImpl;
 import com.jets.chat.server.service.impl.UserServiceImpl;
 import com.zaxxer.hikari.HikariDataSource;
 
@@ -36,6 +40,8 @@ public class ServerManager {
     private final AdminService adminService;
     private final ServerStatisticsService statisticsService;
     private final UserService userService;
+    private final RemoteAnnouncementService remoteAnnouncementService;
+    private final RemoteUserService remoteUserService;
     private final Map<Long, ClientCallback> onlineClients = new ConcurrentHashMap<>();
     private final RemoteChatService remoteChatService;
     private final RmiServiceManager rmiServiceManager;
@@ -53,8 +59,6 @@ public class ServerManager {
         this.remoteUserService = new RemoteUserServiceImpl(userService);
         this.adminService = new AdminServiceImpl(adminDao);
         this.statisticsService = new ServerStatisticsServiceImpl(statisticsDao);
-        this.userService = new UserServiceImpl(userDao);
-
         this.rmiServiceManager = new RmiServiceManager(this); // Inject self for delegation
     }
 
@@ -82,6 +86,14 @@ public class ServerManager {
         rmiServiceManager.stopServices();
     }
 
+    public RemoteAnnouncementService getRemoteAnnouncementService() {
+        return remoteAnnouncementService;
+    }
+
+    public RmiServiceManager getRmiServiceManager() {
+        return rmiServiceManager;
+    }
+
     public boolean isServerRunning() {
         return rmiServiceManager.isRunning();
     }
@@ -90,26 +102,24 @@ public class ServerManager {
         return onlineClients;
     }
 
-    // Service getters (unchanged)
     public AnnouncementService getAnnouncementService() {
         return announcementService;
     }
+
     public AdminService getAdminService() {
         return adminService;
     }
+
     public ServerStatisticsService getStatisticsService() {
         return statisticsService;
     }
+
     public UserService getUserService() {
         return userService;
     }
 
     public RemoteUserService getRemoteUserService() {
         return remoteUserService;
-    }
-
-    public Map<Long, ClientCallback> getOnlineClients() {
-        return onlineClients;
     }
 
     public RemoteChatService getRemoteChatService() {
