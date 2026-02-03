@@ -57,7 +57,8 @@ public class LoginController {
         Platform.runLater(() -> {
             try {
                 Stage stage = (Stage) emailField.getScene().getWindow();
-                clientCallback = new ClientCallbackImpl(stage);
+                clientCallback = new ClientCallbackImpl(
+                        ClientManager.getInstance().getChatViewModel());
                 System.out.println("ClientCallback initialized");
 
                 // Now that callback is ready, check for auto-login

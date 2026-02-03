@@ -39,6 +39,17 @@ public class ClientManager {
         }
     }
 
+    public static ClientManager getInstance() {
+        if (instance == null) {
+            synchronized (ClientManager.class) {
+                if (instance == null) {
+                    instance = new ClientManager();
+                }
+            }
+        }
+        return instance;
+    }
+
     public RemoteAnnouncementService getRemoteAnnouncementService() {
         return remoteAnnouncementService;
     }
