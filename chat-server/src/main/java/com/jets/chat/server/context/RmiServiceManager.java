@@ -11,10 +11,8 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-/**
- * SINGLE RESPONSIBILITY: Manages RMI lifecycle ONLY (bind/unbind/export) NO
- * business logic — delegates to ServerManager for service operations
- */
+// Manages RMI lifecycle ONLY (bind/unbind/export)
+
 public class RmiServiceManager {
     private final ServerManager serverManager; // Delegates business logic
     private Registry registry;
@@ -40,7 +38,7 @@ public class RmiServiceManager {
             } catch (Exception e) {
                 registry = LocateRegistry.createRegistry(ProjectConstants.RMI_SERVICE_PORT);
                 System.out.println(
-                        "✓ Created RMI registry on port " + ProjectConstants.RMI_SERVICE_PORT);
+                        "Created RMI registry on port " + ProjectConstants.RMI_SERVICE_PORT);
             }
 
             // Create and export Announcement Service (check if already exported)
@@ -56,7 +54,7 @@ public class RmiServiceManager {
             } catch (Exception e) {
                 // Not exported yet, so export it
                 UnicastRemoteObject.exportObject(announcementImpl, 0);
-                System.out.println("✓ Exported Announcement service");
+                System.out.println("Exported Announcement service");
             }
 
             registry.rebind(ProjectConstants.ANNOUNCEMENT_SERVICE, announcementImpl);
@@ -74,21 +72,21 @@ public class RmiServiceManager {
             } catch (Exception e) {
                 // Not exported yet, so export it
                 UnicastRemoteObject.exportObject(userImpl, 0);
-                System.out.println("✓ Exported User service");
+                System.out.println("Exported User service");
             }
 
             registry.rebind(ProjectConstants.USER_SERVICE, userImpl);
-            System.out.println("✓ Bound " + ProjectConstants.USER_SERVICE);
+            System.out.println("Bound " + ProjectConstants.USER_SERVICE);
 
             isRunning.set(true);
-            System.out.println("✓ RMI services started successfully");
+            System.out.println("RMI services started successfully");
 
         } catch (RemoteException e) {
-            System.err.println("✗ Failed to start RMI services: " + e.getMessage());
+            System.err.println("Failed to start RMI services: " + e.getMessage());
             cleanup();
             throw e;
         } catch (Exception e) {
-            System.err.println("✗ Unexpected error starting RMI services: " + e.getMessage());
+            System.err.println("Unexpected error starting RMI services: " + e.getMessage());
             cleanup();
             throw new RemoteException("Failed to start RMI services", e);
         }
@@ -103,7 +101,7 @@ public class RmiServiceManager {
         try {
             System.out.println("Shutting down RMI services...");
 
-            // CRITICAL: Clear callbacks BEFORE unbinding (prevents broadcast to dead
+            // Clear callbacks BEFORE unbinding (prevents broadcast to dead
             // clients)
             serverManager.getUserService().clearOnlineUsers();
 
@@ -111,16 +109,15 @@ public class RmiServiceManager {
             if (registry != null) {
                 try {
                     registry.unbind(ProjectConstants.ANNOUNCEMENT_SERVICE);
-                    System.out.println("✓ Unbound " + ProjectConstants.ANNOUNCEMENT_SERVICE);
+                    System.out.println("Unbound " + ProjectConstants.ANNOUNCEMENT_SERVICE);
                 } catch (Exception e) {
-                    System.err
-                            .println("✗ Failed to unbind announcement service: " + e.getMessage());
+                    System.err.println("Failed to unbind announcement service: " + e.getMessage());
                 }
                 try {
                     registry.unbind(ProjectConstants.USER_SERVICE);
-                    System.out.println("✓ Unbound " + ProjectConstants.USER_SERVICE);
+                    System.out.println("Unbound " + ProjectConstants.USER_SERVICE);
                 } catch (Exception e) {
-                    System.err.println("✗ Failed to unbind user service: " + e.getMessage());
+                    System.err.println("Failed to unbind user service: " + e.getMessage());
                 }
             }
 
@@ -128,11 +125,11 @@ public class RmiServiceManager {
             if (announcementImpl != null) {
                 try {
                     if (UnicastRemoteObject.unexportObject(announcementImpl, true)) {
-                        System.out.println("✓ Unexported Announcement service");
+                        System.out.println("Unexported Announcement service");
                     }
                 } catch (Exception e) {
-                    System.err.println(
-                            "✗ Failed to unexport announcement service: " + e.getMessage());
+                    System.err
+                            .println("Failed to unexport announcement service: " + e.getMessage());
                 }
                 announcementImpl = null;
             }
@@ -140,19 +137,19 @@ public class RmiServiceManager {
             if (userImpl != null) {
                 try {
                     if (UnicastRemoteObject.unexportObject(userImpl, true)) {
-                        System.out.println("✓ Unexported User service");
+                        System.out.println("Unexported User service");
                     }
                 } catch (Exception e) {
-                    System.err.println("✗ Failed to unexport user service: " + e.getMessage());
+                    System.err.println("Failed to unexport user service: " + e.getMessage());
                 }
                 userImpl = null;
             }
 
             isRunning.set(false);
-            System.out.println("✓ RMI services stopped successfully");
+            System.out.println("RMI services stopped successfully");
 
         } catch (Exception e) {
-            System.err.println("✗ Error during RMI shutdown: " + e.getMessage());
+            System.err.println("Error during RMI shutdown: " + e.getMessage());
             cleanup();
         }
     }

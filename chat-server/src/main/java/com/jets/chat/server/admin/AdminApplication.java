@@ -22,7 +22,7 @@ public class AdminApplication extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        // Load login UI FIRST (don't auto-start server yet)
+        // Load login UI FIRST
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/admin-login.fxml"));
         Scene scene = new Scene(loader.load());
         scene.getStylesheets()

@@ -28,7 +28,6 @@ public class MustChangePasswordController {
         this.currentAdmin = admin;
     }
 
-    // Matches onAction="#changePassword" in your FXML
     @FXML
     private void changePassword() {
         String current = currentPasswordField.getText();
@@ -55,7 +54,6 @@ public class MustChangePasswordController {
         }
     }
 
-    // Matches onAction="#handleCancel" in your FXML
     @FXML
     private void handleCancel() {
         currentPasswordField.clear();

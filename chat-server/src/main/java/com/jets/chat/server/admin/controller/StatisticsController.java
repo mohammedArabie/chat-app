@@ -57,7 +57,6 @@ public class StatisticsController {
             countryChart.getData().add(series);
         }
 
-        // 初始化标签
         if (onlineCount != null)
             onlineCount.setText("0");
         if (offlineCount != null)
@@ -216,7 +215,6 @@ public class StatisticsController {
         genderChart.setTitle("Gender Distribution");
 
         if (genderStats.isEmpty()) {
-            // 如果没有数据，显示占位符
             genderChart.getData().clear();
             PieChart.Data noData = new PieChart.Data("No Data Available", 1);
             genderChart.getData().add(noData);
