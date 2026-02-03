@@ -46,7 +46,7 @@ public class AdminLoginController {
         if (adminOpt.isPresent()) {
             Admin admin = adminOpt.get();
 
-            // ✅ CRITICAL: Pass firstLogin flag to dashboard
+            // Pass firstLogin flag to dashboard
             boolean mustChange = serverManager.getAdminService()
                     .mustChangePassword(admin.getAdminId());
 
@@ -78,7 +78,7 @@ public class AdminLoginController {
         }
     }
 
-    // ✅ UPDATED: Accepts firstLogin flag
+    // Accepts firstLogin flag
     private void loadDashboard(Admin admin, boolean firstLogin) {
         try {
             FXMLLoader loader = new FXMLLoader(

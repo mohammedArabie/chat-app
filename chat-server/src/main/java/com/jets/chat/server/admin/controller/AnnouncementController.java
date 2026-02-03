@@ -68,7 +68,6 @@ public class AnnouncementController {
             return;
         }
 
-        // CONVERT HUMAN NAME → HEX FOR STYLING
         String hexColor = colorMap.get(colorCombo.getValue());
         previewText.setText(text);
         previewText.setStyle(String.format(
@@ -94,7 +93,7 @@ public class AnnouncementController {
             dto.setBold(boldCheck.isSelected());
             dto.setItalic(italicCheck.isSelected());
 
-            // This will save to DB AND broadcast to online users
+            // save to DB AND broadcast to online users
             serverManager.getAnnouncementService().createAnnouncement(dto);
 
             // Show success message

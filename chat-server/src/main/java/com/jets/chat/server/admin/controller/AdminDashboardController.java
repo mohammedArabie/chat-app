@@ -126,7 +126,6 @@ public class AdminDashboardController {
         activeButton.getStyleClass().add("selected");
 
         try {
-            // Load the FXML
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Node view = loader.load();
 

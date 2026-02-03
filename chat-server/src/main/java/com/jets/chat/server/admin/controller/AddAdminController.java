@@ -48,7 +48,7 @@ public class AddAdminController {
 
         if (serverManager.getAdminService().createAdmin(username, password)) {
             String message = String.format(
-                    "✓ Admin '%s' created successfully!\nTemporary password: %s\nAdmin should change password after first login.",
+                    "Admin '%s' created successfully!\nTemporary password: %s\nAdmin should change password after first login.",
                     username, password);
             showStatus(message, true);
             usernameField.clear();
