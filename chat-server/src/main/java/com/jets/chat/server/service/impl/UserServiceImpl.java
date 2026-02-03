@@ -22,15 +22,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Base64;
+import java.util.Map; // ✅ KEEP THIS IMPORT
 import java.util.Optional;
 import java.util.UUID;
 
 public class UserServiceImpl implements UserService {
-
     private final UserDao userDao;
 
     public UserServiceImpl(UserDao userDao) {
-
         this.userDao = userDao;
     }
 
@@ -218,7 +217,6 @@ public class UserServiceImpl implements UserService {
         }
 
         User user = userOpt.get();
-
         String incomingHash = PasswordUtil.hash(password);
         if (!user.getPasswordHash().equals(incomingHash)) {
             return new LoginResult("Invalid credentials");
@@ -226,7 +224,6 @@ public class UserServiceImpl implements UserService {
 
         String sessionId = UUID.randomUUID().toString();
         boolean sessionCreated = userDao.createSession(sessionId, user.getUserId());
-
         if (!sessionCreated) {
             return new LoginResult("Server error: Could not create session");
         }
@@ -235,9 +232,7 @@ public class UserServiceImpl implements UserService {
         ServerManager.getInstance().getOnlineClients().put(user.getUserId(), callback);
 
         System.out.println("User logged in: " + user.getDisplayName());
-
         UserDTO dto = DtoMapper.toUserDTO(user);
-
         return new LoginResult(dto, sessionId);
     }
 
@@ -249,20 +244,17 @@ public class UserServiceImpl implements UserService {
         }
 
         Optional<User> userOpt = userDao.findById(userId);
-
         if (userOpt.isPresent()) {
             User user = userOpt.get();
+
             ServerManager.getInstance().getOnlineClients().put(userId, callback);
 
             userDao.updateStatus(userId, UserStatus.AVAILABLE);
-
             System.out.println("User reconnected: " + user.getDisplayName());
-
             UserDTO dto = DtoMapper.toUserDTO(user);
             dto.setStatus(UserStatus.AVAILABLE);
             return dto;
         }
-
         return null;
     }
 
@@ -271,5 +263,13 @@ public class UserServiceImpl implements UserService {
         ServerManager.getInstance().getOnlineClients().remove(userId);
         userDao.deleteSession(sessionId);
         userDao.updateStatus(userId, UserStatus.OFFLINE);
+    }
+
+    @Override
+    public void clearOnlineUsers() {
+        Map<Long, ClientCallback> onlineClients = ServerManager.getInstance().getOnlineClients();
+        int count = onlineClients.size();
+        onlineClients.clear();
+        System.out.println("✓ Cleared " + count + " online user sessions");
     }
 }

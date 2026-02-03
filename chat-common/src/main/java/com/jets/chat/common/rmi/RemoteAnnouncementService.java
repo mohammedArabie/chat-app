@@ -10,4 +10,8 @@ public interface RemoteAnnouncementService extends Remote {
     List<AnnouncementDTO> getAllAnnouncements() throws RemoteException;
 
     List<AnnouncementDTO> getLatestAnnouncements(int fetchSize) throws RemoteException;
+
+    AnnouncementDTO createAnnouncement(AnnouncementDTO announcementDTO) throws RemoteException;;
+
+    int getActiveCallbackCount() throws RemoteException;
 }
