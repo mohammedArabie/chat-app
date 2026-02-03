@@ -13,7 +13,7 @@ public class UserDTO implements Serializable {
     private String phoneNumber;
 
     public UserDTO(long id, String displayName, UserStatus status, String email,
-                   String phoneNumber) {
+            String phoneNumber) {
         this.id = id;
         this.displayName = displayName;
         this.status = status;

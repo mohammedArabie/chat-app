@@ -1,6 +1,7 @@
 package com.jets.chat.client.ui.viewmodel;
 
 import com.jets.chat.client.util.ClientManager;
+import com.jets.chat.client.util.SessionManager;
 import com.jets.chat.common.dto.ChatSummaryDTO;
 import com.jets.chat.common.dto.MessageDTO;
 import com.jets.chat.common.rmi.RemoteChatService;
@@ -32,7 +33,7 @@ public class ChatViewModel {
                 currentContact.set(newChat.chatName());
                 chatTitle.set(newChat.chatName());
                 contactEmail.set(newChat.chatName());
-                fetchMessageHistory(newChat.chatId());
+                fetchMessageHistory(newChat.chatId(), SessionManager.getUserId());
             } else {
                 showInfoPane.set(false);
                 chatTitle.set("Select a conversation");
@@ -58,11 +59,11 @@ public class ChatViewModel {
         }).start();
     }
 
-    private void fetchMessageHistory(Long chatId) {
+    private void fetchMessageHistory(Long chatId, long currentUserId) {
         new Thread(() -> {
             try {
                 List<MessageDTO> history = ClientManager.getInstance().getRemoteChatService()
-                        .getChatMessages(chatId);
+                        .getChatMessages(chatId, currentUserId);
 
                 Platform.runLater(() -> {
                     messageHistory.setAll(history);
@@ -87,7 +88,7 @@ public class ChatViewModel {
         new Thread(() -> {
             try {
                 ClientManager.getInstance().getRemoteChatService()
-                        .sendMessage(selectedChat.get().chatId(), text);
+                        .sendMessage(selectedChat.get().chatId(), text, SessionManager.getUserId());
 
                 Platform.runLater(() -> {
                     messageHistory.add(newMsg);

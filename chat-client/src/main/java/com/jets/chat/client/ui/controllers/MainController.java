@@ -1,6 +1,7 @@
 package com.jets.chat.client.ui.controllers;
 
 import com.jets.chat.client.ui.viewmodel.ChatViewModel;
+import com.jets.chat.client.util.SessionManager;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -14,7 +15,6 @@ import static com.jets.chat.common.util.Functions.getInitials;
 public class MainController implements Initializable {
 
     private final ChatViewModel chatViewModel = new ChatViewModel();
-    private final Long currentUserId = 1L;
     @FXML
     private SideBarController sideBarController;
     @FXML
@@ -39,8 +39,7 @@ public class MainController implements Initializable {
 
         setupRightPaneBindings();
 
-        // TODO: fetch it from the session
-        chatViewModel.loadUserChats(currentUserId);
+        chatViewModel.loadUserChats(SessionManager.getUserId());
     }
 
     private void setupRightPaneBindings() {
