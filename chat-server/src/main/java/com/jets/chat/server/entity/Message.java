@@ -1,6 +1,6 @@
 package com.jets.chat.server.entity;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 public class Message {
     private long messageId;
@@ -8,7 +8,7 @@ public class Message {
     private long senderId;
     private String messageType;
     private String content;
-    private Timestamp sentAt;
+    private LocalDateTime sentAt;
     private String fontStyle;
     private String fontColor;
     private int fontSize;
@@ -21,7 +21,7 @@ public class Message {
     }
 
     public Message(long messageId, long chatId, long senderId, String messageType, String content,
-            Timestamp sentAt, String fontStyle, String fontColor, int fontSize, boolean isBold,
+            LocalDateTime sentAt, String fontStyle, String fontColor, int fontSize, boolean isBold,
             boolean isItalic, boolean isUnderline, String backgroundColor) {
         this.messageId = messageId;
         this.chatId = chatId;
@@ -78,11 +78,11 @@ public class Message {
         this.content = content;
     }
 
-    public Timestamp getSentAt() {
+    public LocalDateTime getSentAt() {
         return sentAt;
     }
 
-    public void setSentAt(Timestamp sentAt) {
+    public void setSentAt(LocalDateTime sentAt) {
         this.sentAt = sentAt;
     }
 

@@ -2,6 +2,8 @@ package com.jets.chat.client.util;
 
 import com.jets.chat.common.rmi.RemoteAnnouncementService;
 import com.jets.chat.common.rmi.RemoteUserService;
+import com.jets.chat.common.rmi.RemoteChatService;
+import com.jets.chat.common.rmi.RemoteClientService;
 import com.jets.chat.common.util.ProjectConstants;
 
 import java.rmi.NotBoundException;
@@ -13,19 +15,8 @@ public class ClientManager {
     private static ClientManager instance;
 
     private final RemoteAnnouncementService remoteAnnouncementService;
-
     private final RemoteUserService remoteUserService;
-
-    public static ClientManager getInstance() {
-        if (instance == null) {
-            synchronized (ClientManager.class) {
-                if (instance == null) {
-                    instance = new ClientManager();
-                }
-            }
-        }
-        return instance;
-    }
+    private final RemoteChatService remoteChatService;
 
     private ClientManager() {
         try {
@@ -42,6 +33,25 @@ public class ClientManager {
             throw new RuntimeException(e);
         } catch (NotBoundException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public static ClientManager getInstance() {
+        if (instance == null) {
+            synchronized (ClientManager.class) {
+                if (instance == null) {
+                    instance = new ClientManager();
+                }
+            }
+        }
+        return instance;
+    }
+
+    public void registerCallback(Long userId, RemoteClientService callback) {
+        try {
+            remoteChatService.registerClient(userId, callback);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

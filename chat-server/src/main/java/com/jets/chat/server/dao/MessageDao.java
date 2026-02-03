@@ -12,6 +12,8 @@ public interface MessageDao {
 
     Optional<Message> findById(long id);
 
+    Optional<Message> findLatest(long chatId);
+
     Message update(Message messageDto);
 
     Optional<Message> deleteById(long id);
