@@ -151,7 +151,8 @@ public class AdminDashboardController {
         } catch (IOException e) {
             System.err.println("Failed to load view: " + fxmlPath);
             e.printStackTrace();
-            showError("Failed to load view", "Cannot load: " + fxmlPath + "\nError: " + e.getMessage());
+            showError("Failed to load view",
+                    "Cannot load: " + fxmlPath + "\nError: " + e.getMessage());
         }
     }
 

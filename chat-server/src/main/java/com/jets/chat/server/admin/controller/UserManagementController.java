@@ -155,7 +155,8 @@ public class UserManagementController {
         });
 
         // Add all columns to table
-        usersTable.getColumns().addAll(idCol, nameCol, phoneCol, emailCol, countryCol, genderCol, statusCol, lastSeenCol);
+        usersTable.getColumns().addAll(idCol, nameCol, phoneCol, emailCol, countryCol, genderCol,
+                statusCol, lastSeenCol);
     }
 
     @FXML
@@ -177,8 +178,7 @@ public class UserManagementController {
                     // Count online users
                     Map<Long, ClientCallback> onlineClients = serverManager.getOnlineClients();
                     int onlineCount = (int) users.stream()
-                            .filter(user -> onlineClients.containsKey(user.getUserId()))
-                            .count();
+                            .filter(user -> onlineClients.containsKey(user.getUserId())).count();
                     onlineUsersLabel.setText(String.valueOf(onlineCount));
                 });
             } catch (Exception e) {
@@ -201,13 +201,13 @@ public class UserManagementController {
             return;
         }
 
-        ObservableList<User> filtered = allUsers.stream()
-                .filter(user ->
-                        user.getDisplayName().toLowerCase().contains(query) ||
-                                user.getPhoneNumber().toLowerCase().contains(query) ||
-                                (user.getEmail() != null && user.getEmail().toLowerCase().contains(query)) ||
-                                (user.getCountry() != null && user.getCountry().toLowerCase().contains(query)) ||
-                                (user.getGender() != null && user.getGender().name().toLowerCase().contains(query)))
+        ObservableList<User> filtered = allUsers.stream().filter(user -> user.getDisplayName()
+                .toLowerCase().contains(query)
+                || user.getPhoneNumber().toLowerCase().contains(query)
+                || (user.getEmail() != null && user.getEmail().toLowerCase().contains(query))
+                || (user.getCountry() != null && user.getCountry().toLowerCase().contains(query))
+                || (user.getGender() != null
+                        && user.getGender().name().toLowerCase().contains(query)))
                 .collect(Collectors.toCollection(FXCollections::observableArrayList));
 
         usersTable.setItems(filtered);
@@ -231,8 +231,7 @@ public class UserManagementController {
 
         Map<Long, ClientCallback> onlineClients = serverManager.getOnlineClients();
         int onlineCount = (int) users.stream()
-                .filter(user -> onlineClients.containsKey(user.getUserId()))
-                .count();
+                .filter(user -> onlineClients.containsKey(user.getUserId())).count();
         onlineUsersLabel.setText(String.valueOf(onlineCount));
     }
 

@@ -49,8 +49,8 @@ public class RmiServiceManager {
 
             // Check if already exported before exporting
             try {
-                RemoteAnnouncementService announcementStub =
-                        (RemoteAnnouncementService) UnicastRemoteObject.toStub(announcementImpl);
+                RemoteAnnouncementService announcementStub = (RemoteAnnouncementService) UnicastRemoteObject
+                        .toStub(announcementImpl);
                 // If we get here, it's already exported
                 System.out.println("Announcement service already exported, reusing...");
             } catch (Exception e) {
@@ -67,8 +67,8 @@ public class RmiServiceManager {
 
             // Check if already exported before exporting
             try {
-                RemoteUserService userStub =
-                        (RemoteUserService) UnicastRemoteObject.toStub(userImpl);
+                RemoteUserService userStub = (RemoteUserService) UnicastRemoteObject
+                        .toStub(userImpl);
                 // If we get here, it's already exported
                 System.out.println("User service already exported, reusing...");
             } catch (Exception e) {
@@ -103,7 +103,8 @@ public class RmiServiceManager {
         try {
             System.out.println("Shutting down RMI services...");
 
-            // CRITICAL: Clear callbacks BEFORE unbinding (prevents broadcast to dead clients)
+            // CRITICAL: Clear callbacks BEFORE unbinding (prevents broadcast to dead
+            // clients)
             serverManager.getUserService().clearOnlineUsers();
 
             // Unbind services
@@ -112,7 +113,8 @@ public class RmiServiceManager {
                     registry.unbind(ProjectConstants.ANNOUNCEMENT_SERVICE);
                     System.out.println("✓ Unbound " + ProjectConstants.ANNOUNCEMENT_SERVICE);
                 } catch (Exception e) {
-                    System.err.println("✗ Failed to unbind announcement service: " + e.getMessage());
+                    System.err
+                            .println("✗ Failed to unbind announcement service: " + e.getMessage());
                 }
                 try {
                     registry.unbind(ProjectConstants.USER_SERVICE);
@@ -129,7 +131,8 @@ public class RmiServiceManager {
                         System.out.println("✓ Unexported Announcement service");
                     }
                 } catch (Exception e) {
-                    System.err.println("✗ Failed to unexport announcement service: " + e.getMessage());
+                    System.err.println(
+                            "✗ Failed to unexport announcement service: " + e.getMessage());
                 }
                 announcementImpl = null;
             }
@@ -160,14 +163,16 @@ public class RmiServiceManager {
             if (announcementImpl != null) {
                 try {
                     UnicastRemoteObject.unexportObject(announcementImpl, true);
-                } catch (Exception ignored) {}
+                } catch (Exception ignored) {
+                }
                 announcementImpl = null;
             }
 
             if (userImpl != null) {
                 try {
                     UnicastRemoteObject.unexportObject(userImpl, true);
-                } catch (Exception ignored) {}
+                } catch (Exception ignored) {
+                }
                 userImpl = null;
             }
         } finally {
