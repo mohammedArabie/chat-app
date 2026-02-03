@@ -16,10 +16,12 @@ public final class ChatDaoImpl implements ChatDao {
 
     private final DataSource dataSource;
 
+    // ================== CONSTRUCTOR ==================
     public ChatDaoImpl(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
+    // ================== CHAT CREATION ==================
     @Override
     public long insertChat(ChatType type) {
         String sql = "INSERT INTO chats (chat_type) VALUES (?)";
@@ -62,6 +64,23 @@ public final class ChatDaoImpl implements ChatDao {
         }
     }
 
+    public Optional<String> findGroupNameByChatId(long chatId) {
+        String sql = "SELECT group_name FROM chat_groups WHERE chat_id = ?";
+
+        try (Connection connection = dataSource.getConnection();
+                PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setLong(1, chatId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return Optional.of(rs.getString("group_name"));
+            }
+            return Optional.empty();
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to insert chat group", e);
+        }
+    }
+
+    // ================== CHAT RETRIEVAL ==================
     @Override
     public Optional<Chat> findById(long chatId) {
         String sql = "SELECT chat_id, chat_type, created_at FROM chats WHERE chat_id = ?";
@@ -113,6 +132,7 @@ public final class ChatDaoImpl implements ChatDao {
         return chats;
     }
 
+    // ================== PARTICIPANTS ==================
     @Override
     public boolean addParticipant(long chatId, long userId) {
         try (Connection connection = dataSource.getConnection()) {
@@ -176,6 +196,7 @@ public final class ChatDaoImpl implements ChatDao {
         return participants;
     }
 
+    // ================== GROUP OPERATIONS ==================
     @Override
     public Optional<ChatGroup> getGroupInfo(long chatId) {
         String sql = "SELECT chat_id, group_name, owner_id FROM chat_groups WHERE chat_id = ?";

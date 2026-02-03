@@ -23,6 +23,8 @@ public class Server {
 
             registry.rebind(ProjectConstants.ANNOUNCEMENT_SERVICE, remoteAnnouncementService);
 
+            registry.rebind(ProjectConstants.CHAT_SERVICE, serverManager.getRemoteChatService());
+
             registry.rebind(ProjectConstants.USER_SERVICE, remoteUserService);
 
             System.out.println("Server Running");

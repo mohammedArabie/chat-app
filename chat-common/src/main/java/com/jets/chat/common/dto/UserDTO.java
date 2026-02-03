@@ -13,7 +13,7 @@ public class UserDTO implements Serializable {
     private String phoneNumber;
 
     public UserDTO(long id, String displayName, UserStatus status, String email,
-            String phoneNumber) {
+                   String phoneNumber) {
         this.id = id;
         this.displayName = displayName;
         this.status = status;
@@ -36,6 +36,10 @@ public class UserDTO implements Serializable {
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
     }
+
+public record UserDTO(String name, String status, String lastMsg,
+        String color) implements Serializable {
+}
 
     public UserStatus getStatus() {
         return status;
