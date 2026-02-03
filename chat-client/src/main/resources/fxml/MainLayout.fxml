@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane fx:id="mainRoot" prefHeight="750.0" prefWidth="1200.0"
+            stylesheets="@../styles/main.css"
+            xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.jets.chat.client.ui.controllers.MainController">
+
+    <!-- LEFT: Sidebar Included -->
+    <left>
+        <fx:include fx:id="sideBar" source="SideBar.fxml"/>
+    </left>
+
+    <!-- CENTER: Chat Area Included -->
+    <center>
+        <fx:include fx:id="chat" source="ChatArea.fxml"/>
+    </center>
+
+    <!-- RIGHT: Info Pane (Static for now, bound in MainController) -->
+    <right>
+        <VBox fx:id="infoPaneRoot" alignment="TOP_CENTER" prefWidth="300.0" spacing="25.0" styleClass="info-pane">
+            <padding>
+                <Insets top="40.0" left="20.0" right="20.0"/>
+            </padding>
+
+            <Label text="Contact Info" styleClass="section-header"/>
+
+            <StackPane>
+                <Circle radius="50" fill="#0084FF"/>
+                <Label fx:id="infoInitials" text="SC"
+                       style="-fx-font-size: 24; -fx-text-fill: white; -fx-font-weight: bold;"/>
+            </StackPane>
+
+            <VBox alignment="CENTER" spacing="5">
+                <Label fx:id="infoName" styleClass="name-large" text="Select a Contact"/>
+                <Label fx:id="infoHandle" styleClass="text-muted" text=""/>
+            </VBox>
+
+            <HBox spacing="10" alignment="CENTER">
+                <Button styleClass="action-btn" text="Message" prefWidth="100"/>
+                <Button styleClass="action-btn" text="Video" prefWidth="100"/>
+            </HBox>
+
+            <Separator opacity="0.1"/>
+
+            <VBox alignment="TOP_LEFT" spacing="20">
+                <VBox spacing="5">
+                    <Label text="EMAIL" styleClass="text-muted-tiny"/>
+                    <Label fx:id="infoEmail" text="---" styleClass="text-white"/>
+                </VBox>
+                <VBox spacing="5">
+                    <Label text="PHONE" styleClass="text-muted-tiny"/>
+                    <Label text="+1 (555) 987-6543" styleClass="text-white"/>
+                </VBox>
+                <VBox spacing="5">
+                    <Label text="LOCATION" styleClass="text-muted-tiny"/>
+                    <Label text="New York, NY" styleClass="text-white"/>
+                </VBox>
+            </VBox>
+        </VBox>
+    </right>
+</BorderPane>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+
+<HBox fx:id="root" alignment="CENTER_LEFT" prefWidth="260.0" spacing="12.0"
+      styleClass="contact-item-container" stylesheets="@../styles/main.css"
+      xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <!-- Avatar Section with Online Status Dot -->
+        <StackPane>
+            <children>
+                <Circle fx:id="avatarCircle" fill="#25292d" radius="20.0" stroke="TRANSPARENT"/>
+                <Label fx:id="initialsLabel" style="-fx-font-weight: bold; -fx-text-fill: white;" text="SC"/>
+                <AnchorPane prefHeight="40.0" prefWidth="40.0">
+                    <children>
+                        <Circle fx:id="statusDot" fill="#3ba55d" radius="5.0" stroke="#15191c" strokeType="INSIDE"
+                                strokeWidth="2.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0"/>
+                    </children>
+                </AnchorPane>
+            </children>
+        </StackPane>
+
+        <!-- Text Content Section -->
+        <VBox alignment="CENTER_LEFT" spacing="2.0" HBox.hgrow="ALWAYS">
+            <children>
+                <HBox alignment="CENTER_LEFT">
+                    <children>
+                        <Label fx:id="nameLabel" style="-fx-font-weight: bold; -fx-text-fill: white;"
+                               text="Sarah Chen"/>
+                        <StackPane HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="timeLabel" styleClass="text-muted" text="10:30"/>
+                    </children>
+                </HBox>
+                <Label fx:id="lastMessageLabel" maxWidth="160.0" styleClass="text-muted"
+                       text="Hey! Are you free for a call later today?" textOverrun="ELLIPSIS"/>
+            </children>
+        </VBox>
+    </children>
+    <padding>
+        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+    </padding>
+</HBox>

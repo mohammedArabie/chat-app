@@ -1,0 +1,110 @@
+.root {
+    -fx-base: #0B0E11;
+    -fx-background-color: #0B0E11;
+}
+
+.sidebar {
+    -fx-background-color: #15191C;
+    -fx-padding: 10;
+}
+
+.chat-area {
+    -fx-background-color: #0B0E11;
+    -fx-padding: 0 20;
+}
+
+.info-pane {
+    -fx-background-color: #15191C;
+    -fx-padding: 20;
+    -fx-alignment: top-center;
+}
+
+.search-bar {
+    -fx-background-color: #25292D;
+    -fx-text-fill: white;
+    -fx-background-radius: 10;
+    -fx-padding: 8;
+}
+
+.list-view {
+    -fx-background-color: transparent;
+}
+
+.list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+}
+
+.list-cell:filled:selected {
+    -fx-background-color: #25292D;
+}
+
+.text-white {
+    -fx-text-fill: white;
+}
+
+.contact-item-container {
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+}
+
+.contact-item-container:hover {
+    -fx-background-color: #1E2329;
+}
+
+.list-view .list-cell:filled:selected .contact-item-container {
+    -fx-background-color: #25292D;
+}
+
+.text-muted {
+    -fx-text-fill: #8E9297;
+    -fx-font-size: 12px;
+}
+
+.section-header {
+    -fx-text-fill: #555;
+    -fx-font-weight: bold;
+    -fx-font-size: 10px;
+}
+
+.bubble-sent {
+    -fx-background-color: #0084FF;
+    -fx-text-fill: white;
+    -fx-background-radius: 18 18 2 18; /* Top-Left, Top-Right, Bottom-Right, Bottom-Left */
+    -fx-padding: 10 14;
+    -fx-font-size: 13px;
+}
+
+.bubble-received {
+    -fx-background-color: #2D2D2D;
+    -fx-text-fill: white;
+    -fx-background-radius: 18 18 18 2;
+    -fx-padding: 10 14;
+    -fx-font-size: 13px;
+}
+
+.text-muted-tiny {
+    -fx-text-fill: #6E7277;
+    -fx-font-size: 10px;
+}
+
+.message-list-view {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.message-list-view .list-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.message-list-view .list-cell:selected {
+    -fx-background-color: transparent;
+}
+
+.custom-list-view {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}

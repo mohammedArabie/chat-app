@@ -1,11 +1,25 @@
 package com.jets.chat.server.context;
 
 import com.jets.chat.common.callback.ClientCallback;
+import com.jets.chat.common.rmi.RemoteAnnouncementService;
+import com.jets.chat.common.rmi.RemoteUserService;
+import com.jets.chat.common.rmi.RemoteChatService;
 import com.jets.chat.server.config.DataSourceConfig;
 import com.jets.chat.server.dao.*;
 import com.jets.chat.server.dao.impl.*;
 import com.jets.chat.server.service.*;
 import com.jets.chat.server.service.impl.*;
+import com.jets.chat.server.dao.AnnouncementDao;
+import com.jets.chat.server.dao.UserDao;
+import com.jets.chat.server.dao.impl.AnnouncementDaoImpl;
+import com.jets.chat.server.dao.impl.UserDaoImpl;
+import com.jets.chat.server.rmi.RemoteAnnouncementServiceImpl;
+import com.jets.chat.server.rmi.RemoteChatServiceImpl;
+import com.jets.chat.server.rmi.RemoteUserServiceImpl;
+import com.jets.chat.server.service.AnnouncementService;
+import com.jets.chat.server.service.UserService;
+import com.jets.chat.server.service.impl.AnnouncementServiceImpl;
+import com.jets.chat.server.service.impl.UserServiceImpl;
 import com.zaxxer.hikari.HikariDataSource;
 
 import java.rmi.RemoteException;
@@ -18,29 +32,25 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ServerManager {
     private static volatile ServerManager instance;
-
-    // ✅ SHARED ONLINE USERS REGISTRY (single source of truth)
-    private final Map<Long, ClientCallback> onlineClients = new ConcurrentHashMap<>();
-
-    // Services
     private final AnnouncementService announcementService;
     private final AdminService adminService;
     private final ServerStatisticsService statisticsService;
     private final UserService userService;
-
-    // ✅ RMI DELEGATE (handles lifecycle ONLY)
+    private final Map<Long, ClientCallback> onlineClients = new ConcurrentHashMap<>();
+    private final RemoteChatService remoteChatService;
     private final RmiServiceManager rmiServiceManager;
 
     private ServerManager() throws RemoteException {
         HikariDataSource dataSource = DataSourceConfig.getDataSource();
-
         AnnouncementDao announcementDao = new AnnouncementDaoImpl(dataSource);
         AdminDao adminDao = new AdminDaoImpl(dataSource);
         StatisticsDao statisticsDao = new StatisticsDaoImpl(dataSource);
         UserDao userDao = new UserDaoImpl(dataSource);
-
-        // ✅ PASS SHARED REGISTRY TO SERVICES
         this.announcementService = new AnnouncementServiceImpl(announcementDao);
+        this.remoteAnnouncementService = new RemoteAnnouncementServiceImpl(announcementService);
+        this.remoteChatService = new RemoteChatServiceImpl();
+        this.userService = new UserServiceImpl(userDao);
+        this.remoteUserService = new RemoteUserServiceImpl(userService);
         this.adminService = new AdminServiceImpl(adminDao);
         this.statisticsService = new ServerStatisticsServiceImpl(statisticsDao);
         this.userService = new UserServiceImpl(userDao);
@@ -92,5 +102,17 @@ public class ServerManager {
     }
     public UserService getUserService() {
         return userService;
+    }
+
+    public RemoteUserService getRemoteUserService() {
+        return remoteUserService;
+    }
+
+    public Map<Long, ClientCallback> getOnlineClients() {
+        return onlineClients;
+    }
+
+    public RemoteChatService getRemoteChatService() {
+        return remoteChatService;
     }
 }

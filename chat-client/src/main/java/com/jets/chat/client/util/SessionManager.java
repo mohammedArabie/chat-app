@@ -1,11 +1,15 @@
 package com.jets.chat.client.util;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Properties;
 
 public class SessionManager {
     private static final String FILE_NAME = System.getProperty("user.home") + File.separator
             + ".chatapp.session";
+    private static long userId;
 
     public static void saveSession(long userId, String sessionId) {
         Properties props = new Properties();
@@ -35,5 +39,13 @@ public class SessionManager {
 
     public static void clearSession() {
         new File(FILE_NAME).delete();
+    }
+
+    public static void setUserId(long id) {
+        userId = id;
+    }
+
+    public static long getUserId() {
+        return userId;
     }
 }

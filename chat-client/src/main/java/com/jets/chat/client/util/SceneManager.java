@@ -12,16 +12,14 @@ import java.net.URL;
 
 public class SceneManager {
 
+    private static final int DEFAULT_WIDTH = 900;
+    private static final int DEFAULT_HEIGHT = 600;
+    private static final String LOGIN_VIEW = "/fxml/LoginView.fxml";
+    private static final String REGISTER_VIEW = "/fxml/RegisterView.fxml";
+    private static final String MAIN_VIEW = "/fxml/MainLayout.fxml";
     private static SceneManager instance;
     private Stage primaryStage;
     private Scene scene;
-
-    private static final int DEFAULT_WIDTH = 900;
-    private static final int DEFAULT_HEIGHT = 600;
-
-    private static final String LOGIN_VIEW = "/fxml/LoginView.fxml";
-    private static final String REGISTER_VIEW = "/fxml/RegisterView.fxml";
-    private static final String MAIN_VIEW = "/fxml/MainView.fxml";
 
     private SceneManager() {
     }
@@ -48,10 +46,11 @@ public class SceneManager {
     }
 
     public void showMainScreen(String userName) {
-        loadScene(MAIN_VIEW, userName != null ? "Chat - " + userName : "Chat Application");
+        loadScene(MAIN_VIEW, userName != null ? "Chat - " + userName : "Chat Application",
+                "/styles/main.css");
     }
 
-    private void loadScene(String fxmlPath, String title) {
+    private void loadScene(String fxmlPath, String title, String cssPath) {
         try {
             URL fxmlUrl = getClass().getResource(fxmlPath);
             if (fxmlUrl == null) {
@@ -68,6 +67,10 @@ public class SceneManager {
                 scene.setRoot(newRoot);
             }
 
+            if (cssPath != null) {
+                scene.getStylesheets().add(getClass().getResource(cssPath).toExternalForm());
+            }
+
             primaryStage.setTitle(title);
             if (!primaryStage.isShowing()) {
                 primaryStage.show();
@@ -76,6 +79,10 @@ public class SceneManager {
         } catch (IOException e) {
             throw new RuntimeException("Failed to load scene: " + fxmlPath, e);
         }
+    }
+
+    private void loadScene(String fxmlPath, String title) {
+        loadScene(fxmlPath, title, null);
     }
 
     private void applyFadeTransition(Parent oldRoot, Parent newRoot) {

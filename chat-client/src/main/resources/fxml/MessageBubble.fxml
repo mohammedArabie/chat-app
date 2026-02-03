@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Circle?>
+<HBox fx:id="rootPane" maxWidth="Infinity" spacing="12.0" stylesheets="@../styles/main.css"
+      xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <!-- Received Avatar (Hidden for Sent Messages) -->
+        <StackPane fx:id="avatarContainer" alignment="TOP_CENTER">
+            <children>
+                <Circle fill="#2d2d2d" radius="16.0" stroke="TRANSPARENT"/>
+                <Label fx:id="initialsLabel" style="-fx-font-size: 10; -fx-text-fill: white; -fx-font-weight: bold;"
+                       text="SC"/>
+            </children>
+            <HBox.margin>
+                <Insets top="2.0"/>
+            </HBox.margin>
+        </StackPane>
+
+        <!-- Message Content and Time -->
+        <VBox fx:id="vBoxContainer" spacing="4.0">
+            <children>
+                <HBox fx:id="bubbleWrapper">
+                    <children>
+                        <Label fx:id="messageText" lineSpacing="1.2" maxWidth="400.0"
+                               styleClass="message-label" text="Message content..."
+                               wrapText="true"/>
+                    </children>
+                </HBox>
+
+                <Label fx:id="timeLabel" styleClass="text-muted-tiny" text="10:30 AM">
+                    <VBox.margin>
+                        <Insets left="4.0" right="4.0"/>
+                    </VBox.margin>
+                </Label>
+            </children>
+        </VBox>
+    </children>
+    <padding>
+        <Insets bottom="10.0" left="15.0" right="15.0" top="10.0"/>
+    </padding>
+</HBox>
