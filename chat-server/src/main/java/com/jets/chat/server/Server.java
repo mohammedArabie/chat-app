@@ -28,6 +28,7 @@ public class Server {
             registry.rebind(ProjectConstants.USER_SERVICE, remoteUserService);
 
             System.out.println("Server Running");
+            serverManager.startServer();
 
             // Needed when using exec:java to run the server
             // Not needed when using java to run

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.jets.chat.server.admin.controller.AnnouncementController"
+      spacing="25" styleClass="content-area">
+
+    <Label text="Send Server Announcement" styleClass="section-title"/>
+
+    <TextArea fx:id="announcementText" promptText="Type your announcement message here..."
+              styleClass="form-field" prefHeight="180" wrapText="true"
+              style="-fx-font-size: 16px; -fx-padding: 15px;"/>
+
+    <GridPane hgap="20" vgap="15">
+        <Label text="Font:" GridPane.rowIndex="0" GridPane.columnIndex="0" styleClass="form-label"/>
+        <ComboBox fx:id="fontCombo" GridPane.rowIndex="0" GridPane.columnIndex="1" prefWidth="180" styleClass="form-field"/>
+
+        <Label text="Color:" GridPane.rowIndex="0" GridPane.columnIndex="2" styleClass="form-label"/>
+        <ComboBox fx:id="colorCombo" GridPane.rowIndex="0" GridPane.columnIndex="3" prefWidth="100" styleClass="form-field"/>
+
+        <CheckBox fx:id="boldCheck" text="Bold" GridPane.rowIndex="1" GridPane.columnIndex="0" style="-fx-font-size: 15px;"/>
+        <CheckBox fx:id="italicCheck" text="Italic" GridPane.rowIndex="1" GridPane.columnIndex="1" style="-fx-font-size: 15px;"/>
+    </GridPane>
+
+    <VBox spacing="8">
+        <Label text="Preview" style="-fx-font-weight: bold; -fx-font-size: 17px; -fx-text-fill: #495057;"/>
+        <Label fx:id="previewText" text="Your announcement will appear here"
+               wrapText="true" prefWidth="550" prefHeight="70"
+               style="-fx-background-color: #f8f9fa; -fx-padding: 14px; -fx-border-radius: 8px; -fx-border-color: #dee2e6; -fx-border-width: 1px; -fx-font-size: 16px;"/>
+    </VBox>
+
+    <!-- ✅ BOTTOM-RIGHT BUTTONS (matches Change Password style) -->
+    <HBox spacing="15" alignment="CENTER_RIGHT" style="-fx-padding: 15 0 0 0;">
+        <Button text="Cancel" onAction="#handleCancel"
+                style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-size: 16px; -fx-padding: 14px 35px; -fx-background-radius: 10px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0.3, 0, 2);"/>
+        <Button text="Send to All Users" onAction="#sendAnnouncement"
+                style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-size: 16px; -fx-padding: 14px 40px; -fx-background-radius: 10px; -fx-font-weight: bold;"/>
+    </HBox>
+
+</VBox>

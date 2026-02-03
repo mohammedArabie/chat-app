@@ -27,4 +27,15 @@ public class RemoteAnnouncementServiceImpl extends UnicastRemoteObject
     public List<AnnouncementDTO> getLatestAnnouncements(int fetchSize) throws RemoteException {
         return announcementService.getLatestAnnouncements(fetchSize);
     }
+
+    @Override
+    public AnnouncementDTO createAnnouncement(AnnouncementDTO announcementDTO)
+            throws RemoteException {
+        return announcementService.createAnnouncement(announcementDTO);
+    }
+
+    @Override
+    public int getActiveCallbackCount() throws RemoteException {
+        return announcementService.getActiveCallbackCount();
+    }
 }

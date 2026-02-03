@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.jets.chat.server.admin.controller.AdminLoginController"
+            stylesheets="@../style/admin-style.css"
+            styleClass="root">
+
+    <!-- Decorative circles (direct children of AnchorPane - no Group needed) -->
+    <Circle radius="180" fill="rgba(52, 152, 219, 0.12)" centerX="150" centerY="150" mouseTransparent="true"/>
+    <Circle radius="120" fill="rgba(46, 204, 113, 0.10)" centerX="550" centerY="480" mouseTransparent="true"/>
+
+    <!-- Login panel -->
+    <VBox alignment="CENTER" spacing="30" styleClass="login-panel"
+          AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
+          AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+
+        <Label text="Chat Server Admin" styleClass="login-title"/>
+
+        <TextField fx:id="usernameField" promptText="Username"
+                   styleClass="login-field" onAction="#handleLogin"/>
+
+        <PasswordField fx:id="passwordField" promptText="Password"
+                       styleClass="login-field" onAction="#handleLogin"/>
+
+        <Button text="SIGN IN" onAction="#handleLogin"
+                styleClass="login-button" minWidth="180"/>
+
+        <Label fx:id="errorLabel" styleClass="login-error"
+               visible="false" alignment="CENTER"/>
+    </VBox>
+
+    <!-- Footer (FIXED: corrected truncated attribute) -->
+    <Label text="© 2026 Chat Server Administration"
+           style="-fx-text-fill: rgba(255,255,255,0.7); -fx-font-size: 14px;"
+           AnchorPane.bottomAnchor="20" AnchorPane.rightAnchor="20"/>
+
+</AnchorPane>

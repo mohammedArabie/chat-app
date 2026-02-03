@@ -7,6 +7,8 @@ import com.jets.chat.server.entity.User;
 
 import javax.sql.DataSource;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class UserDaoImpl implements UserDao {
@@ -258,6 +260,39 @@ public class UserDaoImpl implements UserDao {
             e.printStackTrace();
             return false;
         }
+    }
+    // UserDaoImpl.java
+    @Override
+    public List<User> getAllUsers() {
+        String sql = "SELECT * FROM users ORDER BY created_at DESC";
+        List<User> users = new ArrayList<>();
+
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                User user = new User();
+                user.setUserId(rs.getLong("user_id"));
+                user.setPhoneNumber(rs.getString("phone_number"));
+                user.setDisplayName(rs.getString("display_name"));
+                user.setEmail(rs.getString("email"));
+                user.setPasswordHash(rs.getString("password_hash")); // Not used in UI
+                user.setGender(Gender.valueOf(rs.getString("gender")));
+                user.setCountry(rs.getString("country"));
+                user.setDateOfBirth(rs.getDate("date_of_birth"));
+                user.setBio(rs.getString("bio"));
+                user.setPicturePath(rs.getString("picture_path"));
+                user.setCreatedAt(rs.getTimestamp("created_at"));
+                user.setChatbotEnabled(rs.getBoolean("chatbot_enabled"));
+                users.add(user);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Failed to fetch users", e);
+        }
+
+        return users;
     }
 
     @Override
