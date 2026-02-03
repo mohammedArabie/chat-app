@@ -10,9 +10,7 @@ public class ClientMain extends Application {
     public void start(Stage stage) throws Exception {
         try {
             SceneManager.getInstance().initialize(stage);
-
             SceneManager.getInstance().showLoginScreen();
-
         } catch (Exception e) {
             System.err.println("Error starting application: " + e.getMessage());
             e.printStackTrace();

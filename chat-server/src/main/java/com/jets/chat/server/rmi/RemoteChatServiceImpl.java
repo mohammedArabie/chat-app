@@ -1,11 +1,12 @@
 package com.jets.chat.server.rmi;
 
+import com.jets.chat.common.callback.ClientCallback;
 import com.jets.chat.common.dto.ChatSummaryDTO;
 import com.jets.chat.common.dto.MessageDTO;
 import com.jets.chat.common.enums.ChatType;
 import com.jets.chat.common.rmi.RemoteChatService;
-import com.jets.chat.common.rmi.RemoteClientService;
 import com.jets.chat.server.config.DataSourceConfig;
+import com.jets.chat.server.context.ServerManager;
 import com.jets.chat.server.dao.ChatDao;
 import com.jets.chat.server.dao.MessageDao;
 import com.jets.chat.server.dao.UserDao;
@@ -22,38 +23,15 @@ import java.rmi.server.UnicastRemoteObject;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class RemoteChatServiceImpl extends UnicastRemoteObject implements RemoteChatService {
-
-    private static final Map<Long, RemoteClientService> onlineClients = new ConcurrentHashMap<>();
     private final ChatDao chatDao = new ChatDaoImpl(DataSourceConfig.getDataSource());
     private final MessageDao messageDao = new MessageDaoImpl(DataSourceConfig.getDataSource());
     private final UserDao userDao = new UserDaoImpl(DataSourceConfig.getDataSource());
 
-    // TODO: fetch userId from the session
-    private final long currentUserId = 1;
-
     public RemoteChatServiceImpl() throws RemoteException {
         super();
-    }
-
-    @Override
-    public void registerClient(Long userId, RemoteClientService clientCallback)
-            throws RemoteException {
-        onlineClients.put(userId, clientCallback);
-        System.out.println("User " + userId + " registered for callbacks.");
-    }
-
-    @Override
-    public void unregisterClient(Long userId) throws RemoteException {
-        if (userDao.findById(userId).isEmpty()) {
-            throw new RuntimeException("User not found");
-        }
-        onlineClients.remove(userId);
-        System.out.println("User " + userId + " unregistered.");
     }
 
     @Override
@@ -101,7 +79,8 @@ public class RemoteChatServiceImpl extends UnicastRemoteObject implements Remote
     }
 
     @Override
-    public List<MessageDTO> getChatMessages(Long chatId) throws RemoteException {
+    public List<MessageDTO> getChatMessages(Long chatId, long currentUserId)
+            throws RemoteException {
         if (chatDao.findById(chatId).isEmpty()) {
             throw new RuntimeException("Chat not found");
         }
@@ -110,7 +89,8 @@ public class RemoteChatServiceImpl extends UnicastRemoteObject implements Remote
     }
 
     @Override
-    public void sendMessage(Long chatId, String content) throws RemoteException {
+    public void sendMessage(Long chatId, String content, long currentUserId)
+            throws RemoteException {
         Message message = new Message();
         message.setChatId(chatId);
         message.setContent(content);
@@ -125,8 +105,10 @@ public class RemoteChatServiceImpl extends UnicastRemoteObject implements Remote
 
         MessageDTO dto = new MessageDTO(content, LocalDateTime.now(), false);
 
+        var onlineClients = ServerManager.getInstance().getOnlineClients();
+
         for (ChatParticipant user : participantIds) {
-            RemoteClientService callback = onlineClients.get(user.getUserId());
+            ClientCallback callback = onlineClients.get(user.getUserId());
             if (callback != null) {
                 try {
                     callback.receiveMessage(dto);

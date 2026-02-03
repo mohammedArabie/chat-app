@@ -39,7 +39,7 @@ public class ContactCell extends ListCell<ChatSummaryDTO> {
             setText(null);
         } else {
             if (loader == null) {
-                loader = new FXMLLoader(getClass().getResource("/views/ContactItem.fxml"));
+                loader = new FXMLLoader(getClass().getResource("/fxml/ContactItem.fxml"));
                 loader.setController(this);
                 try {
                     loader.load();

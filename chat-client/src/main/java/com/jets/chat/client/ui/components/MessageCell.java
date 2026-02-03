@@ -40,7 +40,7 @@ public class MessageCell extends ListCell<MessageDTO> {
             setText(null);
         } else {
             if (loader == null) {
-                loader = new FXMLLoader(getClass().getResource("/views/MessageBubble.fxml"));
+                loader = new FXMLLoader(getClass().getResource("/fxml/MessageBubble.fxml"));
                 loader.setController(this);
                 try {
                     loader.load();
