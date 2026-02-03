@@ -37,10 +37,6 @@ public class UserDTO implements Serializable {
         this.displayName = displayName;
     }
 
-public record UserDTO(String name, String status, String lastMsg,
-        String color) implements Serializable {
-}
-
     public UserStatus getStatus() {
         return status;
     }
