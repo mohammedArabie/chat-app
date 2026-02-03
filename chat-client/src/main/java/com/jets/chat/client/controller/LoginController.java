@@ -11,6 +11,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.shape.SVGPath;
+import javafx.stage.Stage;
 
 import java.rmi.RemoteException;
 import java.util.Properties;
@@ -46,19 +47,24 @@ public class LoginController {
     public void initialize() {
         userService = ClientManager.getInstance().getRemoteUserService();
 
-        try {
-            clientCallback = new ClientCallbackImpl();
-        } catch (RemoteException e) {
-            showError("Failed to initialize connection");
-            e.printStackTrace();
-            signInButton.setDisable(true);
-            return;
-        }
+        // Initialize callback when scene is ready
+        Platform.runLater(() -> {
+            try {
+                Stage stage = (Stage) emailField.getScene().getWindow();
+                clientCallback = new ClientCallbackImpl(stage);
+                System.out.println("ClientCallback initialized");
+
+                // Now that callback is ready, check for auto-login
+                checkAutoLogin();
+            } catch (RemoteException e) {
+                showError("Failed to initialize connection");
+                e.printStackTrace();
+                signInButton.setDisable(true);
+            }
+        });
 
         // Setup password visibility toggle
         setupPasswordToggle();
-
-        checkAutoLogin();
 
         signInButton.setOnAction(e -> handleLogin());
 

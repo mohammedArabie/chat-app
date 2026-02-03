@@ -1,20 +1,16 @@
 package com.jets.chat.server.service.impl;
 
 import com.jets.chat.common.dto.AnnouncementDTO;
-import com.jets.chat.common.rmi.AnnouncementCallback;
 import com.jets.chat.server.dao.AnnouncementDao;
 import com.jets.chat.server.entity.Announcement;
+import com.jets.chat.server.context.ServerManager;
 import com.jets.chat.server.service.AnnouncementService;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class AnnouncementServiceImpl implements AnnouncementService {
     private final AnnouncementDao announcementDao;
-    private final Map<String, AnnouncementCallback> callbacks = new ConcurrentHashMap<>();
 
     public AnnouncementServiceImpl(AnnouncementDao announcementDao) {
         this.announcementDao = announcementDao;
@@ -45,32 +41,30 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         announcementDTO.setSentAt(announcement.getSentAt());
         announcementDTO.setAnnouncementId(announcement.getAnnouncementId());
 
-        List<String> deadSessions = new ArrayList<>();
-        callbacks.forEach((sessionId, callback) -> {
-            try {
-                callback.onAnnouncementReceived(announcementDTO);
-            } catch (RemoteException e) {
-                deadSessions.add(sessionId);
-            }
-        });
-        deadSessions.forEach(callbacks::remove);
+        // Send to all online users using the existing online clients from ServerManager
+        broadcastToOnlineUsers(announcementDTO);
+
         return announcementDTO;
     }
 
-    @Override
-    public void registerCallback(String sessionId, AnnouncementCallback callback)
-            throws RemoteException {
-        callbacks.put(sessionId, callback);
-    }
+    private void broadcastToOnlineUsers(AnnouncementDTO announcementDTO) {
+        // Get the online clients from ServerManager (same as used in UserServiceImpl)
+        var onlineClients = ServerManager.getInstance().getOnlineClients();
 
-    @Override
-    public void unregisterCallback(String sessionId) throws RemoteException {
-        callbacks.remove(sessionId);
+        onlineClients.forEach((userId, clientCallback) -> {
+            try {
+                clientCallback.onAnnouncementReceived(announcementDTO);
+            } catch (RemoteException e) {
+                System.err.println(
+                        "Failed to send announcement to user " + userId + ": " + e.getMessage());
+            }
+        });
     }
 
     @Override
     public int getActiveCallbackCount() {
-        return callbacks.size();
+        // Return the number of online users from ServerManager
+        return ServerManager.getInstance().getOnlineClients().size();
     }
 
     private AnnouncementDTO convertToDto(Announcement entity) {
@@ -83,12 +77,5 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         dto.setFontColor(entity.getFontColor());
         dto.setSentAt(entity.getSentAt());
         return dto;
-    }
-    // ADD THIS METHOD:
-    @Override
-    public void clearCallbacks() {
-        int count = callbacks.size();
-        callbacks.clear();
-        System.out.println("✓ Cleared " + count + " announcement callbacks");
     }
 }

@@ -32,7 +32,7 @@ public class ChatDaoTest {
     void setup() throws Exception {
         HikariConfig config = new HikariConfig();
         config.setDriverClassName("org.h2.Driver");
-        config.setJdbcUrl("jdbc:h2:mem:chat_test;MODE=MySQL;DB_CLOSE_DELAY=-1");
+        config.setJdbcUrl("jdbc:h2:mem:chat_test1;MODE=MySQL;DB_CLOSE_DELAY=-1");
         config.setUsername("sa");
         config.setPassword("");
         config.setMaximumPoolSize(50);
