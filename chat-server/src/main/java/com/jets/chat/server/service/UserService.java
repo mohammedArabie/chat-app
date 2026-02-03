@@ -16,4 +16,5 @@ public interface UserService {
     UserDTO reconnect(long userId, String sessionId, ClientCallback callback);
 
     void logout(long userId, String sessionId);
+    public void clearOnlineUsers();
 }

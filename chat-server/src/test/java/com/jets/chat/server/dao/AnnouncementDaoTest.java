@@ -34,7 +34,7 @@ public class AnnouncementDaoTest {
     @BeforeAll
     void init() throws Exception {
         HikariConfig config = new HikariConfig();
-        config.setJdbcUrl("jdbc:h2:mem:announcement_test;MODE=MySQL;DB_CLOSE_DELAY=-1");
+        config.setJdbcUrl("jdbc:h2:mem:announcement_test1;MODE=MySQL;DB_CLOSE_DELAY=-1");
         config.setUsername("sa");
         config.setPassword("");
         config.setMaximumPoolSize(20);

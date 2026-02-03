@@ -11,6 +11,7 @@ public interface RemoteAnnouncementService extends Remote {
 
     List<AnnouncementDTO> getLatestAnnouncements(int fetchSize) throws RemoteException;
 
-    void registerCallback(String sessionId, AnnouncementCallback callback) throws RemoteException;
-    void unregisterCallback(String sessionId) throws RemoteException;
+    AnnouncementDTO createAnnouncement(AnnouncementDTO announcementDTO) throws RemoteException;;
+
+    int getActiveCallbackCount() throws RemoteException;
 }

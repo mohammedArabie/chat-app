@@ -23,7 +23,6 @@ public class AnnouncementController {
 
     private ServerManager serverManager;
 
-    // ✅ HUMAN-READABLE COLOR MAPPING (display name → hex code)
     private final Map<String, String> colorMap = new HashMap<>() {
         {
             put("Black", "#000000");
@@ -48,7 +47,6 @@ public class AnnouncementController {
                 "Verdana");
         fontCombo.setValue("Arial");
 
-        // ✅ HUMAN-READABLE COLOR OPTIONS (display names only)
         colorCombo.getItems().addAll(colorMap.keySet());
         colorCombo.setValue("Black"); // Default to Black
 
@@ -70,7 +68,7 @@ public class AnnouncementController {
             return;
         }
 
-        // ✅ CONVERT HUMAN NAME → HEX FOR STYLING
+        // CONVERT HUMAN NAME → HEX FOR STYLING
         String hexColor = colorMap.get(colorCombo.getValue());
         previewText.setText(text);
         previewText.setStyle(String.format(
@@ -89,7 +87,6 @@ public class AnnouncementController {
         }
 
         try {
-            // ✅ CREATE DTO WITH HUMAN-READABLE → HEX CONVERSION
             AnnouncementDTO dto = new AnnouncementDTO();
             dto.setContent(content);
             dto.setFontStyle(fontCombo.getValue());
@@ -97,14 +94,12 @@ public class AnnouncementController {
             dto.setBold(boldCheck.isSelected());
             dto.setItalic(italicCheck.isSelected());
 
-            // Save to DB + broadcast
+            // This will save to DB AND broadcast to online users
             serverManager.getAnnouncementService().createAnnouncement(dto);
 
-            // Show success with user count
-            int activeUsers = serverManager.getAnnouncementService().getActiveCallbackCount();
-            showSuccess(String.format(
-                    "✓ Announcement sent successfully!\nDelivered to %d online user%s.",
-                    activeUsers, activeUsers == 1 ? "" : "s"));
+            // Show success message
+            showSuccess(
+                    "✓ Announcement sent successfully!\nIt has been broadcast to all online users.");
 
             // Clear form
             announcementText.clear();

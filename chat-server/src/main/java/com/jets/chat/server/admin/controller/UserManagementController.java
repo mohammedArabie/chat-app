@@ -1,7 +1,7 @@
 package com.jets.chat.server.admin.controller;
 
+import com.jets.chat.common.callback.ClientCallback;
 import com.jets.chat.common.enums.Gender;
-import com.jets.chat.common.enums.UserStatus;
 import com.jets.chat.server.context.ServerManager;
 import com.jets.chat.server.dao.UserDao;
 import com.jets.chat.server.dao.impl.UserDaoImpl;
@@ -24,6 +24,7 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class UserManagementController {
@@ -33,6 +34,8 @@ public class UserManagementController {
     private TextField searchField;
     @FXML
     private Label totalUsersLabel;
+    @FXML
+    private Label onlineUsersLabel;
 
     private ServerManager serverManager;
     private UserDao userDao;
@@ -58,56 +61,58 @@ public class UserManagementController {
     }
 
     private void setupTable() {
+        // Clear existing columns if any
+        usersTable.getColumns().clear();
+
         // ID Column
-        TableColumn<User, Long> idCol = (TableColumn<User, Long>) usersTable.getColumns().get(0);
+        TableColumn<User, Long> idCol = new TableColumn<>("ID");
+        idCol.setPrefWidth(70);
         idCol.setCellValueFactory(new PropertyValueFactory<>("userId"));
 
         // Display Name Column
-        TableColumn<User, String> nameCol = (TableColumn<User, String>) usersTable.getColumns()
-                .get(1);
+        TableColumn<User, String> nameCol = new TableColumn<>("Display Name");
+        nameCol.setPrefWidth(180);
         nameCol.setCellValueFactory(new PropertyValueFactory<>("displayName"));
 
         // Phone Column
-        TableColumn<User, String> phoneCol = (TableColumn<User, String>) usersTable.getColumns()
-                .get(2);
+        TableColumn<User, String> phoneCol = new TableColumn<>("Phone");
+        phoneCol.setPrefWidth(140);
         phoneCol.setCellValueFactory(new PropertyValueFactory<>("phoneNumber"));
 
         // Email Column
-        TableColumn<User, String> emailCol = (TableColumn<User, String>) usersTable.getColumns()
-                .get(3);
+        TableColumn<User, String> emailCol = new TableColumn<>("Email");
+        emailCol.setPrefWidth(200);
         emailCol.setCellValueFactory(new PropertyValueFactory<>("email"));
 
         // Country Column
-        TableColumn<User, String> countryCol = (TableColumn<User, String>) usersTable.getColumns()
-                .get(4);
+        TableColumn<User, String> countryCol = new TableColumn<>("Country");
+        countryCol.setPrefWidth(120);
         countryCol.setCellValueFactory(new PropertyValueFactory<>("country"));
 
-        // Gender Column (proper enum handling)
-        TableColumn<User, String> genderCol = (TableColumn<User, String>) usersTable.getColumns()
-                .get(5);
+        // Gender Column
+        TableColumn<User, String> genderCol = new TableColumn<>("Gender");
+        genderCol.setPrefWidth(90);
         genderCol.setCellValueFactory(cellData -> {
             Gender gender = cellData.getValue().getGender();
             if (gender == null)
                 return new SimpleStringProperty("N/A");
-
             String genderStr = gender.name();
             return new SimpleStringProperty(
                     genderStr.substring(0, 1).toUpperCase() + genderStr.substring(1).toLowerCase());
         });
 
-        TableColumn<User, String> statusCol = (TableColumn<User, String>) usersTable.getColumns()
-                .get(6);
+        // Status Column
+        TableColumn<User, String> statusCol = new TableColumn<>("Status");
+        statusCol.setPrefWidth(130);
         statusCol.setCellValueFactory(cellData -> {
             long userId = cellData.getValue().getUserId();
-            UserStatus status = userDao.getStatus(userId); // Returns AVAILABLE/OFFLINE/BUSY/AWAY
-
-            // Convert enum to display-friendly string (AVAILABLE → "Available")
-            String displayStatus = status.name().substring(0, 1).toUpperCase()
-                    + status.name().substring(1).toLowerCase();
-            return new SimpleStringProperty(displayStatus);
+            Map<Long, ClientCallback> onlineClients = serverManager.getOnlineClients();
+            boolean isOnline = onlineClients.containsKey(userId);
+            String status = isOnline ? "Available" : "Offline";
+            return new SimpleStringProperty(status);
         });
 
-        // Status badge styling with CORRECT ENUM → CSS MAPPING
+        // Status badge styling
         statusCol.setCellFactory(col -> new TableCell<>() {
             private final HBox box = new HBox();
             private final Label badge = new Label();
@@ -115,7 +120,7 @@ public class UserManagementController {
             {
                 box.setAlignment(javafx.geometry.Pos.CENTER);
                 box.setPadding(new javafx.geometry.Insets(4, 8, 4, 8));
-                badge.getStyleClass().add("status-badge"); // Uses YOUR existing CSS class
+                badge.getStyleClass().add("status-badge");
                 box.getChildren().add(badge);
             }
 
@@ -128,41 +133,35 @@ public class UserManagementController {
                 }
 
                 badge.setText(status);
-                badge.getStyleClass().removeAll("status-online", "status-offline", "status-busy",
-                        "status-away");
+                badge.getStyleClass().removeAll("status-online", "status-offline");
 
-                // ✅ CRITICAL FIX: Map Java enum values to YOUR CSS classes
-                switch (status.toLowerCase()) {
-                    case "available" -> badge.getStyleClass().add("status-online"); // AVAILABLE →
-                                                                                    // Green
-                    case "offline" -> badge.getStyleClass().add("status-offline"); // OFFLINE → Red
-                    case "busy" -> badge.getStyleClass().add("status-busy"); // BUSY → Orange
-                    case "away" -> badge.getStyleClass().add("status-away"); // AWAY → Yellow/Gray
-                    default -> badge.getStyleClass().add("status-offline");
+                if (status.equalsIgnoreCase("available")) {
+                    badge.getStyleClass().add("status-online");
+                    badge.setText("Online");
+                } else {
+                    badge.getStyleClass().add("status-offline");
                 }
 
                 setGraphic(box);
             }
         });
 
-        // Last Seen Column (using created_at as fallback - can be improved later)
-        TableColumn<User, Timestamp> lastSeenCol = (TableColumn<User, Timestamp>) usersTable
-                .getColumns().get(7);
-        lastSeenCol
-                .setCellValueFactory(cellData -> new javafx.beans.property.SimpleObjectProperty<>(
-                        cellData.getValue().getCreatedAt()));
-        lastSeenCol.setCellFactory(col -> new TableCell<>() {
-            @Override
-            protected void updateItem(Timestamp timestamp, boolean empty) {
-                super.updateItem(timestamp, empty);
-                setText(empty || timestamp == null ? "-" : dateFormat.format(timestamp));
-            }
+        // Last Seen Column
+        TableColumn<User, String> lastSeenCol = new TableColumn<>("Last Seen");
+        lastSeenCol.setPrefWidth(150);
+        lastSeenCol.setCellValueFactory(cellData -> {
+            Timestamp timestamp = cellData.getValue().getCreatedAt();
+            return new SimpleStringProperty(timestamp == null ? "-" : dateFormat.format(timestamp));
         });
+
+        // Add all columns to table
+        usersTable.getColumns().addAll(idCol, nameCol, phoneCol, emailCol, countryCol, genderCol, statusCol, lastSeenCol);
     }
 
     @FXML
     public void loadUsers() {
         totalUsersLabel.setText("Loading...");
+        onlineUsersLabel.setText("...");
 
         new Thread(() -> {
             try {
@@ -170,13 +169,24 @@ public class UserManagementController {
                 Platform.runLater(() -> {
                     allUsers.setAll(users);
                     usersTable.setItems(allUsers);
-                    totalUsersLabel.setText(String.valueOf(users.size()));
+
+                    // Update counters
+                    int totalUsers = users.size();
+                    totalUsersLabel.setText(String.valueOf(totalUsers));
+
+                    // Count online users
+                    Map<Long, ClientCallback> onlineClients = serverManager.getOnlineClients();
+                    int onlineCount = (int) users.stream()
+                            .filter(user -> onlineClients.containsKey(user.getUserId()))
+                            .count();
+                    onlineUsersLabel.setText(String.valueOf(onlineCount));
                 });
             } catch (Exception e) {
                 e.printStackTrace();
                 Platform.runLater(() -> {
                     showError("Failed to load users: " + e.getMessage());
                     totalUsersLabel.setText("Error");
+                    onlineUsersLabel.setText("Error");
                 });
             }
         }).start();
@@ -187,21 +197,43 @@ public class UserManagementController {
         String query = searchField.getText().toLowerCase().trim();
         if (query.isEmpty()) {
             usersTable.setItems(allUsers);
-            totalUsersLabel.setText(String.valueOf(allUsers.size()));
+            updateCounters(allUsers);
             return;
         }
 
-        ObservableList<User> filtered = allUsers.stream().filter(user -> user.getDisplayName()
-                .toLowerCase().contains(query)
-                || user.getPhoneNumber().toLowerCase().contains(query)
-                || (user.getEmail() != null && user.getEmail().toLowerCase().contains(query))
-                || (user.getCountry() != null && user.getCountry().toLowerCase().contains(query))
-                || (user.getGender() != null
-                        && user.getGender().name().toLowerCase().contains(query)))
+        ObservableList<User> filtered = allUsers.stream()
+                .filter(user ->
+                        user.getDisplayName().toLowerCase().contains(query) ||
+                                user.getPhoneNumber().toLowerCase().contains(query) ||
+                                (user.getEmail() != null && user.getEmail().toLowerCase().contains(query)) ||
+                                (user.getCountry() != null && user.getCountry().toLowerCase().contains(query)) ||
+                                (user.getGender() != null && user.getGender().name().toLowerCase().contains(query)))
                 .collect(Collectors.toCollection(FXCollections::observableArrayList));
 
         usersTable.setItems(filtered);
-        totalUsersLabel.setText(filtered.size() + " of " + allUsers.size());
+        updateCounters(filtered);
+    }
+
+    @FXML
+    private void handleRefresh() {
+        loadUsers();
+    }
+
+    private void updateCounters(ObservableList<User> users) {
+        int filteredCount = users.size();
+        int totalCount = allUsers.size();
+
+        if (filteredCount == totalCount) {
+            totalUsersLabel.setText(String.valueOf(totalCount));
+        } else {
+            totalUsersLabel.setText(filteredCount + " of " + totalCount);
+        }
+
+        Map<Long, ClientCallback> onlineClients = serverManager.getOnlineClients();
+        int onlineCount = (int) users.stream()
+                .filter(user -> onlineClients.containsKey(user.getUserId()))
+                .count();
+        onlineUsersLabel.setText(String.valueOf(onlineCount));
     }
 
     private void showError(String message) {

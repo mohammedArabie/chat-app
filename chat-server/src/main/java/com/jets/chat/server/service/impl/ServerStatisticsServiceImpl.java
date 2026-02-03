@@ -1,12 +1,12 @@
 package com.jets.chat.server.service.impl;
 
+import com.jets.chat.common.callback.ClientCallback;
+import com.jets.chat.server.context.ServerManager;
 import com.jets.chat.server.dao.StatisticsDao;
 import com.jets.chat.server.service.ServerStatisticsService;
 
 import java.util.Map;
 
-// ✅ CORRECT: Service layer contains NO database code
-// ✅ Delegates ALL data operations to DAO
 public class ServerStatisticsServiceImpl implements ServerStatisticsService {
     private final StatisticsDao statisticsDao; // Injected DAO dependency
 
@@ -17,12 +17,15 @@ public class ServerStatisticsServiceImpl implements ServerStatisticsService {
 
     @Override
     public int getOnlineUsersCount() {
-        return statisticsDao.getOnlineUsersCount();
+        Map<Long, ClientCallback> onlineClients = ServerManager.getInstance().getOnlineClients();
+        return onlineClients.size();
     }
 
     @Override
     public int getOfflineUsersCount() {
-        return statisticsDao.getOfflineUsersCount();
+        long totalUsers = statisticsDao.getTotalUsers();
+        int onlineUsers = getOnlineUsersCount();
+        return (int) (totalUsers - onlineUsers);
     }
 
     @Override

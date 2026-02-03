@@ -25,18 +25,16 @@ public class AdminDashboardController {
     private ServerManager serverManager;
     private Admin currentAdmin;
 
-    // ✅ UPDATED: Accepts firstLogin flag
     public void init(ServerManager serverManager, Admin admin, boolean firstLogin) {
         this.serverManager = serverManager;
         this.currentAdmin = admin;
         adminInfo.setText("Admin: " + admin.getUsername());
         updateServerStatus();
 
-        // ✅ CRITICAL: Auto-navigate to change password on first login
         if (firstLogin) {
-            showChangePassword(); // ← AUTO-REDIRECT AFTER DASHBOARD LOADS
+            showChangePassword();
         } else {
-            showStatistics(); // normal flow
+            showStatistics();
         }
     }
 
@@ -63,10 +61,13 @@ public class AdminDashboardController {
         try {
             if (serverManager.isServerRunning()) {
                 serverManager.stopServer();
+                System.out.println("✓ Server stopped");
             } else {
                 serverManager.startServer();
+                System.out.println("✓ Server started");
             }
             updateServerStatus();
+
         } catch (Exception e) {
             showError("Server operation failed", e.getMessage());
             e.printStackTrace();
@@ -77,18 +78,22 @@ public class AdminDashboardController {
     private void showStatistics() {
         loadView("/view/statistics-view.fxml", statsBtn);
     }
+
     @FXML
     private void showUserManagement() {
         loadView("/view/user-management.fxml", userMgmtBtn);
     }
+
     @FXML
     private void showAddAdmin() {
         loadView("/view/add-admin.fxml", addAdminBtn);
     }
+
     @FXML
     private void showChangePassword() {
         loadView("/view/change-password.fxml", pwdBtn);
     }
+
     @FXML
     private void showAnnouncement() {
         loadView("/view/announcement-view.fxml", announceBtn);
@@ -98,9 +103,8 @@ public class AdminDashboardController {
     private void handleLogout() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/admin-login.fxml"));
-            loader.load();
             Stage stage = (Stage) serverStatus.getScene().getWindow();
-            stage.setScene(new Scene(loader.getRoot()));
+            stage.setScene(new Scene(loader.load()));
             stage.centerOnScreen();
             stage.show();
         } catch (IOException e) {
@@ -109,33 +113,45 @@ public class AdminDashboardController {
     }
 
     private void loadView(String fxmlPath, Button activeButton) {
+        System.out.println("Loading view: " + fxmlPath);
+
+        // Reset all button styles
         statsBtn.getStyleClass().remove("selected");
         userMgmtBtn.getStyleClass().remove("selected");
         addAdminBtn.getStyleClass().remove("selected");
         pwdBtn.getStyleClass().remove("selected");
         announceBtn.getStyleClass().remove("selected");
+
+        // Set active button style
         activeButton.getStyleClass().add("selected");
 
         try {
+            // Load the FXML
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
             Node view = loader.load();
+
+            // Initialize the controller
             Object controller = loader.getController();
 
-            if (controller instanceof StatisticsController c)
-                c.init(serverManager);
-            else if (controller instanceof UserManagementController c)
-                c.init(serverManager);
-            else if (controller instanceof AddAdminController c)
-                c.init(serverManager, currentAdmin);
-            else if (controller instanceof ChangePasswordController c)
-                c.init(serverManager, currentAdmin);
-            else if (controller instanceof AnnouncementController c)
-                c.init(serverManager);
+            if (controller instanceof StatisticsController) {
+                ((StatisticsController) controller).init(serverManager);
+            } else if (controller instanceof UserManagementController) {
+                ((UserManagementController) controller).init(serverManager);
+            } else if (controller instanceof AddAdminController) {
+                ((AddAdminController) controller).init(serverManager, currentAdmin);
+            } else if (controller instanceof ChangePasswordController) {
+                ((ChangePasswordController) controller).init(serverManager, currentAdmin);
+            } else if (controller instanceof AnnouncementController) {
+                ((AnnouncementController) controller).init(serverManager);
+            }
 
+            // Display the view
             contentArea.getChildren().setAll(view);
+
         } catch (IOException e) {
+            System.err.println("Failed to load view: " + fxmlPath);
             e.printStackTrace();
-            showError("Failed to load view", e.getMessage());
+            showError("Failed to load view", "Cannot load: " + fxmlPath + "\nError: " + e.getMessage());
         }
     }
 

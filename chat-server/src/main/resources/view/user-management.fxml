@@ -14,7 +14,7 @@
     <HBox spacing="15" alignment="CENTER_LEFT">
         <TextField fx:id="searchField" promptText="Search users by name, phone or email..."
                    styleClass="search-box" HBox.hgrow="ALWAYS" onKeyReleased="#handleSearch"/>
-        <Button text="Refresh" onAction="#loadUsers"
+        <Button text="Refresh" onAction="#handleRefresh"
                 style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-size: 15px; -fx-padding: 10px 20px; -fx-background-radius: 8px;"/>
     </HBox>
 
@@ -34,5 +34,8 @@
     <HBox spacing="10" alignment="CENTER_RIGHT">
         <Label text="Total Users:" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
         <Label fx:id="totalUsersLabel" text="0" style="-fx-font-size: 18px; -fx-text-fill: #3498db; -fx-font-weight: bold;"/>
+        <Label text=" / " style="-fx-font-size: 16px;"/>
+        <Label text="Online:" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
+        <Label fx:id="onlineUsersLabel" text="0" style="-fx-font-size: 18px; -fx-text-fill: #27ae60; -fx-font-weight: bold;"/>
     </HBox>
-</VBox>  <!-- ✅ CRITICAL: Closing tag was missing in your snippet -->
+</VBox>

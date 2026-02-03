@@ -12,7 +12,6 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.rmi.RemoteException;
 
 public class AdminLoginController {
     @FXML
@@ -25,12 +24,7 @@ public class AdminLoginController {
     private ServerManager serverManager;
 
     public AdminLoginController() {
-        try {
-            this.serverManager = ServerManager.getInstance();
-        } catch (RemoteException e) {
-            showError("Server unavailable. Please ensure the chat server is running.");
-            e.printStackTrace();
-        }
+        this.serverManager = ServerManager.getInstance();
     }
 
     @FXML

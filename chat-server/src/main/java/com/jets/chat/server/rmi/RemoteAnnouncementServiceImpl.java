@@ -1,7 +1,6 @@
 package com.jets.chat.server.rmi;
 
 import com.jets.chat.common.dto.AnnouncementDTO;
-import com.jets.chat.common.rmi.AnnouncementCallback;
 import com.jets.chat.common.rmi.RemoteAnnouncementService;
 import com.jets.chat.server.service.AnnouncementService;
 
@@ -30,13 +29,13 @@ public class RemoteAnnouncementServiceImpl extends UnicastRemoteObject
     }
 
     @Override
-    public void registerCallback(String sessionId, AnnouncementCallback callback)
+    public AnnouncementDTO createAnnouncement(AnnouncementDTO announcementDTO)
             throws RemoteException {
-        announcementService.registerCallback(sessionId, callback);
+        return announcementService.createAnnouncement(announcementDTO);
     }
 
     @Override
-    public void unregisterCallback(String sessionId) throws RemoteException {
-        announcementService.unregisterCallback(sessionId);
+    public int getActiveCallbackCount() throws RemoteException {
+        return announcementService.getActiveCallbackCount();
     }
 }
