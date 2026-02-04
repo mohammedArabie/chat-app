@@ -1,7 +1,10 @@
 package com.jets.chat.server.service.impl;
 
 import com.jets.chat.common.dto.InvitationDTO;
+import com.jets.chat.common.enums.ChatType;
 import com.jets.chat.common.enums.ContactStatus;
+import com.jets.chat.server.context.ServerManager;
+import com.jets.chat.server.dao.ChatDao;
 import com.jets.chat.server.dao.ContactsDao;
 import com.jets.chat.server.dao.UserDao;
 import com.jets.chat.server.entity.Contact;
@@ -9,6 +12,7 @@ import com.jets.chat.server.entity.User;
 import com.jets.chat.server.service.ContactsService;
 import javafx.util.Pair;
 
+import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -19,10 +23,12 @@ public class ContactsServiceImpl implements ContactsService {
 
     private final ContactsDao contactsDao;
     private final UserDao userDao;
+    private final ChatDao chatDao;
 
-    public ContactsServiceImpl(ContactsDao contactsDao, UserDao userDao) {
+    public ContactsServiceImpl(ContactsDao contactsDao, UserDao userDao, ChatDao chatDao) {
         this.contactsDao = contactsDao;
         this.userDao = userDao;
+        this.chatDao = chatDao;
     }
 
     @Override
@@ -57,11 +63,17 @@ public class ContactsServiceImpl implements ContactsService {
     }
 
     @Override
-    public void acceptRequest(long contactId, long ownerId) {
+    public void acceptRequest(long contactId, long ownerId) throws RemoteException {
         if (contactsDao.findByIds(ownerId, contactId).isEmpty()) {
             throw new RuntimeException("Contact not found");
         }
-        contactsDao.updateStatus(ownerId, contactId, ContactStatus.ACCEPTED);
+        if (contactsDao.updateStatus(ownerId, contactId, ContactStatus.ACCEPTED)) {
+            long chatId = chatDao.insertChat(ChatType.PRIVATE);
+            chatDao.addParticipant(chatId, ownerId);
+            chatDao.addParticipant(chatId, contactId);
+            ServerManager.getInstance().getOnlineClients().get(ownerId).reloadChats();
+            ServerManager.getInstance().getOnlineClients().get(contactId).reloadChats();
+        }
     }
 
     @Override
