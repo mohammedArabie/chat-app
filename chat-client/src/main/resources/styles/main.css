@@ -1,139 +1,183 @@
 .root {
-    -fx-base: #0B0E11;
-    -fx-background-color: #0B0E11;
+  -fx-base: #0b0e11;
+  -fx-background-color: #0b0e11;
 }
 
 .sidebar {
-    -fx-background-color: #15191C;
-    -fx-padding: 10;
+  -fx-background-color: #15191c;
+  -fx-padding: 10;
 }
 
 .chat-area {
-    -fx-background-color: #0B0E11;
-    -fx-padding: 0 20;
+  -fx-background-color: #0b0e11;
+  -fx-padding: 0 20;
 }
 
 .info-pane {
-    -fx-background-color: #15191C;
-    -fx-padding: 20;
-    -fx-alignment: top-center;
+  -fx-background-color: #15191c;
+  -fx-padding: 20;
+  -fx-alignment: top-center;
 }
 
 .search-bar {
-    -fx-background-color: #25292D;
-    -fx-text-fill: white;
-    -fx-background-radius: 10;
-    -fx-padding: 8;
+  -fx-background-color: #25292d;
+  -fx-text-fill: white;
+  -fx-background-radius: 10;
+  -fx-padding: 8;
 }
 
 .list-view {
-    -fx-background-color: transparent;
+  -fx-background-color: transparent;
 }
 
 .list-cell {
-    -fx-background-color: transparent;
-    -fx-text-fill: white;
+  -fx-background-color: transparent;
+  -fx-text-fill: white;
 }
 
 .list-cell:filled:selected {
-    -fx-background-color: #25292D;
+  -fx-background-color: #25292d;
 }
 
 .text-white {
-    -fx-text-fill: white;
+  -fx-text-fill: white;
 }
 
 .contact-item-container {
-    -fx-background-radius: 8;
-    -fx-cursor: hand;
+  -fx-background-radius: 8;
+  -fx-cursor: hand;
 }
 
 .contact-item-container:hover {
-    -fx-background-color: #1E2329;
+  -fx-background-color: #1e2329;
 }
 
 .list-view .list-cell:filled:selected .contact-item-container {
-    -fx-background-color: #25292D;
+  -fx-background-color: #25292d;
 }
 
 .text-muted {
-    -fx-text-fill: #8E9297;
-    -fx-font-size: 12px;
+  -fx-text-fill: #8e9297;
+  -fx-font-size: 12px;
 }
 
 .section-header {
-    -fx-text-fill: #555;
-    -fx-font-weight: bold;
-    -fx-font-size: 10px;
+  -fx-text-fill: #555;
+  -fx-font-weight: bold;
+  -fx-font-size: 10px;
 }
 
 .bubble-sent {
-    -fx-background-color: #0084FF;
-    -fx-text-fill: white;
-    -fx-background-radius: 18 18 2 18; /* Top-Left, Top-Right, Bottom-Right, Bottom-Left */
-    -fx-padding: 10 14;
-    -fx-font-size: 13px;
+  -fx-background-color: #0084ff;
+  -fx-text-fill: white;
+  -fx-background-radius: 18 18 2 18; /* Top-Left, Top-Right, Bottom-Right, Bottom-Left */
+  -fx-padding: 10 14;
+  -fx-font-size: 13px;
 }
 
 .bubble-received {
-    -fx-background-color: #2D2D2D;
-    -fx-text-fill: white;
-    -fx-background-radius: 18 18 18 2;
-    -fx-padding: 10 14;
-    -fx-font-size: 13px;
+  -fx-background-color: #2d2d2d;
+  -fx-text-fill: white;
+  -fx-background-radius: 18 18 18 2;
+  -fx-padding: 10 14;
+  -fx-font-size: 13px;
 }
 
 .text-muted-tiny {
-    -fx-text-fill: #6E7277;
-    -fx-font-size: 10px;
+  -fx-text-fill: #6e7277;
+  -fx-font-size: 10px;
 }
 
 .message-list-view {
-    -fx-background-color: transparent;
-    -fx-background-insets: 0;
-    -fx-padding: 0;
+  -fx-background-color: transparent;
+  -fx-background-insets: 0;
+  -fx-padding: 0;
 }
 
 .message-list-view .list-cell {
-    -fx-background-color: transparent;
-    -fx-padding: 0;
+  -fx-background-color: transparent;
+  -fx-padding: 0;
 }
 
 .message-list-view .list-cell:selected {
-    -fx-background-color: transparent;
+  -fx-background-color: transparent;
 }
 
 .custom-list-view {
-    -fx-background-color: transparent;
-    -fx-background-insets: 0;
-    -fx-padding: 0;
+  -fx-background-color: transparent;
+  -fx-background-insets: 0;
+  -fx-padding: 0;
 }
 
 .badge-text {
-    -fx-font-size: 9px;
-    -fx-font-weight: bold;
-    -fx-text-fill: white;
+  -fx-font-size: 9px;
+  -fx-font-weight: bold;
+  -fx-text-fill: white;
 }
 
 .icon-container {
-    -fx-cursor: hand;
+  -fx-cursor: hand;
 }
 
 .tab-container {
-    -fx-background-color: #0B0E11;
-    -fx-background-radius: 10;
-    -fx-padding: 5;
+  -fx-background-color: #0b0e11;
+  -fx-background-radius: 10;
+  -fx-padding: 5;
 }
 
 .tab-btn-active {
-    -fx-background-color: #25292D;
-    -fx-text-fill: white;
-    -fx-background-radius: 8;
+  -fx-background-color: #25292d;
+  -fx-text-fill: white;
+  -fx-background-radius: 8;
 }
 
 .search-bar {
-    -fx-background-color: #15191C;
-    -fx-border-color: #25292D;
-    -fx-border-radius: 8;
-    -fx-text-fill: white;
+  -fx-background-color: #15191c;
+  -fx-border-color: #25292d;
+  -fx-border-radius: 8;
+  -fx-text-fill: white;
+}
+
+.notification-bar {
+  -fx-background-color: #25292d;
+  -fx-background-radius: 5;
+  -fx-border-color: #444444;
+  -fx-border-radius: 5;
+  -fx-padding: 15;
+  -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.6), 10, 0, 0, 0);
+}
+
+.notification-bar > .label {
+  -fx-text-fill: white !important;
+  -fx-font-weight: bold;
+}
+
+.notification-bar .text {
+  -fx-fill: #e0e0e0 !important;
+}
+
+.dialog-pane {
+  -fx-background-color: #15191c; /* Matches your Sidebar */
+}
+
+.dialog-pane > .content.label {
+  -fx-text-fill: white;
+}
+
+.dialog-pane:header .header-panel {
+  -fx-background-color: #25292d;
+}
+
+.dialog-pane:header .header-panel .label {
+  -fx-text-fill: white;
+}
+
+.dialog-pane .button-bar button {
+  -fx-background-color: #25292d;
+  -fx-text-fill: white;
+  -fx-cursor: hand;
+}
+
+.dialog-pane .button-bar button:hover {
+  -fx-background-color: #35393d;
 }
