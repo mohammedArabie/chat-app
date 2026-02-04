@@ -272,4 +272,13 @@ public class UserServiceImpl implements UserService {
         onlineClients.clear();
         System.out.println("✓ Cleared " + count + " online user sessions");
     }
+    @Override
+    public boolean phoneNumberExists(String phoneNumber) {
+        if (phoneNumber == null || phoneNumber.trim().isEmpty()) {
+            return false;
+        }
+
+        Optional<User> user = userDao.findByPhoneNumber(phoneNumber.trim());
+        return user.isPresent();
+    }
 }
