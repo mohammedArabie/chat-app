@@ -1,20 +1,11 @@
 package com.jets.chat.client.callback;
 
 import com.jets.chat.client.ui.viewmodel.ChatViewModel;
-import com.jets.chat.client.util.SceneManager;
 import com.jets.chat.client.util.SessionManager;
-import com.jets.chat.common.callback.ClientCallback;
-import com.jets.chat.common.dto.AnnouncementDTO;
-import com.jets.chat.common.dto.ChatSummaryDTO;
-import com.jets.chat.common.dto.MessageDTO;
-import com.jets.chat.common.enums.UserStatus;
-import javafx.application.Platform;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.Label;
 import com.jets.chat.client.util.SystemNotificationUtil;
 import com.jets.chat.common.callback.ClientCallback;
 import com.jets.chat.common.dto.AnnouncementDTO;
+import com.jets.chat.common.dto.ChatSummaryDTO;
 import com.jets.chat.common.dto.MessageDTO;
 import com.jets.chat.common.enums.UserStatus;
 import javafx.application.Platform;
@@ -34,13 +25,22 @@ public class ClientCallbackImpl extends UnicastRemoteObject implements ClientCal
     @Override
     public void receiveMessage(MessageDTO message) throws RemoteException {
         Platform.runLater(() -> {
-            if (chatViewModel.selectedChatProperty().get() != null) {
-                chatViewModel.getMessageHistory().add(message);
+            chatViewModel.updateChatInSidebar(message);
+
+            ChatSummaryDTO selected = chatViewModel.selectedChatProperty().get();
+            if (selected != null && selected.chatId() == message.chatId()) {
+
+                chatViewModel.getMessageHistory()
+                        .add(new MessageDTO(message.chatId(), message.content(), message.time(),
+                                message.isSentByMe(), SessionManager.getDisplayName()));
             }
 
             if (chatViewModel.isSystemNotificationsEnabled()) {
-                SystemNotificationUtil.showInfoNotification("You have recieved a new message",
-                        message.content());
+                String snippet = message.isFileMessage()
+                        ? "📎 File: " + message.content()
+                        : message.content();
+                SystemNotificationUtil.showInfoNotification("New message in " + message.chatId(),
+                        snippet);
             }
         });
     }

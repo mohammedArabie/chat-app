@@ -60,7 +60,7 @@ public final class ContactsDaoImpl implements ContactsDao {
         }
 
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(INSERT_SQL)) {
+                PreparedStatement statement = connection.prepareStatement(INSERT_SQL)) {
 
             statement.setLong(1, contact.getOwnerId());
             statement.setLong(2, contact.getContactId());
@@ -88,7 +88,7 @@ public final class ContactsDaoImpl implements ContactsDao {
     @Override
     public Optional<Contact> findByIds(long ownerId, long contactId) {
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SELECT_BY_IDS_SQL)) {
+                PreparedStatement statement = connection.prepareStatement(SELECT_BY_IDS_SQL)) {
 
             statement.setLong(1, ownerId);
             statement.setLong(2, contactId);
@@ -105,8 +105,7 @@ public final class ContactsDaoImpl implements ContactsDao {
     @Override
     public List<Contact> findUserContacts(long userId) {
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection
-                     .prepareStatement(SELECT_USER_CONTACTS)) {
+                PreparedStatement statement = connection.prepareStatement(SELECT_USER_CONTACTS)) {
 
             statement.setLong(1, userId);
             statement.setLong(2, userId);
@@ -126,8 +125,8 @@ public final class ContactsDaoImpl implements ContactsDao {
     @Override
     public List<Contact> findAllContactsByOwnerId(long ownerId) {
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection
-                     .prepareStatement(SELECT_ALL_BY_OWNER_SQL)) {
+                PreparedStatement statement = connection
+                        .prepareStatement(SELECT_ALL_BY_OWNER_SQL)) {
 
             statement.setLong(1, ownerId);
 
@@ -151,8 +150,8 @@ public final class ContactsDaoImpl implements ContactsDao {
         }
 
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection
-                     .prepareStatement(SELECT_ALL_BY_OWNER_AND_STATUS_SQL)) {
+                PreparedStatement statement = connection
+                        .prepareStatement(SELECT_ALL_BY_OWNER_AND_STATUS_SQL)) {
 
             statement.setLong(1, ownerId);
             statement.setString(2, status.name());
@@ -173,8 +172,8 @@ public final class ContactsDaoImpl implements ContactsDao {
     @Override
     public List<Contact> findAllContactsByOwnerIdAndCategory(long ownerId, String category) {
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection
-                     .prepareStatement(SELECT_ALL_BY_OWNER_AND_CATEGORY_SQL)) {
+                PreparedStatement statement = connection
+                        .prepareStatement(SELECT_ALL_BY_OWNER_AND_CATEGORY_SQL)) {
 
             statement.setLong(1, ownerId);
             statement.setString(2, category);
@@ -202,7 +201,7 @@ public final class ContactsDaoImpl implements ContactsDao {
         }
 
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(UPDATE_SQL)) {
+                PreparedStatement statement = connection.prepareStatement(UPDATE_SQL)) {
 
             statement.setString(1, contact.getStatus().name());
             statement.setString(2, contact.getCategory());
@@ -223,7 +222,7 @@ public final class ContactsDaoImpl implements ContactsDao {
         }
 
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(UPDATE_STATUS_SQL)) {
+                PreparedStatement statement = connection.prepareStatement(UPDATE_STATUS_SQL)) {
 
             statement.setString(1, status.name());
             statement.setLong(2, ownerId);
@@ -239,7 +238,7 @@ public final class ContactsDaoImpl implements ContactsDao {
     @Override
     public boolean updateCategory(long ownerId, long contactId, String category) {
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(UPDATE_CATEGORY_SQL)) {
+                PreparedStatement statement = connection.prepareStatement(UPDATE_CATEGORY_SQL)) {
 
             statement.setString(1, category);
             statement.setLong(2, ownerId);
@@ -255,7 +254,7 @@ public final class ContactsDaoImpl implements ContactsDao {
     @Override
     public boolean deleteByIds(long ownerId, long contactId) {
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(DELETE_SQL)) {
+                PreparedStatement statement = connection.prepareStatement(DELETE_SQL)) {
 
             statement.setLong(1, ownerId);
             statement.setLong(2, contactId);
@@ -270,7 +269,7 @@ public final class ContactsDaoImpl implements ContactsDao {
     @Override
     public boolean exists(long ownerId, long contactId) {
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(EXISTS_SQL)) {
+                PreparedStatement statement = connection.prepareStatement(EXISTS_SQL)) {
 
             statement.setLong(1, ownerId);
             statement.setLong(2, contactId);
@@ -287,7 +286,7 @@ public final class ContactsDaoImpl implements ContactsDao {
     @Override
     public List<Pair<Long, Long>> getPendingRequestsByContactId(long contactId) {
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(GET_PENDING_BY_REQUEST_ID_SQL)) {
+                PreparedStatement stmt = conn.prepareStatement(GET_PENDING_BY_REQUEST_ID_SQL)) {
             stmt.setLong(1, contactId);
             List<Pair<Long, Long>> requests = new ArrayList<>();
             try (ResultSet rs = stmt.executeQuery()) {

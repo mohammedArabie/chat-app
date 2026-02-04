@@ -4,6 +4,7 @@ import com.jets.chat.client.ui.viewmodel.ChatViewModel;
 import com.jets.chat.common.rmi.RemoteAnnouncementService;
 import com.jets.chat.common.rmi.RemoteChatService;
 import com.jets.chat.common.rmi.RemoteContactsService;
+import com.jets.chat.common.rmi.RemoteFileService;
 import com.jets.chat.common.rmi.RemoteUserService;
 import com.jets.chat.common.util.ProjectConstants;
 
@@ -19,6 +20,7 @@ public class ClientManager {
     private final RemoteUserService remoteUserService;
     private final RemoteChatService remoteChatService;
     private final RemoteContactsService remoteContactsService;
+    private final RemoteFileService remoteFileService;
     private final ChatViewModel chatViewModel;
 
     private ClientManager() {
@@ -33,6 +35,8 @@ public class ClientManager {
                     .lookup(ProjectConstants.CHAT_SERVICE);
             this.remoteContactsService = (RemoteContactsService) registry
                     .lookup(ProjectConstants.CONTACTS_SERVICE);
+            this.remoteFileService = (RemoteFileService) registry
+                    .lookup(ProjectConstants.FILE_SERVICE);
             this.chatViewModel = new ChatViewModel();
         } catch (RemoteException e) {
             System.out.println("Failed to connect");
@@ -72,5 +76,9 @@ public class ClientManager {
 
     public RemoteContactsService getRemoteContactsService() {
         return remoteContactsService;
+    }
+
+    public RemoteFileService getRemoteFileService() {
+        return remoteFileService;
     }
 }
