@@ -11,8 +11,7 @@
         <StackPane fx:id="avatarContainer" alignment="TOP_CENTER">
             <children>
                 <Circle fill="#2d2d2d" radius="16.0" stroke="TRANSPARENT"/>
-                <Label fx:id="initialsLabel" style="-fx-font-size: 10; -fx-text-fill: white; -fx-font-weight: bold;"
-                       text="SC"/>
+                <Label fx:id="initialsLabel" style="-fx-font-size: 10; -fx-text-fill: white; -fx-font-weight: bold;"/>
             </children>
             <HBox.margin>
                 <Insets top="2.0"/>
