@@ -5,7 +5,9 @@ import com.jets.chat.common.dto.LoginResult;
 import com.jets.chat.common.dto.RegisterRequestDTO;
 import com.jets.chat.common.dto.RegisterResponseDTO;
 import com.jets.chat.common.dto.UserDTO;
+import com.jets.chat.common.enums.UserStatus;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
@@ -24,4 +26,12 @@ public interface UserService {
     boolean phoneNumberExists(String phoneNumber);
 
     public Optional<UserDTO> getUserByEmail(String email);
+
+    void updateStatus(long userId, UserStatus status);
+
+    UserStatus getUserStatus(long userId);
+
+    List<Long> getUserContacts(long userId);
+
+    void notifyContactsOfStatusChange(long userId, UserStatus status);
 }

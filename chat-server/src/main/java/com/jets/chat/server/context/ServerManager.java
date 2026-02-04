@@ -6,30 +6,14 @@ import com.jets.chat.common.rmi.RemoteChatService;
 import com.jets.chat.common.rmi.RemoteContactsService;
 import com.jets.chat.common.rmi.RemoteUserService;
 import com.jets.chat.server.config.DataSourceConfig;
-import com.jets.chat.server.dao.AdminDao;
-import com.jets.chat.server.dao.AnnouncementDao;
-import com.jets.chat.server.dao.ContactsDao;
-import com.jets.chat.server.dao.StatisticsDao;
-import com.jets.chat.server.dao.UserDao;
-import com.jets.chat.server.dao.impl.AdminDaoImpl;
-import com.jets.chat.server.dao.impl.AnnouncementDaoImpl;
-import com.jets.chat.server.dao.impl.ContactsDaoImpl;
-import com.jets.chat.server.dao.impl.StatisticsDaoImpl;
-import com.jets.chat.server.dao.impl.UserDaoImpl;
+import com.jets.chat.server.dao.*;
+import com.jets.chat.server.dao.impl.*;
 import com.jets.chat.server.rmi.RemoteAnnouncementServiceImpl;
 import com.jets.chat.server.rmi.RemoteChatServiceImpl;
 import com.jets.chat.server.rmi.RemoteContactsServiceImpl;
 import com.jets.chat.server.rmi.RemoteUserServiceImpl;
-import com.jets.chat.server.service.AdminService;
-import com.jets.chat.server.service.AnnouncementService;
-import com.jets.chat.server.service.ContactsService;
-import com.jets.chat.server.service.ServerStatisticsService;
-import com.jets.chat.server.service.UserService;
-import com.jets.chat.server.service.impl.AdminServiceImpl;
-import com.jets.chat.server.service.impl.AnnouncementServiceImpl;
-import com.jets.chat.server.service.impl.ContactsServiceImpl;
-import com.jets.chat.server.service.impl.ServerStatisticsServiceImpl;
-import com.jets.chat.server.service.impl.UserServiceImpl;
+import com.jets.chat.server.service.*;
+import com.jets.chat.server.service.impl.*;
 import com.zaxxer.hikari.HikariDataSource;
 
 import java.rmi.RemoteException;
@@ -60,6 +44,7 @@ public class ServerManager {
         AdminDao adminDao = new AdminDaoImpl(dataSource);
         StatisticsDao statisticsDao = new StatisticsDaoImpl(dataSource);
         UserDao userDao = new UserDaoImpl(dataSource);
+        ChatDao chatDao = new ChatDaoImpl(dataSource);
         this.announcementService = new AnnouncementServiceImpl(announcementDao);
         this.remoteAnnouncementService = new RemoteAnnouncementServiceImpl(announcementService);
         this.remoteChatService = new RemoteChatServiceImpl();
@@ -71,7 +56,7 @@ public class ServerManager {
 
         // Initialize ContactsService
         ContactsDao contactsDao = new ContactsDaoImpl(dataSource);
-        this.contactsService = new ContactsServiceImpl(contactsDao, userDao);
+        this.contactsService = new ContactsServiceImpl(contactsDao, userDao, chatDao);
         this.remoteContactsService = new RemoteContactsServiceImpl(contactsService);
     }
 

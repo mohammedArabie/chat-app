@@ -9,6 +9,7 @@ import com.jets.chat.common.dto.MessageDTO;
 import com.jets.chat.common.dto.UserDTO;
 import com.jets.chat.common.rmi.RemoteChatService;
 import com.jets.chat.common.rmi.RemoteContactsService;
+import com.jets.chat.common.enums.UserStatus;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
@@ -18,6 +19,9 @@ import javafx.collections.ObservableList;
 import java.rmi.RemoteException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class ChatViewModel {
 
@@ -40,6 +44,7 @@ public class ChatViewModel {
 
     private final IntegerProperty unreadAnnouncementsCount = new SimpleIntegerProperty(0);
 
+    private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
     private final BooleanProperty showSettingsPane = new SimpleBooleanProperty(false);
     private final BooleanProperty enableSystemNotifications = new SimpleBooleanProperty(true);
 
@@ -60,6 +65,35 @@ public class ChatViewModel {
         });
     }
 
+    public void startPolling() {
+        scheduler.scheduleAtFixedRate(this::updateChatList, 2, 2, TimeUnit.SECONDS);
+        scheduler.scheduleAtFixedRate(this::fetchPendingInvitations, 3, 5, TimeUnit.SECONDS);
+    }
+
+    public void stopPolling() {
+        scheduler.shutdown();
+        try {
+            if (!scheduler.awaitTermination(1, TimeUnit.SECONDS)) {
+                scheduler.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            scheduler.shutdownNow();
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    private void updateChatList() {
+        try {
+            RemoteChatService chatService = ClientManager.getInstance().getRemoteChatService();
+            List<ChatSummaryDTO> chats = chatService.getUserChats(SessionManager.getUserId());
+            Platform.runLater(() -> {
+                chatSummaryList.setAll(chats);
+            });
+        } catch (RemoteException e) {
+            System.err.println("Error polling chat list: " + e.getMessage());
+        }
+    }
+
     public void loadUserChats(Long userId) {
         new Thread(() -> {
             try {
@@ -68,7 +102,7 @@ public class ChatViewModel {
                     List<ChatSummaryDTO> chats = service.getUserChats(userId);
                     Platform.runLater(() -> {
                         chatSummaryList.setAll(chats);
-                        System.out.println("Sidebar populated with " + chats.size() + " chats.");
+                        System.out.println("Sidebar populated with " + chats + " chats.");
                     });
                 }
             } catch (Exception e) {
@@ -98,13 +132,13 @@ public class ChatViewModel {
             return;
         }
 
-        MessageDTO newMsg = new MessageDTO(text, LocalDateTime.now(), true);
+        String senderName = SessionManager.getDisplayName();
+        MessageDTO newMsg = new MessageDTO(text, LocalDateTime.now(), true, senderName);
 
         new Thread(() -> {
             try {
                 ClientManager.getInstance().getRemoteChatService()
                         .sendMessage(selectedChat.get().chatId(), text, SessionManager.getUserId());
-
                 Platform.runLater(() -> {
                     messageHistory.add(newMsg);
                 });
@@ -133,6 +167,10 @@ public class ChatViewModel {
     }
 
     public void fetchInvitationsFromServer() {
+        fetchPendingInvitations();
+    }
+
+    private void fetchPendingInvitations() {
         new Thread(() -> {
             try {
                 RemoteContactsService service = ClientManager.getInstance()
@@ -250,7 +288,6 @@ public class ChatViewModel {
                         .acceptRequest(SessionManager.getUserId(), invitation.ownerId());
                 Platform.runLater(() -> {
                     pendingInvitations.remove(invitation);
-                    loadUserChats(SessionManager.getUserId());
                 });
             } catch (RemoteException e) {
                 e.printStackTrace();
@@ -270,6 +307,16 @@ public class ChatViewModel {
         }).start();
     }
 
+    public void changeStatus(UserStatus status) {
+        new Thread(() -> {
+            try {
+                ClientManager.getInstance().getRemoteUserService()
+                        .updateStatus(SessionManager.getUserId(), status);
+            } catch (RemoteException e) {
+                System.err.println("Failed to update user status: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }).start();
     public BooleanProperty showSettingsPaneProperty() {
         return showSettingsPane;
     }

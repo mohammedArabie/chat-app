@@ -39,4 +39,10 @@ public class ChatParticipant {
     public void setJoinedAt(Timestamp joinedAt) {
         this.joinedAt = joinedAt;
     }
+
+    @Override
+    public String toString() {
+        return "ChatParticipant{" + "chatId=" + chatId + ", userId=" + userId + ", joinedAt="
+                + joinedAt + '}';
+    }
 }

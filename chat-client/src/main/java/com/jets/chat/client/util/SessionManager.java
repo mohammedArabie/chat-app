@@ -10,6 +10,7 @@ public class SessionManager {
     private static final String FILE_NAME = System.getProperty("user.home") + File.separator
             + ".chatapp.session";
     private static long userId;
+    private static String displayName;
 
     public static void saveSession(long userId, String sessionId) {
         Properties props = new Properties();
@@ -21,6 +22,14 @@ public class SessionManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void saveDisplayName(String name) {
+        displayName = name;
+    }
+
+    public static String getDisplayName() {
+        return displayName;
     }
 
     public static Properties loadSession() {

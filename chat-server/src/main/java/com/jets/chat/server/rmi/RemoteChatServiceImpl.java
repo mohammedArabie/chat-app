@@ -4,6 +4,7 @@ import com.jets.chat.common.callback.ClientCallback;
 import com.jets.chat.common.dto.ChatSummaryDTO;
 import com.jets.chat.common.dto.MessageDTO;
 import com.jets.chat.common.enums.ChatType;
+import com.jets.chat.common.enums.UserStatus;
 import com.jets.chat.common.rmi.RemoteChatService;
 import com.jets.chat.server.config.DataSourceConfig;
 import com.jets.chat.server.context.ServerManager;
@@ -44,6 +45,7 @@ public class RemoteChatServiceImpl extends UnicastRemoteObject implements Remote
         for (Chat chat : chats) {
             Optional<Message> lastMessage = messageDao.findLatest(chat.getChatId());
             String chatName = "", lastMessageSender = null;
+            UserStatus status = UserStatus.OFFLINE;
             if (chat.getChatType().equals(ChatType.GROUP)) {
                 Optional<String> name = chatDao.findGroupNameByChatId(chat.getChatId());
                 if (name.isEmpty())
@@ -54,26 +56,29 @@ public class RemoteChatServiceImpl extends UnicastRemoteObject implements Remote
                     lastMessageSender = user.map(User::getDisplayName).orElse(null);
                 }
             } else {
+                long otherUserId = -1;
                 if (lastMessage.isPresent()) {
                     Optional<User> user = userDao.findById(lastMessage.get().getSenderId());
-                    lastMessageSender = chatName = user.map(User::getDisplayName).orElse(null);
+                    lastMessageSender = user.map(User::getDisplayName).orElse(null);
                 }
-                // else {
-                // List<ChatParticipant> participants =
-                // chatDao.getParticipants(chat.getChatId());
-                // for (ChatParticipant chatParticipant : participants) {
-                // if (chatParticipant.getUserId() != currentUserId) {
-                // Optional<User> user = userDao.findById(lastMessage.get().getSenderId());
-                // chatName = user.map(User::getDisplayName).orElse(null);
-                // break;
-                // }
-                // }
-                // }
+                {
+                    List<ChatParticipant> participants = chatDao.getParticipants(chat.getChatId());
+                    System.out.println("participants " + participants);
+                    for (ChatParticipant chatParticipant : participants) {
+                        if (chatParticipant.getUserId() != userId) {
+                            Optional<User> user = userDao.findById(chatParticipant.getUserId());
+                            chatName = user.map(User::getDisplayName).orElse(null);
+                            otherUserId = chatParticipant.getUserId();
+                            status = userDao.getStatus(otherUserId);
+                            break;
+                        }
+                    }
+                }
             }
             result.add(new ChatSummaryDTO(chat.getChatId(), chatName,
                     lastMessage.<String>map(Message::getContent).orElse(null),
                     lastMessage.<LocalDateTime>map(Message::getSentAt).orElse(null),
-                    lastMessageSender));
+                    lastMessageSender, status));
         }
         return result;
     }
@@ -84,8 +89,12 @@ public class RemoteChatServiceImpl extends UnicastRemoteObject implements Remote
         if (chatDao.findById(chatId).isEmpty()) {
             throw new RuntimeException("Chat not found");
         }
-        return messageDao.findByChatId(chatId).stream().map(e -> new MessageDTO(e.getContent(),
-                e.getSentAt(), e.getSenderId() == currentUserId)).toList();
+        return messageDao.findByChatId(chatId).stream().map(e -> {
+            Optional<User> sender = userDao.findById(e.getSenderId());
+            String senderName = sender.map(User::getDisplayName).orElse("Unknown");
+            return new MessageDTO(e.getContent(), e.getSentAt(), e.getSenderId() == currentUserId,
+                    senderName);
+        }).toList();
     }
 
     @Override
@@ -103,15 +112,14 @@ public class RemoteChatServiceImpl extends UnicastRemoteObject implements Remote
     private void notifyParticipants(Long chatId, String content) {
         List<ChatParticipant> participantIds = chatDao.getParticipants(chatId);
 
-        MessageDTO dto = new MessageDTO(content, LocalDateTime.now(), false);
-
         var onlineClients = ServerManager.getInstance().getOnlineClients();
 
         for (ChatParticipant user : participantIds) {
             ClientCallback callback = onlineClients.get(user.getUserId());
             if (callback != null) {
                 try {
-                    callback.receiveMessage(dto);
+                    callback.receiveMessage(
+                            new MessageDTO(content, LocalDateTime.now(), false, null));
                 } catch (RemoteException e) {
                     onlineClients.remove(user.getUserId());
                 }
