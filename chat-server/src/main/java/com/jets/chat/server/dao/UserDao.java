@@ -30,4 +30,5 @@ public interface UserDao {
     boolean deleteSession(String sessionId);
 
     boolean isSessionValid(long userId, String sessionId);
+    public boolean updateUser(User user);
 }
