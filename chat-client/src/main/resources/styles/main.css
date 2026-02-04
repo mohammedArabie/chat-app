@@ -108,3 +108,32 @@
     -fx-background-insets: 0;
     -fx-padding: 0;
 }
+
+.badge-text {
+    -fx-font-size: 9px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.icon-container {
+    -fx-cursor: hand;
+}
+
+.tab-container {
+    -fx-background-color: #0B0E11;
+    -fx-background-radius: 10;
+    -fx-padding: 5;
+}
+
+.tab-btn-active {
+    -fx-background-color: #25292D;
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+}
+
+.search-bar {
+    -fx-background-color: #15191C;
+    -fx-border-color: #25292D;
+    -fx-border-radius: 8;
+    -fx-text-fill: white;
+}
