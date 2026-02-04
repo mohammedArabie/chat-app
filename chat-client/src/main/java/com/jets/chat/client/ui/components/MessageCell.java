@@ -83,7 +83,14 @@ public class MessageCell extends ListCell<MessageDTO> {
 
                 avatarContainer.setVisible(true);
                 avatarContainer.setManaged(true);
-                // initialsLabel.setText(message.senderName().substring(0, 1).toUpperCase());
+
+                // Set initials from sender name
+                if (message.senderName() != null && !message.senderName().isEmpty()) {
+                    String initials = getInitials(message.senderName());
+                    initialsLabel.setText(initials);
+                } else {
+                    initialsLabel.setText("?");
+                }
 
                 if (!rootPane.getChildren().contains(avatarContainer)) {
                     rootPane.getChildren().add(0, avatarContainer);
@@ -92,5 +99,19 @@ public class MessageCell extends ListCell<MessageDTO> {
 
             setGraphic(rootPane);
         }
+    }
+
+    private String getInitials(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            return "?";
+        }
+        String[] parts = name.trim().split("\\s+");
+        if (parts.length >= 2) {
+            return (parts[0].substring(0, 1) + parts[parts.length - 1].substring(0, 1))
+                    .toUpperCase();
+        } else if (parts.length == 1) {
+            return parts[0].substring(0, Math.min(2, parts[0].length())).toUpperCase();
+        }
+        return "?";
     }
 }
