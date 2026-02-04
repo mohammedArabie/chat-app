@@ -5,6 +5,7 @@ import com.jets.chat.common.dto.*;
 import com.jets.chat.common.enums.UserStatus;
 import com.jets.chat.common.util.ProjectConstants;
 import com.jets.chat.server.context.ServerManager;
+import com.jets.chat.server.dao.ContactsDao;
 import com.jets.chat.server.dao.UserDao;
 import com.jets.chat.server.entity.User;
 import com.jets.chat.server.service.UserService;
@@ -33,9 +34,16 @@ public class UserServiceImpl implements UserService {
     }
 
     private final UserDao userDao;
+    private final ContactsDao contactsDao;
 
     public UserServiceImpl(UserDao userDao) {
         this.userDao = userDao;
+        this.contactsDao = null; // Will be set later if needed
+    }
+
+    public UserServiceImpl(UserDao userDao, ContactsDao contactsDao) {
+        this.userDao = userDao;
+        this.contactsDao = contactsDao;
     }
 
     private static void initializeUploadDirectory() {
@@ -257,6 +265,7 @@ public class UserServiceImpl implements UserService {
         ServerManager.getInstance().getOnlineClients().remove(userId);
         userDao.deleteSession(sessionId);
         userDao.updateStatus(userId, UserStatus.OFFLINE);
+        notifyContactsOfStatusChange(userId, UserStatus.OFFLINE);
     }
 
     @Override
@@ -272,8 +281,49 @@ public class UserServiceImpl implements UserService {
         Optional<User> user = userDao.findByEmail(email);
         if (user.isEmpty())
             return Optional.empty();
-        // TODO: fetch status
-        return Optional.of(new UserDTO(user.get().getUserId(), user.get().getDisplayName(),
-                UserStatus.AVAILABLE, user.get().getEmail(), user.get().getPhoneNumber()));
+        UserStatus status = userDao.getStatus(user.get().getUserId());
+        return Optional.of(new UserDTO(user.get().getUserId(), user.get().getDisplayName(), status,
+                user.get().getEmail(), user.get().getPhoneNumber()));
+    }
+
+    @Override
+    public void updateStatus(long userId, UserStatus status) {
+        userDao.updateStatus(userId, status);
+        notifyContactsOfStatusChange(userId, status);
+    }
+
+    @Override
+    public UserStatus getUserStatus(long userId) {
+        return userDao.getStatus(userId);
+    }
+
+    @Override
+    public List<Long> getUserContacts(long userId) {
+        // This would need to be implemented with a proper contactsDao
+        // For now, return empty list
+        return new ArrayList<>();
+    }
+
+    @Override
+    public void notifyContactsOfStatusChange(long userId, UserStatus status) {
+        Map<Long, ClientCallback> onlineClients = ServerManager.getInstance().getOnlineClients();
+
+        // Get contacts of the user (this would need proper implementation)
+        List<Long> contacts = getUserContacts(userId);
+
+        for (Long contactId : contacts) {
+            ClientCallback callback = onlineClients.get(contactId);
+            if (callback != null) {
+                try {
+                    callback.updateContactStatus(userId, status);
+                    System.out.println("Notified contact " + contactId + " that user " + userId
+                            + " is now " + status);
+                } catch (Exception e) {
+                    System.err.println("Failed to notify contact " + contactId
+                            + " of status change: " + e.getMessage());
+                    onlineClients.remove(contactId);
+                }
+            }
+        }
     }
 }
