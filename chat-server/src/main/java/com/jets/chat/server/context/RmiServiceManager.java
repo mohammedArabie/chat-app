@@ -2,8 +2,10 @@ package com.jets.chat.server.context;
 
 import com.jets.chat.common.util.ProjectConstants;
 import com.jets.chat.common.rmi.RemoteAnnouncementService;
+import com.jets.chat.common.rmi.RemoteContactsService;
 import com.jets.chat.common.rmi.RemoteUserService;
 import com.jets.chat.server.rmi.RemoteAnnouncementServiceImpl;
+import com.jets.chat.server.rmi.RemoteContactsServiceImpl;
 import com.jets.chat.server.rmi.RemoteUserServiceImpl;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -18,6 +20,7 @@ public class RmiServiceManager {
     private Registry registry;
     private RemoteAnnouncementServiceImpl announcementImpl; // Store the implementation
     private RemoteUserServiceImpl userImpl; // Store the implementation
+    private RemoteContactsServiceImpl contactsImpl; // Store the implementation
     private final AtomicBoolean isRunning = new AtomicBoolean(false);
 
     public RmiServiceManager(ServerManager serverManager) {
@@ -78,6 +81,24 @@ public class RmiServiceManager {
             registry.rebind(ProjectConstants.USER_SERVICE, userImpl);
             System.out.println("Bound " + ProjectConstants.USER_SERVICE);
 
+            // Create and export Contacts Service
+            contactsImpl = new RemoteContactsServiceImpl(serverManager.getContactsService());
+
+            // Check if already exported before exporting
+            try {
+                RemoteContactsService contactsStub = (RemoteContactsService) UnicastRemoteObject
+                        .toStub(contactsImpl);
+                // If we get here, it's already exported
+                System.out.println("Contacts service already exported, reusing...");
+            } catch (Exception e) {
+                // Not exported yet, so export it
+                UnicastRemoteObject.exportObject(contactsImpl, 0);
+                System.out.println("Exported Contacts service");
+            }
+
+            registry.rebind(ProjectConstants.CONTACTS_SERVICE, contactsImpl);
+            System.out.println("Bound " + ProjectConstants.CONTACTS_SERVICE);
+
             isRunning.set(true);
             System.out.println("RMI services started successfully");
 
@@ -119,6 +140,12 @@ public class RmiServiceManager {
                 } catch (Exception e) {
                     System.err.println("Failed to unbind user service: " + e.getMessage());
                 }
+                try {
+                    registry.unbind(ProjectConstants.CONTACTS_SERVICE);
+                    System.out.println("Unbound " + ProjectConstants.CONTACTS_SERVICE);
+                } catch (Exception e) {
+                    System.err.println("Failed to unbind contacts service: " + e.getMessage());
+                }
             }
 
             // Unexport remote objects gracefully
@@ -143,6 +170,17 @@ public class RmiServiceManager {
                     System.err.println("Failed to unexport user service: " + e.getMessage());
                 }
                 userImpl = null;
+            }
+
+            if (contactsImpl != null) {
+                try {
+                    if (UnicastRemoteObject.unexportObject(contactsImpl, true)) {
+                        System.out.println("Unexported Contacts service");
+                    }
+                } catch (Exception e) {
+                    System.err.println("Failed to unexport contacts service: " + e.getMessage());
+                }
+                contactsImpl = null;
             }
 
             isRunning.set(false);
@@ -171,6 +209,14 @@ public class RmiServiceManager {
                 } catch (Exception ignored) {
                 }
                 userImpl = null;
+            }
+
+            if (contactsImpl != null) {
+                try {
+                    UnicastRemoteObject.unexportObject(contactsImpl, true);
+                } catch (Exception ignored) {
+                }
+                contactsImpl = null;
             }
         } finally {
             isRunning.set(false);
