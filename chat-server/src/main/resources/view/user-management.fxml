@@ -18,17 +18,10 @@
                 style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-size: 15px; -fx-padding: 10px 20px; -fx-background-radius: 8px;"/>
     </HBox>
 
-    <TableView fx:id="usersTable" styleClass="data-table" VBox.vgrow="ALWAYS">
-        <columns>
-            <TableColumn text="ID" prefWidth="70"/>
-            <TableColumn text="Display Name" prefWidth="180"/>
-            <TableColumn text="Phone" prefWidth="140"/>
-            <TableColumn text="Email" prefWidth="200"/>
-            <TableColumn text="Country" prefWidth="120"/>
-            <TableColumn text="Gender" prefWidth="90"/>
-            <TableColumn text="Status" prefWidth="130"/>
-            <TableColumn text="Last Seen" prefWidth="150"/>
-        </columns>
+    <!-- REMOVED hardcoded columns - they're created in controller -->
+    <TableView fx:id="usersTable" styleClass="data-table" VBox.vgrow="ALWAYS"
+               editable="true">
+        <!-- Columns are created dynamically in setupTable() method -->
     </TableView>
 
     <HBox spacing="10" alignment="CENTER_RIGHT">

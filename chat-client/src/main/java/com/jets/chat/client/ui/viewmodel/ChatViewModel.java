@@ -1,6 +1,7 @@
 package com.jets.chat.client.ui.viewmodel;
 
 import com.jets.chat.client.util.ClientManager;
+import com.jets.chat.client.util.SceneManager;
 import com.jets.chat.client.util.SessionManager;
 import com.jets.chat.common.dto.ChatSummaryDTO;
 import com.jets.chat.common.dto.InvitationDTO;
@@ -44,6 +45,8 @@ public class ChatViewModel {
     private final IntegerProperty unreadAnnouncementsCount = new SimpleIntegerProperty(0);
 
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+    private final BooleanProperty showSettingsPane = new SimpleBooleanProperty(false);
+    private final BooleanProperty enableSystemNotifications = new SimpleBooleanProperty(true);
 
     public ChatViewModel() {
         pendingRequestsCount.bind(Bindings.size(pendingInvitations));
@@ -185,6 +188,19 @@ public class ChatViewModel {
 
     public void showAddContact() {
         activeRightView.set(RightPaneView.ADD_CONTACT);
+        showSettingsPane.set(false);
+        showInfoPane.set(true);
+        openInfoPane();
+    }
+
+    public void showSettings() {
+        selectedChat.set(null);
+        showInfoPane.set(false);
+        showSettingsPane.set(true);
+    }
+
+    public void closeSettingsPane() {
+        showSettingsPane.set(false);
     }
 
     public void toggleInfoPane() {
@@ -203,7 +219,22 @@ public class ChatViewModel {
         return ClientManager.getInstance().getRemoteUserService().getUserByEmail(email);
     }
 
-    // --- Getters ---
+    public void logout() {
+        new Thread(() -> {
+            try {
+                long userId = SessionManager.getUserId();
+                ClientManager.getInstance().getRemoteUserService().logout(userId, "");
+
+                Platform.runLater(() -> {
+                    SessionManager.clearSession();
+                    SceneManager.getInstance().showLoginScreen();
+                });
+            } catch (RemoteException e) {
+                System.err.println("Failed to logout via RMI");
+                e.printStackTrace();
+            }
+        }).start();
+    }
 
     public ObservableList<ChatSummaryDTO> getChatSummaryList() {
         return chatSummaryList;
@@ -286,5 +317,15 @@ public class ChatViewModel {
                 e.printStackTrace();
             }
         }).start();
+    public BooleanProperty showSettingsPaneProperty() {
+        return showSettingsPane;
+    }
+
+    public BooleanProperty enableSystemNotificationsProperty() {
+        return enableSystemNotifications;
+    }
+
+    public boolean isSystemNotificationsEnabled() {
+        return enableSystemNotifications.get();
     }
 }

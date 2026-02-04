@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox alignment="TOP_CENTER" prefWidth="300.0" spacing="25.0"
+      styleClass="info-pane"
+      xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.jets.chat.client.ui.controllers.SettingsPaneController">
+    <padding>
+        <Insets top="40.0" left="20.0" right="20.0" bottom="20.0"/>
+    </padding>
+
+    <!-- Header -->
+    <Label text="Settings" styleClass="section-header"/>
+
+    <Separator opacity="0.1"/>
+
+    <!-- Settings Content -->
+    <VBox alignment="TOP_LEFT" spacing="25" VBox.vgrow="ALWAYS">
+
+        <!-- Notifications Section -->
+        <VBox spacing="15">
+            <Label text="NOTIFICATIONS" styleClass="text-muted-tiny"/>
+
+            <VBox spacing="12">
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <CheckBox fx:id="systemNotificationCheckBox" selected="true"/>
+                    <VBox spacing="3" HBox.hgrow="ALWAYS">
+                        <Label text="System Notifications" styleClass="text-white"
+                               style="-fx-font-weight: bold; -fx-font-size: 13;"/>
+                        <Label text="Show Windows notifications for new messages"
+                               styleClass="text-muted" style="-fx-font-size: 11;"/>
+                    </VBox>
+                </HBox>
+            </VBox>
+        </VBox>
+
+        <Separator opacity="0.1"/>
+
+        <!-- Account Section -->
+        <VBox spacing="15">
+            <Label text="ACCOUNT" styleClass="text-muted-tiny"/>
+
+            <Button onAction="#onLogoutClicked"
+                    text="Logout"
+                    maxWidth="Infinity"
+                    style="-fx-background-color: #dc3545; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 12 20; -fx-background-radius: 8; -fx-cursor: hand;"/>
+        </VBox>
+
+    </VBox>
+
+</VBox>

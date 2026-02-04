@@ -326,4 +326,13 @@ public class UserServiceImpl implements UserService {
             }
         }
     }
+    @Override
+    public boolean phoneNumberExists(String phoneNumber) {
+        if (phoneNumber == null || phoneNumber.trim().isEmpty()) {
+            return false;
+        }
+
+        Optional<User> user = userDao.findByPhoneNumber(phoneNumber.trim());
+        return user.isPresent();
+    }
 }
