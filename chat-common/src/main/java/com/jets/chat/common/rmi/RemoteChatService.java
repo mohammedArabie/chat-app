@@ -14,4 +14,7 @@ public interface RemoteChatService extends Remote {
     List<MessageDTO> getChatMessages(Long chatId, long currentUserId) throws RemoteException;
 
     void sendMessage(Long chatId, String content, long currentUserId) throws RemoteException;
+
+    void sendFileMessage(Long chatId, String fileName, byte[] fileData, String contentType,
+            long fileSize, long currentUserId) throws RemoteException;
 }

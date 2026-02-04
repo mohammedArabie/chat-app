@@ -40,11 +40,6 @@ public class UserServiceImpl implements UserService {
     private final UserDao userDao;
     private final ContactsDao contactsDao;
 
-    public UserServiceImpl(UserDao userDao) {
-        this.userDao = userDao;
-        this.contactsDao = null;
-    }
-
     public UserServiceImpl(UserDao userDao, ContactsDao contactsDao) {
         this.userDao = userDao;
         this.contactsDao = contactsDao;
@@ -308,7 +303,8 @@ public class UserServiceImpl implements UserService {
         for (Contact contact : contacts) {
             if (contact.getContactId() != userId) {
                 ids.add(contact.getContactId());
-            } else ids.add(contact.getOwnerId());
+            } else
+                ids.add(contact.getOwnerId());
         }
         return ids;
     }
