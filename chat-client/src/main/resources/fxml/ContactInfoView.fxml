@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Circle?>
+
+<VBox prefWidth="300.0" spacing="25.0" styleClass="info-pane" stylesheets="@../styles/main.css"
+      xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.jets.chat.client.ui.controllers.ContactInfoController">
+    <padding>
+        <Insets top="20.0" left="20.0" right="20.0" bottom="20.0"/>
+    </padding>
+
+    <HBox alignment="CENTER_LEFT">
+        <Label text="Contact Info" styleClass="section-header" />
+        <Region HBox.hgrow="ALWAYS" />
+        <Button onAction="#onClose" styleClass="icon-btn-small" text="✕" />
+    </HBox>
+
+    <VBox alignment="TOP_CENTER" spacing="15.0">
+        <StackPane>
+            <Circle fx:id="profileCircle" radius="50" fill="#0084FF" />
+            <Label fx:id="initialsLabel" text="SC" style="-fx-font-size: 24; -fx-text-fill: white; -fx-font-weight: bold;"/>
+        </StackPane>
+        <VBox alignment="CENTER" spacing="2">
+            <Label fx:id="nameLabel" styleClass="name-large" text="Sarah Chen" />
+            <Label fx:id="handleLabel" styleClass="text-muted" text="@sarahchen" />
+        </VBox>
+    </VBox>
+
+    <HBox spacing="10" alignment="CENTER">
+        <Button styleClass="action-btn" text="Message" prefWidth="110"/>
+        <Button styleClass="action-btn" text="Video" prefWidth="110"/>
+    </HBox>
+
+    <Separator opacity="0.1" />
+
+    <VBox spacing="15">
+        <VBox spacing="5">
+            <Label text="EMAIL" styleClass="text-muted-tiny" />
+            <Label fx:id="emailLabel" text="sarah.chen@email.com" styleClass="text-white" />
+        </VBox>
+        <VBox spacing="5">
+            <Label text="PHONE" styleClass="text-muted-tiny" />
+            <Label text="+1 (555) 987-6543" styleClass="text-white" />
+        </VBox>
+        <VBox spacing="5">
+            <Label text="LOCATION" styleClass="text-muted-tiny" />
+            <Label text="New York, NY" styleClass="text-white" />
+        </VBox>
+    </VBox>
+</VBox>

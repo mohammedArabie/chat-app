@@ -6,9 +6,12 @@ import com.jets.chat.common.dto.RegisterRequestDTO;
 import com.jets.chat.common.dto.RegisterResponseDTO;
 import com.jets.chat.common.dto.UserDTO;
 
+import java.util.Optional;
+
 public interface UserService {
 
     public RegisterResponseDTO register(RegisterRequestDTO dto);
+
     public byte[] getProfilePicture(String picturePath);
 
     LoginResult login(String emailOrPhone, String password, ClientCallback callback);
@@ -16,7 +19,10 @@ public interface UserService {
     UserDTO reconnect(long userId, String sessionId, ClientCallback callback);
 
     void logout(long userId, String sessionId);
+
     public void clearOnlineUsers();
     boolean phoneNumberExists(String phoneNumber);
 
+
+    public Optional<UserDTO> getUserByEmail(String email);
 }

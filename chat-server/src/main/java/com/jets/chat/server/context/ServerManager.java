@@ -3,25 +3,31 @@ package com.jets.chat.server.context;
 import com.jets.chat.common.callback.ClientCallback;
 import com.jets.chat.common.rmi.RemoteAnnouncementService;
 import com.jets.chat.common.rmi.RemoteChatService;
+import com.jets.chat.common.rmi.RemoteContactsService;
 import com.jets.chat.common.rmi.RemoteUserService;
 import com.jets.chat.server.config.DataSourceConfig;
 import com.jets.chat.server.dao.AdminDao;
 import com.jets.chat.server.dao.AnnouncementDao;
+import com.jets.chat.server.dao.ContactsDao;
 import com.jets.chat.server.dao.StatisticsDao;
 import com.jets.chat.server.dao.UserDao;
 import com.jets.chat.server.dao.impl.AdminDaoImpl;
 import com.jets.chat.server.dao.impl.AnnouncementDaoImpl;
+import com.jets.chat.server.dao.impl.ContactsDaoImpl;
 import com.jets.chat.server.dao.impl.StatisticsDaoImpl;
 import com.jets.chat.server.dao.impl.UserDaoImpl;
 import com.jets.chat.server.rmi.RemoteAnnouncementServiceImpl;
 import com.jets.chat.server.rmi.RemoteChatServiceImpl;
+import com.jets.chat.server.rmi.RemoteContactsServiceImpl;
 import com.jets.chat.server.rmi.RemoteUserServiceImpl;
 import com.jets.chat.server.service.AdminService;
 import com.jets.chat.server.service.AnnouncementService;
+import com.jets.chat.server.service.ContactsService;
 import com.jets.chat.server.service.ServerStatisticsService;
 import com.jets.chat.server.service.UserService;
 import com.jets.chat.server.service.impl.AdminServiceImpl;
 import com.jets.chat.server.service.impl.AnnouncementServiceImpl;
+import com.jets.chat.server.service.impl.ContactsServiceImpl;
 import com.jets.chat.server.service.impl.ServerStatisticsServiceImpl;
 import com.jets.chat.server.service.impl.UserServiceImpl;
 import com.zaxxer.hikari.HikariDataSource;
@@ -45,6 +51,8 @@ public class ServerManager {
     private final Map<Long, ClientCallback> onlineClients = new ConcurrentHashMap<>();
     private final RemoteChatService remoteChatService;
     private final RmiServiceManager rmiServiceManager;
+    private final ContactsService contactsService;
+    private final RemoteContactsService remoteContactsService;
 
     private ServerManager() throws RemoteException {
         HikariDataSource dataSource = DataSourceConfig.getDataSource();
@@ -60,6 +68,11 @@ public class ServerManager {
         this.adminService = new AdminServiceImpl(adminDao);
         this.statisticsService = new ServerStatisticsServiceImpl(statisticsDao);
         this.rmiServiceManager = new RmiServiceManager(this); // Inject self for delegation
+
+        // Initialize ContactsService
+        ContactsDao contactsDao = new ContactsDaoImpl(dataSource);
+        this.contactsService = new ContactsServiceImpl(contactsDao, userDao);
+        this.remoteContactsService = new RemoteContactsServiceImpl(contactsService);
     }
 
     public static ServerManager getInstance() {
@@ -124,5 +137,13 @@ public class ServerManager {
 
     public RemoteChatService getRemoteChatService() {
         return remoteChatService;
+    }
+
+    public ContactsService getContactsService() {
+        return contactsService;
+    }
+
+    public RemoteContactsService getRemoteContactsService() {
+        return remoteContactsService;
     }
 }

@@ -12,36 +12,28 @@ import java.util.List;
 import java.util.Optional;
 
 public class UserDaoImpl implements UserDao {
+    private static final String INSERT_USER_SQL = "INSERT INTO users "
+            + "(phone_number, display_name, email, password_hash, gender, country, date_of_birth, bio, picture_path, chatbot_enabled) "
+            + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    private static final String INSERT_STATUS_SQL = "INSERT INTO user_status (user_id, status) VALUES (?, 'OFFLINE')";
+    private static final String FIND_BY_ID_SQL = "SELECT * FROM users WHERE user_id = ?";
+    private static final String FIND_BY_PHONE_SQL = "SELECT * FROM users WHERE phone_number = ?";
+    private static final String FIND_BY_EMAIL_SQL = "SELECT * FROM users WHERE email = ?";
+    private static final String UPDATE_USER_SQL = "UPDATE users SET display_name = ?, email = ?, gender = ?, country = ?, date_of_birth = ?, bio = ?, picture_path = ?, chatbot_enabled = ? "
+            + "WHERE user_id = ?";
+    private static final String UPDATE_PASSWORD_SQL = "UPDATE users SET password_hash = ? WHERE user_id = ?";
+    private static final String UPDATE_STATUS_SQL = "UPDATE user_status SET status = ?, last_seen = CURRENT_TIMESTAMP WHERE user_id = ?";
+    private static final String GET_STATUS_SQL = "SELECT status FROM user_status WHERE user_id = ?";
+    private static final String INSERT_SESSION_SQL = "INSERT INTO user_sessions (session_id, user_id) VALUES (?, ?)";
+    private static final String DELETE_SESSION_SQL = "DELETE FROM user_sessions WHERE session_id = ?";
+    private static final String VALIDATE_SESSION_SQL = "SELECT 1 FROM user_sessions WHERE user_id = ? AND session_id = ?";
+    private static final String GET_PENDING_REQUESTS_SQL = "SELECT * FROM contacts WHERE status = 'PENDING' AND contact_id = ?";
+    private static final String INSERT_REQUEST_SQL = "INSERT INTO contacts (owner_id, contact_id) VALUES(?, ?)";
     private final DataSource dataSource;
 
     public UserDaoImpl(DataSource dataSource) {
         this.dataSource = dataSource;
     }
-
-    private static final String INSERT_USER_SQL = "INSERT INTO users "
-            + "(phone_number, display_name, email, password_hash, gender, country, date_of_birth, bio, picture_path, chatbot_enabled) "
-            + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-    private static final String INSERT_STATUS_SQL = "INSERT INTO user_status (user_id, status) VALUES (?, 'OFFLINE')";
-
-    private static final String FIND_BY_ID_SQL = "SELECT * FROM users WHERE user_id = ?";
-
-    private static final String FIND_BY_PHONE_SQL = "SELECT * FROM users WHERE phone_number = ?";
-    private static final String FIND_BY_EMAIL_SQL = "SELECT * FROM users WHERE email = ?";
-    private static final String UPDATE_USER_SQL = "UPDATE users SET display_name = ?, email = ?, gender = ?, country = ?, date_of_birth = ?, bio = ?, picture_path = ?, chatbot_enabled = ? "
-            + "WHERE user_id = ?";
-
-    private static final String UPDATE_PASSWORD_SQL = "UPDATE users SET password_hash = ? WHERE user_id = ?";
-
-    private static final String UPDATE_STATUS_SQL = "UPDATE user_status SET status = ?, last_seen = CURRENT_TIMESTAMP WHERE user_id = ?";
-
-    private static final String GET_STATUS_SQL = "SELECT status FROM user_status WHERE user_id = ?";
-
-    private static final String INSERT_SESSION_SQL = "INSERT INTO user_sessions (session_id, user_id) VALUES (?, ?)";
-
-    private static final String DELETE_SESSION_SQL = "DELETE FROM user_sessions WHERE session_id = ?";
-
-    private static final String VALIDATE_SESSION_SQL = "SELECT 1 FROM user_sessions WHERE user_id = ? AND session_id = ?";
 
     @Override
     public User save(User user) {
@@ -280,6 +272,7 @@ public class UserDaoImpl implements UserDao {
             return false;
         }
     }
+
     // UserDaoImpl.java
     @Override
     public List<User> getAllUsers() {

@@ -2,6 +2,7 @@ package com.jets.chat.server.dao;
 
 import com.jets.chat.common.enums.ContactStatus;
 import com.jets.chat.server.entity.Contact;
+import javafx.util.Pair;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,4 +28,6 @@ public interface ContactsDao {
     boolean deleteByIds(long ownerId, long contactId);
 
     boolean exists(long ownerId, long contactId);
+
+    List<Pair<Long, Long>> getPendingRequestsByContactId(long contactId);
 }
