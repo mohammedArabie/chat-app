@@ -23,6 +23,5 @@ public interface UserService {
     public void clearOnlineUsers();
     boolean phoneNumberExists(String phoneNumber);
 
-
     public Optional<UserDTO> getUserByEmail(String email);
 }
