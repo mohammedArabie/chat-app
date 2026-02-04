@@ -8,10 +8,8 @@ import com.jets.chat.common.enums.UserStatus;
 import javafx.application.Platform;
 import com.jets.chat.common.dto.AnnouncementDTO;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.Dialog;  // Add this import
-import javafx.scene.control.Label;    // Add this import
-import javafx.scene.layout.VBox;
-
+import javafx.scene.control.Dialog; // Add this import
+import javafx.scene.control.Label; // Add this import
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -73,7 +71,8 @@ public class ClientCallbackImpl extends UnicastRemoteObject implements ClientCal
 
             // Font family if specified
             if (announcement.getFontStyle() != null) {
-                style.append("-fx-font-family: '").append(announcement.getFontStyle()).append("'; ");
+                style.append("-fx-font-family: '").append(announcement.getFontStyle())
+                        .append("'; ");
             }
 
             // Bold if specified (most important)

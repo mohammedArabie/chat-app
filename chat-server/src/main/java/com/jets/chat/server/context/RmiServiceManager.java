@@ -216,7 +216,6 @@ public class RmiServiceManager {
                 userImpl = null;
             }
 
-
             if (chatImpl != null) {
                 try {
                     UnicastRemoteObject.unexportObject(chatImpl, true);
