@@ -27,11 +27,15 @@ public class MainController implements Initializable {
     @FXML
     private VBox infoPaneRoot;
     @FXML
+    private VBox settingsPane;
+    @FXML
     private Label infoName;
     @FXML
     private Label infoInitials;
     @FXML
     private Label infoEmail;
+    @FXML
+    private SettingsPaneController settingsPaneController;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -41,6 +45,10 @@ public class MainController implements Initializable {
         if (chatController != null) {
             chatController.init(chatViewModel);
         }
+        if (settingsPaneController != null) {
+            settingsPaneController.init(chatViewModel);
+        }
+
         setupRightPaneBindings();
         chatViewModel.loadUserChats(SessionManager.getUserId());
         chatViewModel.fetchInvitationsFromServer();
@@ -53,6 +61,11 @@ public class MainController implements Initializable {
                         chatViewModel.activeRightViewProperty()));
         infoPaneRoot.managedProperty().bind(infoPaneRoot.visibleProperty());
 
+        // Bind visibility to the ViewModel property for settings pane
+        settingsPane.visibleProperty().bind(chatViewModel.showSettingsPaneProperty());
+        settingsPane.managedProperty().bind(chatViewModel.showSettingsPaneProperty());
+
+        // Bind data
         infoName.textProperty().bind(chatViewModel.chatTitleProperty());
         infoEmail.textProperty().bind(chatViewModel.contactEmailProperty());
 

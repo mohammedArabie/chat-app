@@ -25,8 +25,4 @@ public interface ClientCallback extends Remote {
      */
     void updateContactStatus(Integer contactId, UserStatus status) throws RemoteException;
 
-    /**
-     * Called by the server to send a system-wide announcement.
-     */
-    void receiveAnnouncement(String title, String content) throws RemoteException;
 }

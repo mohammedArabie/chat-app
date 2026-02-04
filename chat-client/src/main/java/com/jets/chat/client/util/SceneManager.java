@@ -12,8 +12,8 @@ import java.net.URL;
 
 public class SceneManager {
 
-    private static final int DEFAULT_WIDTH = 900;
-    private static final int DEFAULT_HEIGHT = 600;
+    private static final int DEFAULT_WIDTH = 1440;
+    private static final int DEFAULT_HEIGHT = 720;
     private static final String LOGIN_VIEW = "/fxml/LoginView.fxml";
     private static final String REGISTER_VIEW = "/fxml/RegisterView.fxml";
     private static final String MAIN_VIEW = "/fxml/MainLayout.fxml";
