@@ -203,13 +203,24 @@ public class RegisterController implements Initializable {
     private void setupDatePicker() {
         dobPicker.setEditable(false);
 
+        // Set valid date range: 1930-01-01 to 2015-12-31
+        LocalDate minDate = LocalDate.of(1930, 1, 1);
+        LocalDate maxDate = LocalDate.of(2015, 12, 31);
+
         dobPicker.setDayCellFactory(picker -> new DateCell() {
             @Override
             public void updateItem(LocalDate date, boolean empty) {
                 super.updateItem(date, empty);
-                setDisable(empty || date.isAfter(LocalDate.now().minusYears(13)));
+                // Disable dates outside valid range
+                setDisable(empty || date.isBefore(minDate) || date.isAfter(maxDate));
             }
         });
+
+        // Set INITIAL VIEW to 1995 (user starts browsing from here)
+        dobPicker.setValue(LocalDate.of(1995, 1, 1));
+
+        // Prevent manual text entry bypassing validation
+        dobPicker.getEditor().setEditable(false);
     }
 
     @FXML
