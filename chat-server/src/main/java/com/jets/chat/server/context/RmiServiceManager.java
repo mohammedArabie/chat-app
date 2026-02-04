@@ -2,9 +2,11 @@ package com.jets.chat.server.context;
 
 import com.jets.chat.common.util.ProjectConstants;
 import com.jets.chat.common.rmi.RemoteAnnouncementService;
+import com.jets.chat.common.rmi.RemoteContactsService;
 import com.jets.chat.common.rmi.RemoteUserService;
 import com.jets.chat.common.rmi.RemoteChatService;
 import com.jets.chat.server.rmi.RemoteAnnouncementServiceImpl;
+import com.jets.chat.server.rmi.RemoteContactsServiceImpl;
 import com.jets.chat.server.rmi.RemoteUserServiceImpl;
 import com.jets.chat.server.rmi.RemoteChatServiceImpl;
 import java.rmi.RemoteException;
@@ -20,6 +22,7 @@ public class RmiServiceManager {
     private Registry registry;
     private RemoteAnnouncementServiceImpl announcementImpl; // Store the implementation
     private RemoteUserServiceImpl userImpl; // Store the implementation
+    private RemoteContactsServiceImpl contactsImpl; // Store the implementation
     private RemoteChatServiceImpl chatImpl; // ADDED THIS LINE - ChatService implementation
     private final AtomicBoolean isRunning = new AtomicBoolean(false);
 
@@ -81,6 +84,23 @@ public class RmiServiceManager {
             registry.rebind(ProjectConstants.USER_SERVICE, userImpl);
             System.out.println("Bound " + ProjectConstants.USER_SERVICE);
 
+            // Create and export Contacts Service
+            contactsImpl = new RemoteContactsServiceImpl(serverManager.getContactsService());
+
+            // Check if already exported before exporting
+            try {
+                RemoteContactsService contactsStub = (RemoteContactsService) UnicastRemoteObject
+                        .toStub(contactsImpl);
+                // If we get here, it's already exported
+                System.out.println("Contacts service already exported, reusing...");
+            } catch (Exception e) {
+                // Not exported yet, so export it
+                UnicastRemoteObject.exportObject(contactsImpl, 0);
+                System.out.println("Exported Contacts service");
+            }
+
+            registry.rebind(ProjectConstants.CONTACTS_SERVICE, contactsImpl);
+            System.out.println("Bound " + ProjectConstants.CONTACTS_SERVICE);
             // =============== ADDED THIS SECTION ===============
             // Create and export Chat Service
             chatImpl = new RemoteChatServiceImpl();
@@ -142,6 +162,12 @@ public class RmiServiceManager {
                 } catch (Exception e) {
                     System.err.println("Failed to unbind user service: " + e.getMessage());
                 }
+                try {
+                    registry.unbind(ProjectConstants.CONTACTS_SERVICE);
+                    System.out.println("Unbound " + ProjectConstants.CONTACTS_SERVICE);
+                } catch (Exception e) {
+                    System.err.println("Failed to unbind contacts service: " + e.getMessage());
+                }
 
                 try {
                     registry.unbind(ProjectConstants.CHAT_SERVICE);
@@ -176,6 +202,16 @@ public class RmiServiceManager {
                 userImpl = null;
             }
 
+            if (contactsImpl != null) {
+                try {
+                    if (UnicastRemoteObject.unexportObject(contactsImpl, true)) {
+                        System.out.println("Unexported Contacts service");
+                    }
+                } catch (Exception e) {
+                    System.err.println("Failed to unexport contacts service: " + e.getMessage());
+                }
+                contactsImpl = null;
+            }
             if (chatImpl != null) {
                 try {
                     if (UnicastRemoteObject.unexportObject(chatImpl, true)) {
@@ -216,6 +252,13 @@ public class RmiServiceManager {
                 userImpl = null;
             }
 
+            if (contactsImpl != null) {
+                try {
+                    UnicastRemoteObject.unexportObject(contactsImpl, true);
+                } catch (Exception ignored) {
+                }
+                contactsImpl = null;
+            }
             if (chatImpl != null) {
                 try {
                     UnicastRemoteObject.unexportObject(chatImpl, true);

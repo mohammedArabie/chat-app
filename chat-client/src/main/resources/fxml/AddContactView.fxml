@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Circle?>
+<VBox prefWidth="300.0" spacing="20.0" styleClass="info-pane" stylesheets="@../styles/main.css"
+      xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.jets.chat.client.ui.controllers.AddContactController">
+    <padding>
+        <Insets top="20.0" left="20.0" right="20.0" bottom="20.0"/>
+    </padding>
+
+    <HBox alignment="CENTER_LEFT">
+        <VBox>
+            <Label text="Add Contact" styleClass="name-large"/>
+            <Label text="Find and connect with people" styleClass="text-muted"/>
+        </VBox>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button onAction="#onClose" styleClass="icon-btn-small" text="✕"/>
+    </HBox>
+
+    <HBox spacing="10" styleClass="tab-container">
+        <Button fx:id="usernameTab" text="Search" styleClass="tab-btn-active" HBox.hgrow="ALWAYS" maxWidth="Infinity"
+                disable="true"/>
+    </HBox>
+
+    <VBox spacing="10">
+        <Label text="Find by email" styleClass="text-muted-tiny"/>
+        <HBox spacing="8">
+            <TextField fx:id="searchField" promptText="Enter email..." styleClass="search-bar"
+                       HBox.hgrow="ALWAYS"/>
+            <Button onAction="#onSearch" text="🔍" styleClass="send-btn" prefWidth="40"/>
+        </HBox>
+    </VBox>
+
+    <VBox fx:id="resultsArea" spacing="20" VBox.vgrow="ALWAYS">
+        <VBox fx:id="emptyStateBox" alignment="CENTER" spacing="15" VBox.vgrow="ALWAYS">
+            <Label text="👤" style="-fx-font-size: 50; -fx-opacity: 0.2;" />
+            <VBox alignment="CENTER" spacing="5">
+                <Label text="Search for contacts" styleClass="text-white" />
+                <Label text="Enter an email to find people" styleClass="text-muted" alignment="CENTER" textAlignment="CENTER" wrapText="true" />
+            </VBox>
+        </VBox>
+
+        <VBox fx:id="userResultBox" alignment="TOP_CENTER" spacing="15" visible="false" managed="false" styleClass="invitation-card">
+            <StackPane>
+                <Circle radius="35" fill="#0084FF" />
+                <Label fx:id="resultInitials" text="UR" style="-fx-font-size: 18; -fx-text-fill: white; -fx-font-weight: bold;"/>
+            </StackPane>
+
+            <VBox alignment="CENTER" spacing="2">
+                <Label fx:id="resultName" styleClass="text-white" style="-fx-font-size: 16; -fx-font-weight: bold;" text="User Name" />
+                <Label fx:id="resultEmail" styleClass="text-muted" text="user@email.com" />
+            </VBox>
+
+            <Button onAction="#onSendInvitation" styleClass="accept-btn" text="Send Invitation" maxWidth="Infinity" />
+        </VBox>
+
+        <!-- View C: Not Found State -->
+        <VBox fx:id="notFoundBox" alignment="CENTER" spacing="10" visible="false" managed="false">
+            <Label text="✕" style="-fx-font-size: 30; -fx-text-fill: #ff4444;" />
+            <Label text="No user found" styleClass="text-white" />
+        </VBox>
+    </VBox>
+</VBox>

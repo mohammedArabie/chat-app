@@ -4,7 +4,7 @@ import com.jets.chat.common.enums.ContactStatus;
 import com.jets.chat.server.dao.ContactsDao;
 import com.jets.chat.server.entity.Contact;
 import com.zaxxer.hikari.HikariDataSource;
-
+import javafx.util.Pair;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +37,8 @@ public final class ContactsDaoImpl implements ContactsDao {
     private static final String DELETE_SQL = "DELETE FROM contacts WHERE owner_id = ? AND contact_id = ?";
 
     private static final String EXISTS_SQL = "SELECT 1 FROM contacts WHERE owner_id = ? AND contact_id = ? LIMIT 1";
+
+    private static final String GET_PENDING_BY_REQUEST_ID_SQL = "SELECT * FROM contacts WHERE status = 'PENDING' AND contact_id = ?";
 
     @Override
     public Contact save(Contact contact) {
@@ -268,5 +270,22 @@ public final class ContactsDaoImpl implements ContactsDao {
         contact.setCategory(rs.getString("category"));
         contact.setCreatedAt(rs.getTimestamp("created_at"));
         return contact;
+    }
+
+    @Override
+    public List<Pair<Long, Long>> getPendingRequestsByContactId(long contactId) {
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(GET_PENDING_BY_REQUEST_ID_SQL)) {
+            stmt.setLong(1, contactId);
+            List<Pair<Long, Long>> requests = new ArrayList<>();
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    requests.add(new Pair<>(rs.getLong("contact_id"), rs.getLong("owner_id")));
+                }
+            }
+            return requests;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

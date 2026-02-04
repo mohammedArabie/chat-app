@@ -1,15 +1,13 @@
 package com.jets.chat.server.rmi;
 
 import com.jets.chat.common.callback.ClientCallback;
-import com.jets.chat.common.dto.LoginResult;
-import com.jets.chat.common.dto.RegisterRequestDTO;
-import com.jets.chat.common.dto.RegisterResponseDTO;
-import com.jets.chat.common.dto.UserDTO;
+import com.jets.chat.common.dto.*;
 import com.jets.chat.common.rmi.RemoteUserService;
 import com.jets.chat.server.service.UserService;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.Optional;
 
 public class RemoteUserServiceImpl extends UnicastRemoteObject implements RemoteUserService {
 
@@ -48,5 +46,13 @@ public class RemoteUserServiceImpl extends UnicastRemoteObject implements Remote
     @Override
     public void logout(long userId, String sessionId) throws RemoteException {
         userService.logout(userId, sessionId);
+    }
+
+    @Override
+    public UserDTO getUserByEmail(String email) throws RemoteException {
+        Optional<UserDTO> user = userService.getUserByEmail(email);
+        if (user.isEmpty())
+            return null;
+        return user.get();
     }
 }
