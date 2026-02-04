@@ -103,7 +103,7 @@ public class RmiServiceManager {
             System.out.println("Bound " + ProjectConstants.CONTACTS_SERVICE);
             // =============== ADDED THIS SECTION ===============
             // Create and export Chat Service
-            chatImpl = new RemoteChatServiceImpl();
+            chatImpl = new RemoteChatServiceImpl(serverManager.getChatService());
 
             // Check if already exported before exporting
             try {

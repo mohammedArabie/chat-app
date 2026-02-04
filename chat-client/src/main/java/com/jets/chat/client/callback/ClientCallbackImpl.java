@@ -53,18 +53,13 @@ public class ClientCallbackImpl extends UnicastRemoteObject implements ClientCal
     @Override
     public void updateContactStatus(Long contactId, UserStatus status) throws RemoteException {
         Platform.runLater(() -> {
-            // Update the status in the chat summary list
             System.out.println("Contact " + contactId + " is now " + status);
-
-            // Find and update the contact in the chat list
             var chatList = chatViewModel.getChatSummaryList();
             for (ChatSummaryDTO chat : chatList) {
                 if (chat.chatId() == contactId) {
-                    // Create a new ChatSummaryDTO with updated status
                     ChatSummaryDTO updatedChat = new ChatSummaryDTO(chat.chatId(), chat.chatName(),
                             chat.lastMessage(), chat.lastMessageTime(), chat.lastMessageSender(),
                             status);
-
                     int index = chatList.indexOf(chat);
                     if (index >= 0) {
                         chatList.set(index, updatedChat);
