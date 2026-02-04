@@ -9,6 +9,7 @@ public final class ProjectConstants {
 
     public static final String ANNOUNCEMENT_SERVICE = "AnnouncementService";
     public static final String USER_SERVICE = "UserService";
+    public static final String CONTACTS_SERVICE = "ContactsService";
     public static final String UPLOAD_FOLDER_NAME = "chat-app-uploads";
     public static final String PROFILES_SUBFOLDER = "profiles";
     public static final String CHAT_SERVICE = "ChatService";

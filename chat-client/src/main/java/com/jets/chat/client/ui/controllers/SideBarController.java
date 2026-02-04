@@ -5,8 +5,11 @@ import com.jets.chat.client.ui.viewmodel.ChatViewModel;
 import com.jets.chat.common.dto.ChatSummaryDTO;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.shape.Circle;
 
 public class SideBarController {
 
@@ -16,6 +19,11 @@ public class SideBarController {
     private TextField searchField;
 
     private ChatViewModel viewModel;
+
+    @FXML
+    private Label requestCount;
+    @FXML
+    private Circle requestBadge;
 
     public void init(ChatViewModel viewModel) {
         this.viewModel = viewModel;
@@ -32,6 +40,14 @@ public class SideBarController {
                 return chat.chatName().toLowerCase().contains(lowerCaseFilter);
             });
         });
+
+        requestCount.textProperty().bind(viewModel.pendingRequestsCountProperty().asString());
+        requestBadge.visibleProperty()
+                .bind(viewModel.pendingRequestsCountProperty().greaterThan(0));
+        requestCount.visibleProperty()
+                .bind(viewModel.pendingRequestsCountProperty().greaterThan(0));
+        requestCount.visibleProperty()
+                .bind(viewModel.pendingRequestsCountProperty().greaterThan(0));
 
         contactListView.setItems(filteredData);
         contactListView.setCellFactory(param -> new ContactCell());
@@ -58,7 +74,17 @@ public class SideBarController {
     }
 
     @FXML
+    private void onAnnouncementsClicked(MouseEvent event) {
+        // viewModel.showAnnouncements();
+    }
+
+    @FXML
     private void onAddContactClicked() {
-        System.out.println("Add contact clicked");
+        viewModel.showAddContact();
+    }
+
+    @FXML
+    private void onRequestsClicked(MouseEvent event) {
+        viewModel.showInvitations();
     }
 }
