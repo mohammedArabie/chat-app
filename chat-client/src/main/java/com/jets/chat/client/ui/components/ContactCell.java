@@ -1,6 +1,7 @@
 package com.jets.chat.client.ui.components;
 
 import com.jets.chat.common.dto.ChatSummaryDTO;
+import com.jets.chat.common.enums.UserStatus;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
@@ -59,14 +60,26 @@ public class ContactCell extends ListCell<ChatSummaryDTO> {
             // Set initials (SC, MJ, etc.)
             initialsLabel.setText(getInitials(contact));
 
-            // TODO: to be removed?
-            String status = "ONLINE";
-            if ("ONLINE".equals(status)) {
-                statusDot.setFill(Color.web("#3BA55D"));
-            } else if ("AWAY".equals(status)) {
-                statusDot.setFill(Color.web("#FAA61A"));
-            } else {
-                statusDot.setFill(Color.web("#747F8D"));
+            // Set status color based on UserStatus
+            UserStatus status = chat.status();
+            if (status == null) {
+                status = UserStatus.OFFLINE;
+            }
+
+            switch (status) {
+                case AVAILABLE :
+                    statusDot.setFill(Color.web("#3BA55D")); // Green for online
+                    break;
+                case AWAY :
+                    statusDot.setFill(Color.web("#FAA61A")); // Yellow for away
+                    break;
+                case BUSY :
+                    statusDot.setFill(Color.web("#ED4245")); // Red for busy
+                    break;
+                case OFFLINE :
+                default :
+                    statusDot.setFill(Color.web("#747F8D")); // Grey for offline
+                    break;
             }
 
             root.getStyleClass().add("contact-item-container");
