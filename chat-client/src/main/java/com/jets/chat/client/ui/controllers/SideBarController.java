@@ -70,7 +70,7 @@ public class SideBarController {
 
     @FXML
     private void onSettingsClicked() {
-        viewModel.showMyProfile();
+        viewModel.showSettings();
     }
 
     @FXML

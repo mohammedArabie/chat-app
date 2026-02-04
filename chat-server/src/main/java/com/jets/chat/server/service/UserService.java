@@ -23,6 +23,7 @@ public interface UserService {
     void logout(long userId, String sessionId);
 
     public void clearOnlineUsers();
+    boolean phoneNumberExists(String phoneNumber);
 
     public Optional<UserDTO> getUserByEmail(String email);
 
