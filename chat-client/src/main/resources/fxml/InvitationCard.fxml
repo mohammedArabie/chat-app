@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.shape.Circle?>
+<VBox spacing="12.0" styleClass="invitation-card" stylesheets="@../styles/main.css" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.jets.chat.client.ui.controllers.InvitationCardController">
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <StackPane>
+            <Circle radius="18" fill="#2d3136" />
+            <Label fx:id="initialsLabel" text="AR" style="-fx-font-size: 11; -fx-text-fill: white;"/>
+        </StackPane>
+        <VBox HBox.hgrow="ALWAYS">
+            <HBox spacing="5">
+                <Label fx:id="nameLabel" text="Alex Rivera" styleClass="text-white" style="-fx-font-weight: bold;"/>
+                <Label fx:id="timeLabel" text="2 hours ago" styleClass="text-muted-tiny" />
+            </HBox>
+            <Label fx:id="typeLabel" text="Wants to connect with you" styleClass="text-muted" />
+        </VBox>
+    </HBox>
+
+    <Label fx:id="messageLabel" text="&quot;Hey! We met at the tech conference...&quot;"
+           styleClass="text-muted" wrapText="true" style="-fx-font-style: italic;" />
+
+    <HBox spacing="10">
+        <Button onAction="#onAccept" text="✓ Accept" styleClass="accept-btn" HBox.hgrow="ALWAYS" maxWidth="Infinity" />
+        <Button onAction="#onDecline" text="✕ Decline" styleClass="decline-btn" HBox.hgrow="ALWAYS" maxWidth="Infinity" />
+    </HBox>
+</VBox>

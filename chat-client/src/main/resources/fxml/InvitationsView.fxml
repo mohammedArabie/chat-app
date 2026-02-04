@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox prefWidth="300.0" spacing="15.0" styleClass="info-pane" stylesheets="@../styles/main.css"
+      xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.jets.chat.client.ui.controllers.InvitationsController">
+    <padding><Insets top="20" right="15" left="15" bottom="15"/></padding>
+
+    <!-- Header -->
+    <HBox alignment="CENTER_LEFT">
+        <VBox>
+            <Label text="Invitations" styleClass="name-large" />
+            <Label fx:id="pendingCountLabel" text="0 pending" styleClass="text-muted" />
+        </VBox>
+        <Region HBox.hgrow="ALWAYS" />
+        <Button onAction="#onClose" styleClass="icon-btn-small" text="✕" />
+    </HBox>
+
+    <StackPane VBox.vgrow="ALWAYS">
+        <ScrollPane fx:id="invitationScrollPane" fitToWidth="true" styleClass="transparent-scroll">
+            <content>
+                <VBox fx:id="invitationListContainer" spacing="12.0">
+                    <padding><Insets right="5" left="2"/></padding>
+                </VBox>
+            </content>
+        </ScrollPane>
+
+        <VBox fx:id="emptyStateBox" alignment="CENTER" spacing="15">
+            <Label text="📩" style="-fx-font-size: 40; -fx-opacity: 0.3;" />
+            <Label text="No pending invitations" styleClass="text-white" />
+            <Label text="When people invite you, they'll show up here." styleClass="text-muted" alignment="CENTER" textAlignment="CENTER" wrapText="true" />
+        </VBox>
+    </StackPane>
+</VBox>
