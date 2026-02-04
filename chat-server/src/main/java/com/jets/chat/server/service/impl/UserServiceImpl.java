@@ -276,4 +276,13 @@ public class UserServiceImpl implements UserService {
         return Optional.of(new UserDTO(user.get().getUserId(), user.get().getDisplayName(),
                 UserStatus.AVAILABLE, user.get().getEmail(), user.get().getPhoneNumber()));
     }
+    @Override
+    public boolean phoneNumberExists(String phoneNumber) {
+        if (phoneNumber == null || phoneNumber.trim().isEmpty()) {
+            return false;
+        }
+
+        Optional<User> user = userDao.findByPhoneNumber(phoneNumber.trim());
+        return user.isPresent();
+    }
 }
