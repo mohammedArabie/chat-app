@@ -733,4 +733,37 @@
     -fx-font-style: italic;
     -fx-padding: 4 0 0 0;
 }
+/* DatePicker fix  */
+.date-picker-popup {
+    -fx-background-color: white !important;
+    -fx-border-color: #cccccc !important;
+}
 
+/* MONTH/YEAR HEADER - BLACK TEXT */
+.date-picker-popup > .month-year-pane > .spinner > .label {
+    -fx-text-fill: #000000 !important;    /* BLACK TEXT */
+    -fx-font-weight: bold !important;
+    -fx-font-size: 14px !important;
+}
+
+/* Navigation arrows visibility */
+.date-picker-popup > .month-year-pane > .spinner > .button > .left-arrow,
+.date-picker-popup > .month-year-pane > .spinner > .button > .right-arrow {
+    -fx-background-color: #333333 !important; /* Dark arrows */
+}
+
+/* Day cells - black text */
+.date-picker-popup > .calendar-grid > .day-cell {
+    -fx-text-fill: #000000 !important;
+}
+
+/* Disabled dates (outside 1930-2015) */
+.date-picker-popup > .calendar-grid > .day-cell:disabled {
+    -fx-text-fill: #cccccc !important;
+}
+
+/* Selected date */
+.date-picker-popup > .calendar-grid > .selected {
+    -fx-background-color: #3b82f6 !important;
+    -fx-text-fill: white !important;
+}
