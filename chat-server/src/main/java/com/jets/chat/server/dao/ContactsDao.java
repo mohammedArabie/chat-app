@@ -21,6 +21,8 @@ public interface ContactsDao {
 
     boolean update(Contact contact);
 
+    public List<Contact> findUserContacts(long userId);
+
     boolean updateStatus(long ownerId, long contactId, ContactStatus status);
 
     boolean updateCategory(long ownerId, long contactId, String category);

@@ -1,12 +1,16 @@
 package com.jets.chat.server.service.impl;
 
 import com.jets.chat.common.callback.ClientCallback;
-import com.jets.chat.common.dto.*;
+import com.jets.chat.common.dto.LoginResult;
+import com.jets.chat.common.dto.RegisterRequestDTO;
+import com.jets.chat.common.dto.RegisterResponseDTO;
+import com.jets.chat.common.dto.UserDTO;
 import com.jets.chat.common.enums.UserStatus;
 import com.jets.chat.common.util.ProjectConstants;
 import com.jets.chat.server.context.ServerManager;
 import com.jets.chat.server.dao.ContactsDao;
 import com.jets.chat.server.dao.UserDao;
+import com.jets.chat.server.entity.Contact;
 import com.jets.chat.server.entity.User;
 import com.jets.chat.server.service.UserService;
 import com.jets.chat.server.util.DtoMapper;
@@ -38,7 +42,7 @@ public class UserServiceImpl implements UserService {
 
     public UserServiceImpl(UserDao userDao) {
         this.userDao = userDao;
-        this.contactsDao = null; // Will be set later if needed
+        this.contactsDao = null;
     }
 
     public UserServiceImpl(UserDao userDao, ContactsDao contactsDao) {
@@ -299,16 +303,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<Long> getUserContacts(long userId) {
-        // This would need to be implemented with a proper contactsDao
-        // For now, return empty list
-        return new ArrayList<>();
+        var contacts = contactsDao.findUserContacts(userId);
+        List<Long> ids = new ArrayList<>();
+        for (Contact contact : contacts) {
+            if (contact.getContactId() != userId) {
+                ids.add(contact.getContactId());
+            } else ids.add(contact.getOwnerId());
+        }
+        return ids;
     }
 
     @Override
     public void notifyContactsOfStatusChange(long userId, UserStatus status) {
         Map<Long, ClientCallback> onlineClients = ServerManager.getInstance().getOnlineClients();
 
-        // Get contacts of the user (this would need proper implementation)
         List<Long> contacts = getUserContacts(userId);
 
         for (Long contactId : contacts) {

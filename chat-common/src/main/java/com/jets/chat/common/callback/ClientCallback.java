@@ -14,7 +14,5 @@ public interface ClientCallback extends Remote {
 
     void updateContactStatus(Long contactId, UserStatus status) throws RemoteException;
 
-    void receiveAnnouncement(String title, String content) throws RemoteException;
-
     void reloadChats() throws RemoteException;
 }
