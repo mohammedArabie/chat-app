@@ -113,8 +113,8 @@ public class ChatServiceImpl implements ChatService {
             ClientCallback callback = onlineClients.get(user.getUserId());
             if (callback != null) {
                 try {
-                    callback.receiveMessage(
-                            new MessageDTO(content, LocalDateTime.now(), user.getUserId() == currentUserId, null));
+                    callback.receiveMessage(new MessageDTO(content, LocalDateTime.now(),
+                            user.getUserId() == currentUserId, null));
                 } catch (Exception e) {
                     onlineClients.remove(user.getUserId());
                 }
