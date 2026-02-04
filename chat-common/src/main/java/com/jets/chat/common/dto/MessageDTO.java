@@ -4,5 +4,5 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 public record MessageDTO(String content, LocalDateTime time, boolean isSentByMe,
-        String senderName) implements Serializable {
+        String senderName, long chatID) implements Serializable {
 }

@@ -7,9 +7,9 @@ import com.jets.chat.common.dto.ChatSummaryDTO;
 import com.jets.chat.common.dto.InvitationDTO;
 import com.jets.chat.common.dto.MessageDTO;
 import com.jets.chat.common.dto.UserDTO;
+import com.jets.chat.common.enums.UserStatus;
 import com.jets.chat.common.rmi.RemoteChatService;
 import com.jets.chat.common.rmi.RemoteContactsService;
-import com.jets.chat.common.enums.UserStatus;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
@@ -133,7 +133,7 @@ public class ChatViewModel {
         }
 
         String senderName = SessionManager.getDisplayName();
-        MessageDTO newMsg = new MessageDTO(text, LocalDateTime.now(), true, senderName);
+        MessageDTO newMsg = new MessageDTO(text, LocalDateTime.now(), true, senderName, this.selectedChat.get().chatId());
 
         new Thread(() -> {
             try {
@@ -317,6 +317,8 @@ public class ChatViewModel {
                 e.printStackTrace();
             }
         }).start();
+    }
+
     public BooleanProperty showSettingsPaneProperty() {
         return showSettingsPane;
     }

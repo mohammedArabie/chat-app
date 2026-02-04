@@ -308,7 +308,8 @@ public class UserServiceImpl implements UserService {
         for (Contact contact : contacts) {
             if (contact.getContactId() != userId) {
                 ids.add(contact.getContactId());
-            } else ids.add(contact.getOwnerId());
+            } else
+                ids.add(contact.getOwnerId());
         }
         return ids;
     }
