@@ -37,6 +37,7 @@ public class ServerManager {
     private final RmiServiceManager rmiServiceManager;
     private final ContactsService contactsService;
     private final RemoteContactsService remoteContactsService;
+    private final ChatService chatService;
 
     private ServerManager() throws RemoteException {
         HikariDataSource dataSource = DataSourceConfig.getDataSource();
@@ -47,7 +48,6 @@ public class ServerManager {
         ChatDao chatDao = new ChatDaoImpl(dataSource);
         this.announcementService = new AnnouncementServiceImpl(announcementDao);
         this.remoteAnnouncementService = new RemoteAnnouncementServiceImpl(announcementService);
-        this.remoteChatService = new RemoteChatServiceImpl();
         this.userService = new UserServiceImpl(userDao);
         this.remoteUserService = new RemoteUserServiceImpl(userService);
         this.adminService = new AdminServiceImpl(adminDao);
@@ -58,6 +58,11 @@ public class ServerManager {
         ContactsDao contactsDao = new ContactsDaoImpl(dataSource);
         this.contactsService = new ContactsServiceImpl(contactsDao, userDao, chatDao);
         this.remoteContactsService = new RemoteContactsServiceImpl(contactsService);
+
+        // Initialize ChatService
+        MessageDao messageDao = new MessageDaoImpl(dataSource);
+        this.chatService = new ChatServiceImpl(chatDao, messageDao, userDao);
+        this.remoteChatService = new RemoteChatServiceImpl(chatService);
     }
 
     public static ServerManager getInstance() {
@@ -130,5 +135,9 @@ public class ServerManager {
 
     public RemoteContactsService getRemoteContactsService() {
         return remoteContactsService;
+    }
+
+    public ChatService getChatService() {
+        return chatService;
     }
 }
