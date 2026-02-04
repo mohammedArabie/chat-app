@@ -3,8 +3,10 @@ package com.jets.chat.server.context;
 import com.jets.chat.common.util.ProjectConstants;
 import com.jets.chat.common.rmi.RemoteAnnouncementService;
 import com.jets.chat.common.rmi.RemoteUserService;
+import com.jets.chat.common.rmi.RemoteChatService;
 import com.jets.chat.server.rmi.RemoteAnnouncementServiceImpl;
 import com.jets.chat.server.rmi.RemoteUserServiceImpl;
+import com.jets.chat.server.rmi.RemoteChatServiceImpl;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -18,6 +20,7 @@ public class RmiServiceManager {
     private Registry registry;
     private RemoteAnnouncementServiceImpl announcementImpl; // Store the implementation
     private RemoteUserServiceImpl userImpl; // Store the implementation
+    private RemoteChatServiceImpl chatImpl; // ADDED THIS LINE - ChatService implementation
     private final AtomicBoolean isRunning = new AtomicBoolean(false);
 
     public RmiServiceManager(ServerManager serverManager) {
@@ -78,6 +81,26 @@ public class RmiServiceManager {
             registry.rebind(ProjectConstants.USER_SERVICE, userImpl);
             System.out.println("Bound " + ProjectConstants.USER_SERVICE);
 
+            // =============== ADDED THIS SECTION ===============
+            // Create and export Chat Service
+            chatImpl = new RemoteChatServiceImpl();
+
+            // Check if already exported before exporting
+            try {
+                RemoteChatService chatStub = (RemoteChatService) UnicastRemoteObject
+                        .toStub(chatImpl);
+                // If we get here, it's already exported
+                System.out.println("Chat service already exported, reusing...");
+            } catch (Exception e) {
+                // Not exported yet, so export it
+                UnicastRemoteObject.exportObject(chatImpl, 0);
+                System.out.println("Exported Chat service");
+            }
+
+            registry.rebind(ProjectConstants.CHAT_SERVICE, chatImpl);
+            System.out.println("Bound " + ProjectConstants.CHAT_SERVICE);
+            // =============== END OF ADDED SECTION ===============
+
             isRunning.set(true);
             System.out.println("RMI services started successfully");
 
@@ -119,6 +142,14 @@ public class RmiServiceManager {
                 } catch (Exception e) {
                     System.err.println("Failed to unbind user service: " + e.getMessage());
                 }
+
+                try {
+                    registry.unbind(ProjectConstants.CHAT_SERVICE);
+                    System.out.println("Unbound " + ProjectConstants.CHAT_SERVICE);
+                } catch (Exception e) {
+                    System.err.println("Failed to unbind chat service: " + e.getMessage());
+                }
+
             }
 
             // Unexport remote objects gracefully
@@ -144,6 +175,18 @@ public class RmiServiceManager {
                 }
                 userImpl = null;
             }
+
+            if (chatImpl != null) {
+                try {
+                    if (UnicastRemoteObject.unexportObject(chatImpl, true)) {
+                        System.out.println("Unexported Chat service");
+                    }
+                } catch (Exception e) {
+                    System.err.println("Failed to unexport chat service: " + e.getMessage());
+                }
+                chatImpl = null;
+            }
+            // =============== END OF ADDED SECTION ===============
 
             isRunning.set(false);
             System.out.println("RMI services stopped successfully");
@@ -172,6 +215,17 @@ public class RmiServiceManager {
                 }
                 userImpl = null;
             }
+
+
+            if (chatImpl != null) {
+                try {
+                    UnicastRemoteObject.unexportObject(chatImpl, true);
+                } catch (Exception ignored) {
+                }
+                chatImpl = null;
+            }
+            // =============== END OF ADDED SECTION ===============
+
         } finally {
             isRunning.set(false);
         }
