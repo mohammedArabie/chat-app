@@ -7,7 +7,11 @@ import com.jets.chat.common.dto.MessageDTO;
 import com.jets.chat.common.enums.UserStatus;
 import javafx.application.Platform;
 import com.jets.chat.common.dto.AnnouncementDTO;
-import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;  // Add this import
+import javafx.scene.control.Label;    // Add this import
+import javafx.scene.layout.VBox;
+
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -56,12 +60,56 @@ public class ClientCallbackImpl extends UnicastRemoteObject implements ClientCal
     @Override
     public void onAnnouncementReceived(AnnouncementDTO announcement) throws RemoteException {
         Platform.runLater(() -> {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Server Announcement");
-            alert.setHeaderText(null);
-            alert.setContentText(announcement.getContent());
-            alert.initOwner(SceneManager.getInstance().getPrimaryStage());
-            alert.show();
+            // Create a clean, simple dialog
+            Dialog<Void> dialog = new Dialog<>();
+            dialog.setTitle("Announcement");
+
+            // Create styled label
+            Label label = new Label(announcement.getContent());
+            label.setWrapText(true);
+
+            // Build minimal style - only apply what's specified
+            StringBuilder style = new StringBuilder();
+
+            // Font family if specified
+            if (announcement.getFontStyle() != null) {
+                style.append("-fx-font-family: '").append(announcement.getFontStyle()).append("'; ");
+            }
+
+            // Bold if specified (most important)
+            if (announcement.isBold()) {
+                style.append("-fx-font-weight: bold; ");
+            }
+
+            // Color if specified (second most noticeable)
+            if (announcement.getFontColor() != null) {
+                style.append("-fx-text-fill: ").append(announcement.getFontColor()).append("; ");
+            }
+
+            // Italic if specified
+            if (announcement.isItalic()) {
+                style.append("-fx-font-style: italic; ");
+            }
+
+            style.append("-fx-font-size: 16px; ");
+            label.setStyle(style.toString());
+
+            // Simple layout
+            javafx.scene.layout.VBox box = new javafx.scene.layout.VBox(label);
+            box.setStyle("-fx-padding: 20;");
+
+            dialog.getDialogPane().setContent(box);
+            dialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
+
+            dialog.getDialogPane().setPrefSize(300, 300);
+
+            // Set owner window
+            javafx.stage.Stage primaryStage = SceneManager.getInstance().getPrimaryStage();
+            if (primaryStage != null) {
+                dialog.initOwner(primaryStage);
+            }
+
+            dialog.show();
         });
     }
 }
