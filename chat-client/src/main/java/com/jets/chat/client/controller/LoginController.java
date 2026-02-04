@@ -135,6 +135,7 @@ public class LoginController {
                                     result.getSessionId());
                         }
                         SessionManager.setUserId(result.getUserDto().getId());
+                        SessionManager.saveDisplayName(result.getUserDto().getDisplayName());
                         navigateToMainScreen(result.getUserDto());
                     } else {
                         showError(result.getErrorMessage());
@@ -177,6 +178,8 @@ public class LoginController {
                                 if (userDto != null) {
                                     System.out.println("Auto-login successful for: "
                                             + userDto.getDisplayName());
+                                    SessionManager.setUserId(userDto.getId());
+                                    SessionManager.saveDisplayName(userDto.getDisplayName());
                                     navigateToMainScreen(userDto);
                                 } else {
                                     System.out.println(
