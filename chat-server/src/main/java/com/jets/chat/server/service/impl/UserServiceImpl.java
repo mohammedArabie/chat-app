@@ -1,10 +1,7 @@
 package com.jets.chat.server.service.impl;
 
 import com.jets.chat.common.callback.ClientCallback;
-import com.jets.chat.common.dto.LoginResult;
-import com.jets.chat.common.dto.RegisterRequestDTO;
-import com.jets.chat.common.dto.RegisterResponseDTO;
-import com.jets.chat.common.dto.UserDTO;
+import com.jets.chat.common.dto.*;
 import com.jets.chat.common.enums.UserStatus;
 import com.jets.chat.common.util.ProjectConstants;
 import com.jets.chat.server.context.ServerManager;
@@ -21,18 +18,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Base64;
-import java.util.Map; // ✅ KEEP THIS IMPORT
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public class UserServiceImpl implements UserService {
-    private final UserDao userDao;
-
-    public UserServiceImpl(UserDao userDao) {
-        this.userDao = userDao;
-    }
-
     private static final String UPLOAD_BASE_DIR;
 
     static {
@@ -42,6 +30,12 @@ public class UserServiceImpl implements UserService {
         System.out.println("Profile uploads directory: " + UPLOAD_BASE_DIR);
 
         initializeUploadDirectory();
+    }
+
+    private final UserDao userDao;
+
+    public UserServiceImpl(UserDao userDao) {
+        this.userDao = userDao;
     }
 
     private static void initializeUploadDirectory() {
@@ -271,6 +265,16 @@ public class UserServiceImpl implements UserService {
         int count = onlineClients.size();
         onlineClients.clear();
         System.out.println("✓ Cleared " + count + " online user sessions");
+    }
+
+    @Override
+    public Optional<UserDTO> getUserByEmail(String email) {
+        Optional<User> user = userDao.findByEmail(email);
+        if (user.isEmpty())
+            return Optional.empty();
+        // TODO: fetch status
+        return Optional.of(new UserDTO(user.get().getUserId(), user.get().getDisplayName(),
+                UserStatus.AVAILABLE, user.get().getEmail(), user.get().getPhoneNumber()));
     }
     @Override
     public boolean phoneNumberExists(String phoneNumber) {

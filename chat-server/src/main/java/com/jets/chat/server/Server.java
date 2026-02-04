@@ -1,6 +1,7 @@
 package com.jets.chat.server;
 
 import com.jets.chat.common.rmi.RemoteAnnouncementService;
+import com.jets.chat.common.rmi.RemoteContactsService;
 import com.jets.chat.common.rmi.RemoteUserService;
 import com.jets.chat.common.util.ProjectConstants;
 import com.jets.chat.server.context.ServerManager;
@@ -19,6 +20,8 @@ public class Server {
 
             RemoteUserService remoteUserService = serverManager.getRemoteUserService();
 
+            RemoteContactsService remoteContactsService = serverManager.getRemoteContactsService();
+
             Registry registry = LocateRegistry.createRegistry(ProjectConstants.RMI_SERVICE_PORT);
 
             registry.rebind(ProjectConstants.ANNOUNCEMENT_SERVICE, remoteAnnouncementService);
@@ -27,12 +30,14 @@ public class Server {
 
             registry.rebind(ProjectConstants.USER_SERVICE, remoteUserService);
 
+            registry.rebind(ProjectConstants.CONTACTS_SERVICE, remoteContactsService);
+
             System.out.println("Server Running");
             serverManager.startServer();
 
             // Needed when using exec:java to run the server
             // Not needed when using java to run
-            Thread.currentThread().join();
+            // Thread.currentThread().join();
         } catch (RemoteException e) {
             e.printStackTrace();
             System.exit(1);
