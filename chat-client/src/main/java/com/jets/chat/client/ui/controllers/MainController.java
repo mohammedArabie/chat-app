@@ -52,7 +52,7 @@ public class MainController implements Initializable {
         setupRightPaneBindings();
         chatViewModel.loadUserChats(SessionManager.getUserId());
         chatViewModel.fetchInvitationsFromServer();
-        chatViewModel.startPolling();
+//        chatViewModel.startPolling();
     }
 
     private void setupRightPaneBindings() {

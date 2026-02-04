@@ -88,7 +88,7 @@ public class ChatServiceImpl implements ChatService {
             Optional<User> sender = userDao.findById(e.getSenderId());
             String senderName = sender.map(User::getDisplayName).orElse("Unknown");
             return new MessageDTO(e.getContent(), e.getSentAt(), e.getSenderId() == currentUserId,
-                    senderName);
+                    senderName, chatId);
         }).toList();
     }
 
@@ -114,7 +114,7 @@ public class ChatServiceImpl implements ChatService {
             if (callback != null) {
                 try {
                     callback.receiveMessage(new MessageDTO(content, LocalDateTime.now(),
-                            user.getUserId() == currentUserId, null));
+                            user.getUserId() == currentUserId, null, chatId));
                 } catch (Exception e) {
                     onlineClients.remove(user.getUserId());
                 }
