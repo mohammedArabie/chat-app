@@ -40,11 +40,6 @@ public class UserServiceImpl implements UserService {
     private final UserDao userDao;
     private final ContactsDao contactsDao;
 
-    public UserServiceImpl(UserDao userDao) {
-        this.userDao = userDao;
-        this.contactsDao = null;
-    }
-
     public UserServiceImpl(UserDao userDao, ContactsDao contactsDao) {
         this.userDao = userDao;
         this.contactsDao = contactsDao;

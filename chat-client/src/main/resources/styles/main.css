@@ -70,7 +70,7 @@
 .bubble-sent {
   -fx-background-color: #0084ff;
   -fx-text-fill: white;
-  -fx-background-radius: 18 18 2 18; /* Top-Left, Top-Right, Bottom-Right, Bottom-Left */
+  -fx-background-radius: 18 18 2 18;
   -fx-padding: 10 14;
   -fx-font-size: 13px;
 }
@@ -81,6 +81,69 @@
   -fx-background-radius: 18 18 18 2;
   -fx-padding: 10 14;
   -fx-font-size: 13px;
+}
+
+/* File message bubbles */
+.file-bubble-sent {
+  -fx-background-color: #0084ff;
+  -fx-background-radius: 12;
+  -fx-padding: 12;
+  -fx-spacing: 8;
+  -fx-min-width: 280px;
+  -fx-max-width: 320px;
+}
+
+.file-bubble-received {
+  -fx-background-color: #2d2d2d;
+  -fx-background-radius: 12;
+  -fx-padding: 12;
+  -fx-spacing: 8;
+  -fx-min-width: 280px;
+  -fx-max-width: 320px;
+}
+
+.file-name-label {
+  -fx-text-fill: white;
+  -fx-font-size: 13px;
+  -fx-font-weight: bold;
+}
+
+.file-size-label {
+  -fx-text-fill: rgba(255, 255, 255, 0.7);
+  -fx-font-size: 11px;
+}
+
+.file-action-button {
+  -fx-background-color: rgba(255, 255, 255, 0.15);
+  -fx-text-fill: white;
+  -fx-background-radius: 6;
+  -fx-padding: 6 12;
+  -fx-font-size: 12px;
+  -fx-cursor: hand;
+  -fx-font-weight: bold;
+}
+
+.file-action-button:hover {
+  -fx-background-color: rgba(255, 255, 255, 0.25);
+}
+
+/* Attach button */
+.attach-button {
+  -fx-background-color: #25292d;
+  -fx-text-fill: white;
+  -fx-background-radius: 8;
+  -fx-font-size: 18px;
+  -fx-padding: 8 12;
+  -fx-cursor: hand;
+}
+
+.attach-button:hover {
+  -fx-background-color: #35393d;
+}
+
+.attach-button:disabled {
+  -fx-opacity: 0.5;
+  -fx-cursor: default;
 }
 
 .text-muted-tiny {
@@ -157,7 +220,7 @@
 }
 
 .dialog-pane {
-  -fx-background-color: #15191c; /* Matches your Sidebar */
+  -fx-background-color: #15191c;
 }
 
 .dialog-pane > .content.label {

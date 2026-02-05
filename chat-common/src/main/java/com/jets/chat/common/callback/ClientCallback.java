@@ -11,6 +11,9 @@ import java.rmi.RemoteException;
 public interface ClientCallback extends Remote {
     void onAnnouncementReceived(AnnouncementDTO announcement) throws RemoteException;
 
+    /**
+     * Called by the server when a new message is sent to the logged-in user.
+     */
     void receiveMessage(MessageDTO message) throws RemoteException;
 
     void updateContactStatus(Long contactId, UserStatus status) throws RemoteException;

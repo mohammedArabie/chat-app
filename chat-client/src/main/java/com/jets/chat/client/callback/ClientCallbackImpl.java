@@ -1,6 +1,8 @@
 package com.jets.chat.client.callback;
 
 import com.jets.chat.client.ui.viewmodel.ChatViewModel;
+import com.jets.chat.client.util.SessionManager;
+import com.jets.chat.client.util.SystemNotificationUtil;
 import com.jets.chat.common.callback.ClientCallback;
 import com.jets.chat.common.dto.AnnouncementDTO;
 import com.jets.chat.common.dto.ChatSummaryDTO;
@@ -27,8 +29,11 @@ public class ClientCallbackImpl extends UnicastRemoteObject implements ClientCal
         Platform.runLater(() -> {
             chatViewModel.addMessage(message);
             if (chatViewModel.isSystemNotificationsEnabled()) {
-                SystemNotificationUtil.showInfoNotification("You have recieved a new message",
-                        message.content());
+                String snippet = message.isFileMessage()
+                        ? "📎 File: " + message.content()
+                        : message.content();
+                SystemNotificationUtil.showInfoNotification("New message in " + message.chatId(),
+                        snippet);
             }
         });
     }

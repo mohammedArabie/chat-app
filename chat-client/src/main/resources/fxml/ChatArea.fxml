@@ -46,6 +46,14 @@
         <!-- Message Input Area -->
         <HBox alignment="CENTER" prefHeight="80.0" spacing="15.0" styleClass="input-area">
             <children>
+                <!-- Attachment Button -->
+                <Button fx:id="attachButton" mnemonicParsing="false" onAction="#onAttachFile"
+                        styleClass="attach-button" text="📎">
+                    <HBox.margin>
+                        <Insets />
+                    </HBox.margin>
+                </Button>
+
                 <TextField fx:id="messageInput" onAction="#onSendMessage"
                            promptText="Type a message..." styleClass="search-bar"
                            HBox.hgrow="ALWAYS">
@@ -53,6 +61,7 @@
                         <Insets bottom="10.0" left="15.0" right="15.0" top="10.0" />
                     </padding>
                 </TextField>
+
                 <Button fx:id="sendButton" mnemonicParsing="false" onAction="#onSendMessage"
                         prefHeight="38.0" prefWidth="80.0"
                         style="-fx-background-color: #0084FF; -fx-text-fill: white; -fx-background-radius: 8; -fx-font-weight: bold; -fx-cursor: hand;"
