@@ -198,6 +198,24 @@ public class UserDaoImpl implements UserDao {
             return false;
         }
     }
+
+    @Override
+    public boolean updateUserDisplayNameAndEmail(long userId, String displayName, String email) {
+        String sql = "UPDATE users SET display_name = ?, email = ? WHERE user_id = ?";
+
+        try (Connection conn = dataSource.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, displayName);
+            stmt.setString(2, email);
+            stmt.setLong(3, userId);
+
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
     @Override
     public boolean updatePassword(long id, String passwordHash) {
         try (Connection conn = dataSource.getConnection();

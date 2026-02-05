@@ -27,6 +27,8 @@ public interface UserService {
 
     public Optional<UserDTO> getUserByEmail(String email);
 
+    Optional<UserDTO> getUserById(long userId);
+
     void updateStatus(long userId, UserStatus status);
 
     UserStatus getUserStatus(long userId);
@@ -34,4 +36,8 @@ public interface UserService {
     List<Long> getUserContacts(long userId);
 
     void notifyContactsOfStatusChange(long userId, UserStatus status);
+
+    UserDTO updateUserProfile(long userId, String displayName, String email);
+
+    boolean isEmailExists(String email);
 }
