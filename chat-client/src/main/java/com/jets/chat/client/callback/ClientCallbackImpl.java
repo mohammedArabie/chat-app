@@ -2,6 +2,7 @@ package com.jets.chat.client.callback;
 
 import com.jets.chat.client.ui.viewmodel.ChatViewModel;
 import com.jets.chat.client.util.ClientManager;
+import com.jets.chat.client.util.SessionManager;
 import com.jets.chat.client.util.SystemNotificationUtil;
 import com.jets.chat.common.callback.ClientCallback;
 import com.jets.chat.common.dto.AnnouncementDTO;
@@ -53,7 +54,7 @@ public class ClientCallbackImpl extends UnicastRemoteObject implements ClientCal
                             chat.chatId())) {
                         ChatSummaryDTO updatedChat = new ChatSummaryDTO(chat.chatId(),
                                 chat.chatName(), chat.lastMessage(), chat.lastMessageTime(),
-                                chat.lastMessageSender(), status);
+                                chat.lastMessageSender(), status, chat.chatType());
                         int index = chatList.indexOf(chat);
                         if (index >= 0) {
                             chatList.set(index, updatedChat);
