@@ -14,8 +14,6 @@ public class AdminApplication extends Application {
 
     @Override
     public void init() throws Exception {
-        printSecurityBanner();
-
         // Initialize server manager (creates RMI registry ONCE)
         serverManager = ServerManager.getInstance();
     }
@@ -66,11 +64,5 @@ public class AdminApplication extends Application {
         });
     }
 
-    private void printSecurityBanner() {
 
-    }
-
-    public static void main(String[] args) {
-        launch(args);
-    }
 }
