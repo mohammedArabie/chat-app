@@ -1,5 +1,6 @@
 package com.jets.chat.server.service.impl;
 
+import com.jets.chat.common.callback.ClientCallback;
 import com.jets.chat.common.dto.InvitationDTO;
 import com.jets.chat.common.enums.ChatType;
 import com.jets.chat.common.enums.ContactStatus;
@@ -17,6 +18,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public class ContactsServiceImpl implements ContactsService {
@@ -60,6 +62,29 @@ public class ContactsServiceImpl implements ContactsService {
         contact.setStatus(ContactStatus.PENDING);
         contact.setCategory("Friends");
         contactsDao.save(contact);
+
+        notifyReceiverOfInvitation(fromId, toId);
+    }
+
+    private void notifyReceiverOfInvitation(long fromId, long toId) {
+        try {
+            Optional<User> senderOpt = userDao.findById(fromId);
+            if (senderOpt.isEmpty()) {
+                return;
+            }
+            User sender = senderOpt.get();
+            InvitationDTO invitation = new InvitationDTO(fromId, sender.getDisplayName(),
+                    LocalDateTime.now());
+
+            Map<Long, ClientCallback> onlineClients = ServerManager.getInstance()
+                    .getOnlineClients();
+            ClientCallback receiverCallback = onlineClients.get(toId);
+            if (receiverCallback != null) {
+                receiverCallback.onInvitationReceived(invitation);
+            }
+        } catch (RemoteException e) {
+            System.err.println("Error notifying receiver of invitation: " + e.getMessage());
+        }
     }
 
     @Override
@@ -71,8 +96,33 @@ public class ContactsServiceImpl implements ContactsService {
             long chatId = chatDao.insertChat(ChatType.PRIVATE);
             chatDao.addParticipant(chatId, ownerId);
             chatDao.addParticipant(chatId, contactId);
-            ServerManager.getInstance().getOnlineClients().get(ownerId).reloadChats();
-            ServerManager.getInstance().getOnlineClients().get(contactId).reloadChats();
+
+            Map<Long, ClientCallback> onlineClients = ServerManager.getInstance()
+                    .getOnlineClients();
+
+            ClientCallback ownerCallback = onlineClients.get(ownerId);
+            if (ownerCallback != null) {
+                ownerCallback.reloadChats();
+            }
+            notifySenderOfAcceptedInvitation(contactId, ownerId);
+        }
+    }
+
+    private void notifySenderOfAcceptedInvitation(long contactId, long ownerId) {
+        try {
+            Optional<User> acceptorOpt = userDao.findById(contactId);
+            if (acceptorOpt.isEmpty()) {
+                return;
+            }
+            User acceptor = acceptorOpt.get();
+            Map<Long, ClientCallback> onlineClients = ServerManager.getInstance()
+                    .getOnlineClients();
+            ClientCallback senderCallback = onlineClients.get(ownerId);
+            if (senderCallback != null) {
+                senderCallback.onInvitationAccepted(acceptor.getDisplayName());
+            }
+        } catch (RemoteException e) {
+            System.err.println("Error notifying sender of accepted invitation: " + e.getMessage());
         }
     }
 
