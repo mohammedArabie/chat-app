@@ -47,6 +47,11 @@ public class ChatViewModel {
     private final BooleanProperty showSettingsPane = new SimpleBooleanProperty(false);
     private final BooleanProperty enableSystemNotifications = new SimpleBooleanProperty(true);
 
+    // Current user profile properties
+    private final StringProperty currentUserDisplayName = new SimpleStringProperty("You");
+    private final ObjectProperty<UserStatus> currentUserStatus = new SimpleObjectProperty<>(
+            UserStatus.OFFLINE);
+
     public ChatViewModel() throws RemoteException {
         pendingRequestsCount.bind(Bindings.size(pendingInvitations));
 
@@ -492,5 +497,39 @@ public class ChatViewModel {
 
     public boolean isSystemNotificationsEnabled() {
         return enableSystemNotifications.get();
+    }
+
+    public StringProperty currentUserDisplayNameProperty() {
+        return currentUserDisplayName;
+    }
+
+    public ObjectProperty<UserStatus> currentUserStatusProperty() {
+        return currentUserStatus;
+    }
+
+    public void updateCurrentUserStatus(UserStatus status) {
+        this.currentUserStatus.set(status);
+    }
+
+    public void updateCurrentUserDisplayName(String displayName) {
+        this.currentUserDisplayName.set(displayName);
+    }
+
+    public void loadCurrentUserProfile() {
+        new Thread(() -> {
+            try {
+                long userId = SessionManager.getUserId();
+                UserDTO user = ClientManager.getInstance().getRemoteUserService()
+                        .getUserById(userId);
+                Platform.runLater(() -> {
+                    if (user != null) {
+                        currentUserDisplayName.set(user.getDisplayName());
+                        currentUserStatus.set(user.getStatus());
+                    }
+                });
+            } catch (RemoteException e) {
+                System.err.println("Failed to load current user profile: " + e.getMessage());
+            }
+        }).start();
     }
 }

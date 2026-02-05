@@ -13,14 +13,12 @@ import javafx.stage.FileChooser;
 
 import java.io.File;
 
+import static javafx.scene.Cursor.HAND;
+
 public class ChatController {
 
     @FXML
     private Label chatNameLabel;
-    @FXML
-    private Label statusDotLabel;
-    @FXML
-    private Label statusTextLabel;
     @FXML
     private ListView<MessageDTO> messageListView;
     @FXML
@@ -38,14 +36,11 @@ public class ChatController {
     public void init(ChatViewModel viewModel) {
         this.viewModel = viewModel;
 
-        // 1. Bind Header Name
         chatNameLabel.textProperty().bind(viewModel.chatTitleProperty());
 
-        // 2. Setup Message ListView
         messageListView.setItems(viewModel.getMessageHistory());
         messageListView.setCellFactory(param -> new MessageCell());
 
-        // 3. Auto-scroll to bottom when new messages are added
         viewModel.getMessageHistory().addListener((ListChangeListener<MessageDTO>) c -> {
             while (c.next()) {
                 if (c.wasAdded()) {
@@ -54,42 +49,19 @@ public class ChatController {
             }
         });
 
-        // 4. Update Header Status based on selected contact
-        viewModel.currentContactProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal != null) {
-                String status = "ONLINE";
-                statusTextLabel.setText(
-                        status.substring(0, 1).toUpperCase() + status.substring(1).toLowerCase());
-
-                if ("ONLINE".equals(status)) {
-                    statusDotLabel.setStyle("-fx-text-fill: #3BA55D;");
-                } else if ("AWAY".equals(status)) {
-                    statusDotLabel.setStyle("-fx-text-fill: #FAA61A;");
-                } else {
-                    statusDotLabel.setStyle("-fx-text-fill: #747F8D;");
-                }
-            }
-        });
-
-        // 5. Disable input if no chat is selected
         messageInput.disableProperty().bind(viewModel.selectedChatProperty().isNull());
         sendButton.disableProperty().bind(viewModel.selectedChatProperty().isNull());
         attachButton.disableProperty().bind(viewModel.selectedChatProperty().isNull());
 
-        // Make the chat name clickable to open/hide the Info Pane
         chatNameLabel.setOnMouseClicked(event -> {
             if (viewModel.selectedChatProperty().get() != null) {
                 viewModel.toggleInfoPane();
             }
         });
 
-        // Optional: change cursor to hand when hovering over name
-        chatNameLabel.setCursor(javafx.scene.Cursor.HAND);
+        chatNameLabel.setCursor(HAND);
     }
 
-    /**
-     * Triggered when the user clicks 'Send' or presses Enter in the TextField
-     */
     @FXML
     private void onSendMessage() {
         String text = messageInput.getText();
@@ -99,9 +71,6 @@ public class ChatController {
         }
     }
 
-    /**
-     * Triggered when the user clicks the attachment button
-     */
     @FXML
     private void onAttachFile() {
         FileChooser fileChooser = new FileChooser();
