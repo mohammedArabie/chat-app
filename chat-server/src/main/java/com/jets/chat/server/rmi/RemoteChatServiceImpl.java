@@ -56,7 +56,7 @@ public class RemoteChatServiceImpl extends UnicastRemoteObject implements Remote
         if (userOpt.isEmpty()) {
             throw new RuntimeException("User not found");
         }
-        UserStatus status;
+        UserStatus status = null;
 
         List<Chat> chats = chatDao.findChatsByUser(userId);
         List<ChatSummaryDTO> result = new ArrayList<>();
@@ -76,13 +76,16 @@ public class RemoteChatServiceImpl extends UnicastRemoteObject implements Remote
             } else {
                 if (lastMessage.isPresent()) {
                     Optional<User> user = userDao.findById(lastMessage.get().getSenderId());
-                    lastMessageSender = chatName = user.map(User::getDisplayName).orElse(null);
+                    lastMessageSender = user.map(User::getDisplayName).orElse(null);
                 }
                 List<ChatParticipant> participants = chatDao.getParticipants(chat.getChatId());
-
-                status = participants.get(0).getUserId() == userId
-                        ? userDao.getStatus(participants.get(1).getUserId())
-                        : userDao.getStatus(participants.get(0).getUserId());
+                for (ChatParticipant chatParticipant : participants) {
+                    if (chatParticipant.getUserId() != userId) {
+                        Optional<User> user = userDao.findById(chatParticipant.getUserId());
+                        chatName = user.get().getDisplayName();
+                        status = userDao.getStatus(chatParticipant.getUserId());
+                    }
+                }
             }
             result.add(new ChatSummaryDTO(chat.getChatId(), chatName,
                     lastMessage.<String>map(Message::getContent).orElse(null),
@@ -180,6 +183,15 @@ public class RemoteChatServiceImpl extends UnicastRemoteObject implements Remote
         } catch (IOException e) {
             throw new RemoteException("Failed to save file", e);
         }
+    }
+
+    @Override
+    public boolean isUserInChat(long userId, long chatId) throws RemoteException {
+        for (ChatParticipant chatParticipant : chatDao.getParticipants(chatId)) {
+            if (chatParticipant.getUserId() == userId)
+                return true;
+        }
+        return false;
     }
 
     private void notifyParticipants(Long chatId, long senderId, String content, FileDTO fileDTO) {

@@ -17,4 +17,6 @@ public interface RemoteChatService extends Remote {
 
     void sendFileMessage(Long chatId, String fileName, byte[] fileData, String contentType,
             long fileSize, long currentUserId) throws RemoteException;
+
+    boolean isUserInChat(long userId, long chatId) throws RemoteException;
 }
