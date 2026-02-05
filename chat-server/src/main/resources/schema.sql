@@ -151,11 +151,4 @@ CREATE TABLE IF NOT EXISTS admins (
 ALTER TABLE admins
     ADD COLUMN must_change_password BOOLEAN DEFAULT TRUE AFTER password_hash;
 
--- Step 3: Ensure superadmin exists
-INSERT INTO admins (username, password_hash, must_change_password, created_at)
-VALUES (
-           'superadmin',
-           '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9', -- SHA-256 hash of "admin123"
-           FALSE,  -- Super admin doesn't have change password on first login
-           NOW()
-       );
+-- Step 3: Ensure superadmin exists Add Admin yourself
