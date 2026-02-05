@@ -54,7 +54,7 @@ chat-app/
 | Layer | Technology |
 |-------|------------|
 | **Frontend** | JavaFX 17+, CSS3, FXML |
-| **Backend** | Java 17, RMI with TLS encryption |
+| **Backend** | Java 17, RMI |
 | **Database** | MySQL 8.0, HikariCP connection pool |
 | **Build** | Maven |
 | **Security** | SHA-256 password hashing |
