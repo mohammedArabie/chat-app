@@ -1,70 +1,97 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.Circle?>
-
-<?import javafx.scene.layout.Region?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.layout.StackPane?>
 <VBox fx:id="sideBarRoot" prefWidth="300.0" spacing="10.0" styleClass="sidebar"
       stylesheets="@../styles/main.css" xmlns="http://javafx.com/javafx/17"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.jets.chat.client.ui.controllers.SideBarController">
     <children>
         <!-- User Profile Header -->
+        <!-- User Profile Header -->
         <HBox alignment="CENTER_LEFT" spacing="12.0">
             <children>
-                <Circle fill="#0084ff" radius="18.0" stroke="TRANSPARENT" />
-                <!-- This spacer pushes the buttons to the far right -->
-                <Region HBox.hgrow="ALWAYS" />
+                <!-- Placeholder for User Avatar -->
+                <Circle fx:id="userAvatar" fill="#4a90e2" radius="20.0" stroke="TRANSPARENT"/>
 
-                <HBox spacing="15.0" alignment="CENTER_RIGHT">
+                <Region HBox.hgrow="ALWAYS"/>
+
+                <HBox spacing="10.0" alignment="CENTER_RIGHT">
                     <children>
+                        <!-- Notification/Requests Icon -->
                         <StackPane onMouseClicked="#onRequestsClicked" styleClass="icon-container">
-                            <Label styleClass="icon-header" text="👤+" />
-                            <Circle fx:id="requestBadge" fill="#3ba55d" radius="8.0" StackPane.alignment="TOP_RIGHT">
-                                <StackPane.margin><Insets right="-5.0" top="-5.0" /></StackPane.margin>
+                            <Region styleClass="svg-icon, icon-requests"/>
+                            <Circle fx:id="requestBadge" fill="#ff4757" radius="7.0" StackPane.alignment="TOP_RIGHT">
+                                <StackPane.margin>
+                                    <Insets right="-3.0" top="-3.0"/>
+                                </StackPane.margin>
                             </Circle>
-                            <Label fx:id="requestCount" styleClass="badge-text" text="3" StackPane.alignment="TOP_RIGHT">
-                                <StackPane.margin><Insets right="-2.0" top="-6.0" /></StackPane.margin>
+                            <Label fx:id="requestCount" styleClass="badge-text" text="3"
+                                   StackPane.alignment="TOP_RIGHT">
+                                <StackPane.margin>
+                                    <Insets right="0.0" top="-4.0"/>
+                                </StackPane.margin>
                             </Label>
                         </StackPane>
 
-                        <!-- Existing Add Chat & Settings Icons -->
-                        <Button onAction="#onAddContactClicked" styleClass="icon-btn-small" text="💬+" />
-                        <Button onAction="#onSettingsClicked" styleClass="icon-btn-small" text="⚙" />
+                        <!-- Add Contact Icon -->
+                        <Button onAction="#onAddContactClicked" styleClass="icon-btn-circle">
+                            <graphic>
+                                <Region styleClass="svg-icon, icon-add-user"/>
+                            </graphic>
+                            <tooltip>
+                                <Tooltip text="Add Contact"/>
+                            </tooltip>
+                        </Button>
+
+                        <!-- Create Group Icon -->
+                        <Button onAction="#onCreateGroupClicked" styleClass="icon-btn-circle">
+                            <graphic>
+                                <Region styleClass="svg-icon, icon-group"/>
+                            </graphic>
+                            <tooltip>
+                                <Tooltip text="Create Group"/>
+                            </tooltip>
+                        </Button>
+
+                        <!-- Settings Icon -->
+                        <Button onAction="#onSettingsClicked" styleClass="icon-btn-circle">
+                            <graphic>
+                                <Region styleClass="svg-icon, icon-settings"/>
+                            </graphic>
+                            <tooltip>
+                                <Tooltip text="Settings"/>
+                            </tooltip>
+                        </Button>
                     </children>
                 </HBox>
             </children>
             <padding>
-                <Insets bottom="10.0" left="5.0" right="5.0" top="5.0" />
+                <Insets bottom="10.0" left="5.0" right="5.0" top="5.0"/>
             </padding>
         </HBox>
 
         <!-- Search Field -->
         <TextField fx:id="searchField" promptText="Search conversations..." styleClass="search-bar">
             <VBox.margin>
-                <Insets bottom="5.0" top="5.0" />
+                <Insets bottom="5.0" top="5.0"/>
             </VBox.margin>
         </TextField>
 
         <!-- Section Label -->
         <Label styleClass="section-header" text="MESSAGES">
             <VBox.margin>
-                <Insets left="5.0" top="10.0" />
+                <Insets left="5.0" top="10.0"/>
             </VBox.margin>
         </Label>
 
         <!-- Contact List -->
-        <ListView fx:id="contactListView" VBox.vgrow="ALWAYS" styleClass="custom-list-view" />
+        <ListView fx:id="contactListView" VBox.vgrow="ALWAYS" styleClass="custom-list-view"/>
 
     </children>
     <padding>
-        <Insets bottom="10.0" left="15.0" right="15.0" top="15.0" />
+        <Insets bottom="10.0" left="15.0" right="15.0" top="15.0"/>
     </padding>
 </VBox>

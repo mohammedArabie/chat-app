@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Circle?>
+<VBox prefWidth="300.0" spacing="20.0" styleClass="info-pane" stylesheets="@../styles/main.css"
+      xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.jets.chat.client.ui.controllers.CreateGroupChatController">
+    <padding>
+        <Insets top="20.0" left="20.0" right="20.0" bottom="20.0"/>
+    </padding>
+
+    <HBox alignment="CENTER_LEFT">
+        <VBox>
+            <Label text="Create Group" styleClass="name-large"/>
+            <Label text="Add members and set a group name" styleClass="text-muted"/>
+        </VBox>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button onAction="#onClose" styleClass="icon-btn-small" text="✕"/>
+    </HBox>
+
+    <VBox spacing="10">
+        <Label text="Group Name" styleClass="text-muted-tiny"/>
+        <TextField fx:id="groupNameField" promptText="Enter group name..." styleClass="search-bar"/>
+    </VBox>
+
+    <VBox spacing="10" VBox.vgrow="ALWAYS">
+        <Label text="Add Members" styleClass="text-muted-tiny"/>
+        <ListView fx:id="contactsListView" VBox.vgrow="ALWAYS" styleClass="custom-list-view"/>
+        <Label fx:id="selectionLabel" text="Selected: 0 members" styleClass="text-muted"/>
+    </VBox>
+
+    <Button onAction="#onCreateGroup" styleClass="accept-btn" text="Create Group" maxWidth="Infinity"/>
+
+    <!-- Success Message -->
+    <VBox fx:id="successBox" alignment="CENTER" spacing="10" visible="false" managed="false">
+        <Label text="✓" style="-fx-font-size: 40; -fx-text-fill: #4CAF50;" />
+        <Label text="Group created successfully!" styleClass="text-white" alignment="CENTER" textAlignment="CENTER" wrapText="true"/>
+    </VBox>
+</VBox>

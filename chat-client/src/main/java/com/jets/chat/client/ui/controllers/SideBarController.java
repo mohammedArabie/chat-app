@@ -79,6 +79,11 @@ public class SideBarController {
     }
 
     @FXML
+    private void onCreateGroupClicked() {
+        viewModel.showCreateGroup();
+    }
+
+    @FXML
     private void onRequestsClicked(MouseEvent event) {
         viewModel.showInvitations();
     }
