@@ -3,6 +3,7 @@ package com.jets.chat.client.ui.viewmodel;
 import com.jets.chat.client.util.ClientManager;
 import com.jets.chat.client.util.SceneManager;
 import com.jets.chat.client.util.SessionManager;
+import com.jets.chat.common.dto.*;
 import com.jets.chat.common.dto.ChatSummaryDTO;
 import com.jets.chat.common.dto.InvitationDTO;
 import com.jets.chat.common.dto.MessageDTO;
@@ -16,6 +17,11 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.rmi.RemoteException;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,6 +30,10 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class ChatViewModel {
+
+    private static final long MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
+    private static final String CLIENT_FILE_STORAGE = System.getProperty("user.home")
+            + File.separator + "chat-app";
 
     private final ObservableList<ChatSummaryDTO> chatSummaryList = FXCollections
             .observableArrayList();
@@ -63,6 +73,18 @@ public class ChatViewModel {
                 messageHistory.clear();
             }
         });
+
+        ensureFileStorageDirectory();
+    }
+
+    private void ensureFileStorageDirectory() {
+        try {
+            Path userDir = Paths.get(CLIENT_FILE_STORAGE,
+                    String.valueOf(SessionManager.getUserId()), "files");
+            Files.createDirectories(userDir);
+        } catch (IOException e) {
+            System.err.println("Failed to create file storage directory: " + e.getMessage());
+        }
     }
 
     public void addMessage(MessageDTO messageDTO) {
@@ -84,8 +106,6 @@ public class ChatViewModel {
         try {
             RemoteChatService chatService = ClientManager.getInstance().getRemoteChatService();
             List<ChatSummaryDTO> chats = chatService.getUserChats(SessionManager.getUserId());
-            System.out.println("chat update called " + SessionManager.getDisplayName());
-            System.out.println(chats);
             Platform.runLater(() -> {
                 chatSummaryList.setAll(chats);
             });
@@ -132,9 +152,8 @@ public class ChatViewModel {
             return;
         }
 
-        String senderName = SessionManager.getDisplayName();
-        MessageDTO newMsg = new MessageDTO(text, LocalDateTime.now(), true, senderName,
-                this.selectedChat.get().chatId());
+        MessageDTO newMsg = new MessageDTO(selectedChat.get().chatId(), text, LocalDateTime.now(),
+                true, SessionManager.getDisplayName());
 
         new Thread(() -> {
             try {
@@ -150,11 +169,157 @@ public class ChatViewModel {
         }).start();
     }
 
+    public void sendFileMessage(File file) {
+        if (file == null || selectedChat.get() == null) {
+            return;
+        }
+
+        if (file.length() > MAX_FILE_SIZE) {
+            Platform.runLater(() -> {
+                System.err.println("File too large. Maximum size is 50MB.");
+            });
+            return;
+        }
+
+        new Thread(() -> {
+            try {
+                byte[] fileData = Files.readAllBytes(file.toPath());
+                String fileName = file.getName();
+                String contentType = Files.probeContentType(file.toPath());
+                if (contentType == null) {
+                    contentType = "application/octet-stream";
+                }
+
+                ClientManager.getInstance().getRemoteChatService().sendFileMessage(
+                        selectedChat.get().chatId(), fileName, fileData, contentType, file.length(),
+                        SessionManager.getUserId());
+
+                FileDTO tempFileDTO = new FileDTO(null, // fileId will be assigned by server
+                        fileName, file.length(), contentType, file.getAbsolutePath()
+
+                );
+                MessageDTO newMsg = new MessageDTO(selectedChat.get().chatId(), fileName,
+                        LocalDateTime.now(), true, tempFileDTO, SessionManager.getDisplayName());
+
+                Platform.runLater(() -> {
+                    messageHistory.add(newMsg);
+                });
+
+                System.out.println("File sent successfully: " + fileName);
+
+            } catch (IOException e) {
+                System.err.println("Failed to send file: " + e.getMessage());
+                e.printStackTrace();
+                Platform.runLater(() -> {
+                    System.err.println("Failed to send file");
+                });
+            }
+        }).start();
+    }
+
+    public void downloadAndOpenFile(FileDTO fileDTO) {
+        if (fileDTO == null) {
+            System.err.println("FileDTO is null");
+            return;
+        }
+
+        new Thread(() -> {
+            try {
+                Path localFilePath;
+
+                if (fileDTO.filePath() != null && !fileDTO.filePath().isEmpty()) {
+                    Path originalPath = Paths.get(fileDTO.filePath());
+
+                    if (Files.exists(originalPath)) {
+                        localFilePath = originalPath;
+                        System.out.println("Using original file path: " + localFilePath);
+                    } else {
+                        localFilePath = downloadFileFromServer(fileDTO);
+                    }
+                } else {
+                    localFilePath = downloadFileFromServer(fileDTO);
+                }
+
+                if (localFilePath == null || !Files.exists(localFilePath)) {
+                    System.err.println(
+                            "File not found: " + (localFilePath != null ? localFilePath : "null"));
+                    return;
+                }
+
+                final Path finalPath = localFilePath;
+                Platform.runLater(() -> {
+                    try {
+                        openFileLocation(finalPath);
+                    } catch (IOException e) {
+                        System.err.println("Failed to open file location: " + e.getMessage());
+                    }
+                });
+
+            } catch (Exception e) {
+                System.err.println("Error in downloadAndOpenFile: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
+    private Path downloadFileFromServer(FileDTO fileDTO) throws IOException, RemoteException {
+        if (fileDTO.fileId() == null) {
+            System.err.println("Cannot download file: fileId is null");
+            return null;
+        }
+
+        Path userFilesDir = Paths.get(CLIENT_FILE_STORAGE,
+                String.valueOf(SessionManager.getUserId()), "files");
+        Files.createDirectories(userFilesDir);
+
+        Path localFilePath = userFilesDir.resolve(fileDTO.fileName());
+
+        if (!Files.exists(localFilePath)) {
+            System.out.println("Downloading file from server, fileId: " + fileDTO.fileId());
+            byte[] fileData = ClientManager.getInstance().getRemoteFileService()
+                    .downloadFile(fileDTO.fileId());
+            Files.write(localFilePath, fileData);
+            System.out.println("File downloaded to: " + localFilePath);
+        } else {
+            System.out.println("File already exists locally: " + localFilePath);
+        }
+
+        return localFilePath;
+    }
+
+    private void openFileLocation(Path filePath) throws IOException {
+        String os = System.getProperty("os.name").toLowerCase();
+        ProcessBuilder pb;
+
+        if (os.contains("win")) {
+            pb = new ProcessBuilder("explorer.exe", "/select,", filePath.toString());
+        } else if (os.contains("mac")) {
+            pb = new ProcessBuilder("open", "-R", filePath.toString());
+        } else {
+            pb = new ProcessBuilder("xdg-open", filePath.getParent().toString());
+        }
+
+        pb.start();
+        System.out.println("Opened file location: " + filePath);
+    }
+
+    public void updateChatInSidebar(MessageDTO message) {
+        chatSummaryList.stream().filter(c -> c.chatId() == message.chatId()).findFirst()
+                .ifPresent(oldChat -> {
+                    ChatSummaryDTO updatedChat = new ChatSummaryDTO(oldChat.chatId(),
+                            oldChat.chatName(), message.content(), message.time(),
+                            message.senderName(), UserStatus.AVAILABLE);
+
+                    int index = chatSummaryList.indexOf(oldChat);
+                    chatSummaryList.remove(index);
+                    chatSummaryList.add(0, updatedChat); // Move to the very top
+                });
+    }
+
     public void showMyProfile() {
         selectedChat.set(null);
         currentContact.set("Omar Ahmed");
         contactEmail.set("omar@gmail.com");
-        // Update active view to PROFILE if you have that enum, otherwise CONTACT_INFO
         activeRightView.set(RightPaneView.CONTACT_INFO);
     }
 

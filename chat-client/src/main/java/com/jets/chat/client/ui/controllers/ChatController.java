@@ -9,6 +9,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.stage.FileChooser;
+
+import java.io.File;
 
 public class ChatController {
 
@@ -24,6 +27,8 @@ public class ChatController {
     private TextField messageInput;
     @FXML
     private Button sendButton;
+    @FXML
+    private Button attachButton;
 
     private ChatViewModel viewModel;
 
@@ -69,6 +74,7 @@ public class ChatController {
         // 5. Disable input if no chat is selected
         messageInput.disableProperty().bind(viewModel.selectedChatProperty().isNull());
         sendButton.disableProperty().bind(viewModel.selectedChatProperty().isNull());
+        attachButton.disableProperty().bind(viewModel.selectedChatProperty().isNull());
 
         // Make the chat name clickable to open/hide the Info Pane
         chatNameLabel.setOnMouseClicked(event -> {
@@ -90,6 +96,27 @@ public class ChatController {
         if (text != null && !text.trim().isEmpty()) {
             viewModel.sendMessage(text);
             messageInput.clear();
+        }
+    }
+
+    /**
+     * Triggered when the user clicks the attachment button
+     */
+    @FXML
+    private void onAttachFile() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Select File to Send");
+
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("All Files", "*.*"),
+                new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg", "*.gif"),
+                new FileChooser.ExtensionFilter("Documents", "*.pdf", "*.doc", "*.docx", "*.txt"),
+                new FileChooser.ExtensionFilter("Archives", "*.zip", "*.rar", "*.7z"));
+
+        File selectedFile = fileChooser.showOpenDialog(attachButton.getScene().getWindow());
+
+        if (selectedFile != null) {
+            viewModel.sendFileMessage(selectedFile);
         }
     }
 }
