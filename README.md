@@ -57,7 +57,7 @@ chat-app/
 | **Backend** | Java 17, RMI with TLS encryption |
 | **Database** | MySQL 8.0, HikariCP connection pool |
 | **Build** | Maven |
-| **Security** | SHA-256 password hashing, TLS, input validation |
+| **Security** | SHA-256 password hashing |
 | **Testing** | JUnit 5 |
 
 ---
