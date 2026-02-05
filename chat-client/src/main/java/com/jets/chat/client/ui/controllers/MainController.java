@@ -14,6 +14,7 @@ import javafx.scene.layout.VBox;
 
 import java.io.IOException;
 import java.net.URL;
+import java.rmi.RemoteException;
 import java.util.ResourceBundle;
 
 import static com.jets.chat.common.util.Functions.getInitials;
@@ -51,9 +52,12 @@ public class MainController implements Initializable {
         }
 
         setupRightPaneBindings();
-        chatViewModel.loadUserChats(SessionManager.getUserId());
+        try {
+            chatViewModel.loadUserChats(SessionManager.getUserId());
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
         chatViewModel.fetchInvitationsFromServer();
-        // chatViewModel.startPolling();
     }
 
     private void setupRightPaneBindings() {
