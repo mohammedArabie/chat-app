@@ -93,6 +93,7 @@ public class MainController implements Initializable {
             case CONTACT_INFO, PROFILE -> "/fxml/ContactInfoView.fxml";
             case INVITATIONS -> "/fxml/InvitationsView.fxml";
             case ADD_CONTACT -> "/fxml/AddContactView.fxml";
+            case CREATE_GROUP -> "/fxml/CreateGroupChat.fxml";
             default -> null;
         };
 
@@ -107,6 +108,8 @@ public class MainController implements Initializable {
                 ((InvitationsController) controller).init(chatViewModel);
             } else if (controller instanceof AddContactController) {
                 ((AddContactController) controller).init(chatViewModel);
+            } else if (controller instanceof CreateGroupChatController) {
+                ((CreateGroupChatController) controller).init(chatViewModel);
             }
 
             infoPaneRoot.getChildren().setAll(node);
