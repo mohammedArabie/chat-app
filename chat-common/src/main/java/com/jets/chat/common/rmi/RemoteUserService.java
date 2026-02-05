@@ -23,7 +23,13 @@ public interface RemoteUserService extends Remote {
 
     UserDTO getUserByEmail(String email) throws RemoteException;
 
+    UserDTO getUserById(long userId) throws RemoteException;
+
     void updateStatus(long userId, UserStatus status) throws RemoteException;
 
     UserStatus getUserStatus(long userId) throws RemoteException;
+
+    UserDTO updateUserProfile(long userId, String displayName, String email) throws RemoteException;
+
+    boolean isEmailExists(String email) throws RemoteException;
 }

@@ -282,7 +282,17 @@ public class UserServiceImpl implements UserService {
             return Optional.empty();
         UserStatus status = userDao.getStatus(user.get().getUserId());
         return Optional.of(new UserDTO(user.get().getUserId(), user.get().getDisplayName(), status,
-                user.get().getEmail(), user.get().getPhoneNumber()));
+                user.get().getEmail(), user.get().getPhoneNumber(), user.get().getPicturePath()));
+    }
+
+    @Override
+    public Optional<UserDTO> getUserById(long userId) {
+        Optional<User> user = userDao.findById(userId);
+        if (user.isEmpty())
+            return Optional.empty();
+        UserStatus status = userDao.getStatus(userId);
+        return Optional.of(new UserDTO(user.get().getUserId(), user.get().getDisplayName(), status,
+                user.get().getEmail(), user.get().getPhoneNumber(), user.get().getPicturePath()));
     }
 
     @Override
@@ -338,5 +348,34 @@ public class UserServiceImpl implements UserService {
 
         Optional<User> user = userDao.findByPhoneNumber(phoneNumber.trim());
         return user.isPresent();
+    }
+
+    @Override
+    public UserDTO updateUserProfile(long userId, String displayName, String email) {
+        // Check if email is already used by another user
+        Optional<User> existingUser = userDao.findByEmail(email);
+        if (existingUser.isPresent() && existingUser.get().getUserId() != userId) {
+            return null; // Email already in use
+        }
+
+        boolean updated = userDao.updateUserDisplayNameAndEmail(userId, displayName, email);
+        if (!updated) {
+            return null;
+        }
+
+        // Return updated user
+        Optional<User> updatedUser = userDao.findById(userId);
+        if (updatedUser.isPresent()) {
+            User user = updatedUser.get();
+            UserStatus status = userDao.getStatus(userId);
+            return new UserDTO(user.getUserId(), user.getDisplayName(), status, user.getEmail(),
+                    user.getPhoneNumber(), user.getPicturePath());
+        }
+        return null;
+    }
+
+    @Override
+    public boolean isEmailExists(String email) {
+        return userDao.findByEmail(email).isPresent();
     }
 }

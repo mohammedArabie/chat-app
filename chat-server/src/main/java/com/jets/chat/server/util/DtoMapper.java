@@ -11,6 +11,6 @@ public class DtoMapper {
         }
 
         return new UserDTO(user.getUserId(), user.getDisplayName(), UserStatus.OFFLINE,
-                user.getEmail(), user.getPhoneNumber());
+                user.getEmail(), user.getPhoneNumber(), user.getPicturePath());
     }
 }

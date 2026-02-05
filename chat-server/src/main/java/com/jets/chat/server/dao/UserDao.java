@@ -31,4 +31,5 @@ public interface UserDao {
 
     boolean isSessionValid(long userId, String sessionId);
     public boolean updateUser(User user);
+    boolean updateUserDisplayNameAndEmail(long userId, String displayName, String email);
 }

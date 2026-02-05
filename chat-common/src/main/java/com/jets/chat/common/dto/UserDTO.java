@@ -11,6 +11,7 @@ public class UserDTO implements Serializable {
     private UserStatus status;
     private String email;
     private String phoneNumber;
+    private String picturePath;
 
     public UserDTO(long id, String displayName, UserStatus status, String email,
             String phoneNumber) {
@@ -19,6 +20,16 @@ public class UserDTO implements Serializable {
         this.status = status;
         this.email = email;
         this.phoneNumber = phoneNumber;
+    }
+
+    public UserDTO(long id, String displayName, UserStatus status, String email, String phoneNumber,
+            String picturePath) {
+        this.id = id;
+        this.displayName = displayName;
+        this.status = status;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.picturePath = picturePath;
     }
 
     public long getId() {
@@ -59,6 +70,14 @@ public class UserDTO implements Serializable {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public String getPicturePath() {
+        return picturePath;
+    }
+
+    public void setPicturePath(String picturePath) {
+        this.picturePath = picturePath;
     }
 
 }

@@ -61,6 +61,14 @@ public class RemoteUserServiceImpl extends UnicastRemoteObject implements Remote
     }
 
     @Override
+    public UserDTO getUserById(long userId) throws RemoteException {
+        Optional<UserDTO> user = userService.getUserById(userId);
+        if (user.isEmpty())
+            return null;
+        return user.get();
+    }
+
+    @Override
     public void updateStatus(long userId, UserStatus status) throws RemoteException {
         userService.updateStatus(userId, status);
         userService.notifyContactsOfStatusChange(userId, status);
@@ -69,5 +77,16 @@ public class RemoteUserServiceImpl extends UnicastRemoteObject implements Remote
     @Override
     public UserStatus getUserStatus(long userId) throws RemoteException {
         return userService.getUserStatus(userId);
+    }
+
+    @Override
+    public UserDTO updateUserProfile(long userId, String displayName, String email)
+            throws RemoteException {
+        return userService.updateUserProfile(userId, displayName, email);
+    }
+
+    @Override
+    public boolean isEmailExists(String email) throws RemoteException {
+        return userService.isEmailExists(email);
     }
 }
