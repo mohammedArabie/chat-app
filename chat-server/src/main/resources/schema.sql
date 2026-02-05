@@ -136,3 +136,26 @@ CREATE INDEX idx_message_sender ON messages(sender_id);
 CREATE INDEX idx_chat_participants_user ON chat_participants(user_id);
 CREATE INDEX idx_message_status_user ON message_status(user_id);
 CREATE INDEX idx_sessions_user ON user_sessions(user_id); -- Added this one
+
+--Adding Admin
+-- Step 1: creating table
+CREATE TABLE IF NOT EXISTS admins (
+                                      admin_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                                      username VARCHAR(50) NOT NULL UNIQUE,
+    password_hash VARCHAR(64) NOT NULL,  -- SHA-256 hash (64 hex characters)
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_login TIMESTAMP NULL DEFAULT NULL
+    ) ;
+
+-- Step 2: Add must_change_password column (if not already added)
+ALTER TABLE admins
+    ADD COLUMN must_change_password BOOLEAN DEFAULT TRUE AFTER password_hash;
+
+-- Step 3: Ensure superadmin exists
+INSERT INTO admins (username, password_hash, must_change_password, created_at)
+VALUES (
+           'superadmin',
+           '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9', -- SHA-256 hash of "admin123"
+           FALSE,  -- Super admin doesn't have change password on first login
+           NOW()
+       );
