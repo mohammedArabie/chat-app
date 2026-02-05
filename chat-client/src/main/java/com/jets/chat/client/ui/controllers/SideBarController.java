@@ -74,11 +74,6 @@ public class SideBarController {
     }
 
     @FXML
-    private void onAnnouncementsClicked(MouseEvent event) {
-        // viewModel.showAnnouncements();
-    }
-
-    @FXML
     private void onAddContactClicked() {
         viewModel.showAddContact();
     }
