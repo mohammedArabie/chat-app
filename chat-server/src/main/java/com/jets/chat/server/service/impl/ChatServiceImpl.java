@@ -15,6 +15,7 @@ import com.jets.chat.server.entity.Message;
 import com.jets.chat.server.entity.User;
 import com.jets.chat.server.service.ChatService;
 
+import java.rmi.RemoteException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +44,7 @@ public class ChatServiceImpl implements ChatService {
             Optional<Message> lastMessage = messageDao.findLatest(chat.getChatId());
             String chatName = "", lastMessageSender = null;
             UserStatus status = UserStatus.OFFLINE;
+            ChatType chatType = ChatType.GROUP;
             if (chat.getChatType().equals(ChatType.GROUP)) {
                 Optional<String> name = chatDao.findGroupNameByChatId(chat.getChatId());
                 if (name.isEmpty())
@@ -53,6 +55,7 @@ public class ChatServiceImpl implements ChatService {
                     lastMessageSender = user.map(User::getDisplayName).orElse(null);
                 }
             } else {
+                chatType = ChatType.PRIVATE;
                 if (lastMessage.isPresent()) {
                     Optional<User> user = userDao.findById(lastMessage.get().getSenderId());
                     lastMessageSender = user.map(User::getDisplayName).orElse(null);
@@ -74,7 +77,7 @@ public class ChatServiceImpl implements ChatService {
             result.add(new ChatSummaryDTO(chat.getChatId(), chatName,
                     lastMessage.<String>map(Message::getContent).orElse(null),
                     lastMessage.<LocalDateTime>map(Message::getSentAt).orElse(null),
-                    lastMessageSender, status));
+                    lastMessageSender, status, chatType));
         }
         return result;
     }
@@ -121,5 +124,54 @@ public class ChatServiceImpl implements ChatService {
                 }
             }
         }
+    }
+
+    @Override
+    public Long findChatUser(long chatId, long userId) {
+        for (ChatParticipant chatParticipant : chatDao.getParticipants(chatId)) {
+            if (chatParticipant.getUserId() != userId) {
+                return chatParticipant.getUserId();
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public long createGroup(String groupName, long ownerId, List<Long> memberIds)
+            throws RemoteException {
+        if (userDao.findById(ownerId).isEmpty()) {
+            throw new RuntimeException("Owner user not found");
+        }
+
+        System.out.println("creating");
+
+        for (Long userId : memberIds) {
+            if (userDao.findById(userId).isEmpty()) {
+                throw new RuntimeException("Member user not found: " + userId);
+            }
+        }
+
+        long chatId = chatDao.insertChat(ChatType.GROUP);
+
+        boolean groupInserted = chatDao.insertGroup(chatId, groupName, ownerId);
+        if (!groupInserted) {
+            throw new RuntimeException("Failed to create group");
+        }
+
+        System.out.println("group created " + chatId);
+
+        chatDao.addParticipant(chatId, ownerId);
+
+        for (Long userId : memberIds) {
+            chatDao.addParticipant(chatId, userId);
+        }
+
+        for (Long userId : memberIds) {
+            ClientCallback callback = ServerManager.getInstance().getOnlineClients().get(userId);
+            if (callback != null)
+                callback.reloadChats();
+        }
+
+        return chatId;
     }
 }
