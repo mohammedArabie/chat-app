@@ -65,27 +65,27 @@ public class ChatViewModel {
         });
     }
 
-    public void startPolling() {
-        scheduler.scheduleAtFixedRate(this::updateChatList, 2, 2, TimeUnit.SECONDS);
-        scheduler.scheduleAtFixedRate(this::fetchPendingInvitations, 3, 5, TimeUnit.SECONDS);
-    }
-
-    public void stopPolling() {
-        scheduler.shutdown();
-        try {
-            if (!scheduler.awaitTermination(1, TimeUnit.SECONDS)) {
-                scheduler.shutdownNow();
+    public void addMessage(MessageDTO messageDTO) {
+        if (selectedChat.get() != null && selectedChat.get().chatId() == messageDTO.chatId()) {
+            messageHistory.add(messageDTO);
+        }
+        for (int i = 0; i < chatSummaryList.size(); i++) {
+            ChatSummaryDTO chat = chatSummaryList.get(i);
+            if (chat.chatId() == messageDTO.chatId()) {
+                chatSummaryList.set(i,
+                        new ChatSummaryDTO(chat.chatId(), chat.chatName(), messageDTO.content(),
+                                messageDTO.time(), messageDTO.senderName(), UserStatus.AVAILABLE));
+                break;
             }
-        } catch (InterruptedException e) {
-            scheduler.shutdownNow();
-            Thread.currentThread().interrupt();
         }
     }
 
-    private void updateChatList() {
+    public void updateChatList() {
         try {
             RemoteChatService chatService = ClientManager.getInstance().getRemoteChatService();
             List<ChatSummaryDTO> chats = chatService.getUserChats(SessionManager.getUserId());
+            System.out.println("chat update called " + SessionManager.getDisplayName());
+            System.out.println(chats);
             Platform.runLater(() -> {
                 chatSummaryList.setAll(chats);
             });
@@ -133,7 +133,8 @@ public class ChatViewModel {
         }
 
         String senderName = SessionManager.getDisplayName();
-        MessageDTO newMsg = new MessageDTO(text, LocalDateTime.now(), true, senderName, this.selectedChat.get().chatId());
+        MessageDTO newMsg = new MessageDTO(text, LocalDateTime.now(), true, senderName,
+                this.selectedChat.get().chatId());
 
         new Thread(() -> {
             try {
@@ -190,7 +191,6 @@ public class ChatViewModel {
         activeRightView.set(RightPaneView.ADD_CONTACT);
         showSettingsPane.set(false);
         showInfoPane.set(true);
-        openInfoPane();
     }
 
     public void showSettings() {
@@ -272,10 +272,6 @@ public class ChatViewModel {
         return pendingRequestsCount;
     }
 
-    public IntegerProperty unreadAnnouncementsCountProperty() {
-        return unreadAnnouncementsCount;
-    }
-
     public void sendInvitation(long id) throws RemoteException {
         ClientManager.getInstance().getRemoteContactsService()
                 .sendRequest(SessionManager.getUserId(), id);
@@ -286,6 +282,7 @@ public class ChatViewModel {
             try {
                 ClientManager.getInstance().getRemoteContactsService()
                         .acceptRequest(SessionManager.getUserId(), invitation.ownerId());
+                updateChatList();
                 Platform.runLater(() -> {
                     pendingInvitations.remove(invitation);
                 });

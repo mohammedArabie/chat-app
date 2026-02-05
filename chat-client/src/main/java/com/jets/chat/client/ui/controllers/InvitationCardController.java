@@ -24,7 +24,7 @@ public class InvitationCardController {
         this.viewModel = viewModel;
         nameLabel.setText(data.userName());
         initialsLabel.setText(getInitials(data.userName()));
-        messageLabel.setText(data.userName() + " sent you an invitation request");
+        messageLabel.setText("invitation request from " + data.userName());
         typeLabel.setText("Wants to connect with you");
         timeLabel.setText(formatTimeAgo(data.createdAt()));
     }
