@@ -94,7 +94,7 @@ public class ChatViewModel {
                     chatSummaryList.set(i,
                             new ChatSummaryDTO(chat.chatId(), chat.chatName(), messageDTO.content(),
                                     messageDTO.time(), messageDTO.senderName(),
-                                    UserStatus.AVAILABLE));
+                                    UserStatus.AVAILABLE, chat.chatType()));
                     break;
                 }
             }
@@ -310,7 +310,7 @@ public class ChatViewModel {
                 .ifPresent(oldChat -> {
                     ChatSummaryDTO updatedChat = new ChatSummaryDTO(oldChat.chatId(),
                             oldChat.chatName(), message.content(), message.time(),
-                            message.senderName(), UserStatus.AVAILABLE);
+                            message.senderName(), UserStatus.AVAILABLE, oldChat.chatType());
 
                     int index = chatSummaryList.indexOf(oldChat);
                     chatSummaryList.remove(index);
@@ -360,6 +360,12 @@ public class ChatViewModel {
         showInfoPane.set(true);
     }
 
+    public void showCreateGroup() {
+        activeRightView.set(RightPaneView.CREATE_GROUP);
+        showSettingsPane.set(false);
+        showInfoPane.set(true);
+    }
+
     public void showSettings() {
         selectedChat.set(null);
         showInfoPane.set(false);
@@ -384,10 +390,6 @@ public class ChatViewModel {
 
     public UserDTO search(String email) throws RemoteException {
         return ClientManager.getInstance().getRemoteUserService().getUserByEmail(email);
-    }
-
-    private void notifyContactsAboutMyStatus(UserStatus status) {
-
     }
 
     public void logout() {
