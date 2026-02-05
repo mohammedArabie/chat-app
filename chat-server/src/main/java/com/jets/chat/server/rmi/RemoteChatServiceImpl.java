@@ -90,7 +90,7 @@ public class RemoteChatServiceImpl extends UnicastRemoteObject implements Remote
             result.add(new ChatSummaryDTO(chat.getChatId(), chatName,
                     lastMessage.<String>map(Message::getContent).orElse(null),
                     lastMessage.<LocalDateTime>map(Message::getSentAt).orElse(null),
-                    lastMessageSender, status));
+                    lastMessageSender, status, chat.getChatType()));
         }
         return result;
     }
@@ -192,6 +192,16 @@ public class RemoteChatServiceImpl extends UnicastRemoteObject implements Remote
                 return true;
         }
         return false;
+    }
+
+    @Override
+    public long createGroup(String groupName, long ownerId, List<Long> chatIds)
+            throws RemoteException {
+        List<Long> userIds = new ArrayList<>();
+        for (Long chatId : chatIds) {
+            userIds.add(chatService.findChatUser(chatId, ownerId));
+        }
+        return chatService.createGroup(groupName, ownerId, userIds);
     }
 
     private void notifyParticipants(Long chatId, long senderId, String content, FileDTO fileDTO) {
