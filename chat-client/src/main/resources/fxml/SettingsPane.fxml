@@ -2,53 +2,120 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.Cursor?>
 
-<VBox alignment="TOP_CENTER" prefWidth="300.0" spacing="25.0"
+<VBox alignment="TOP_CENTER" prefWidth="320.0" spacing="15.0"
       styleClass="info-pane"
+      style="-fx-background-color: #1e1e1e; -fx-border-color: #333; -fx-border-width: 0 0 0 1;"
       xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.jets.chat.client.ui.controllers.SettingsPaneController">
     <padding>
-        <Insets top="40.0" left="20.0" right="20.0" bottom="20.0"/>
+        <Insets top="20.0" left="20.0" right="20.0" bottom="20.0"/>
     </padding>
 
-    <!-- Header -->
-    <Label text="Settings" styleClass="section-header"/>
+    <!-- Header with Close Button -->
+    <HBox alignment="CENTER_LEFT" spacing="0">
+        <Label text="Settings" style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: white;" HBox.hgrow="ALWAYS"/>
+        <Region HBox.hgrow="ALWAYS" />
+        <Button onAction="#onCloseClicked"
+                style="-fx-background-color: transparent; -fx-text-fill: #888; -fx-font-size: 18; -fx-padding: 0 5;"
+                text="✕">
+            <cursor>
+                <Cursor fx:constant="HAND" />
+            </cursor>
+        </Button>
+    </HBox>
 
     <Separator opacity="0.1"/>
 
-    <!-- Settings Content -->
-    <VBox alignment="TOP_LEFT" spacing="25" VBox.vgrow="ALWAYS">
+    <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent;" vbarPolicy="NEVER">
+        <VBox alignment="TOP_LEFT" spacing="20">
 
-        <!-- Notifications Section -->
-        <VBox spacing="15">
-            <Label text="NOTIFICATIONS" styleClass="text-muted-tiny"/>
+            <VBox spacing="15">
+                <Label text="PROFILE" style="-fx-text-fill: #888; -fx-font-size: 10; -fx-font-weight: bold;"/>
 
-            <VBox spacing="12">
-                <HBox alignment="CENTER_LEFT" spacing="12">
-                    <CheckBox fx:id="systemNotificationCheckBox" selected="true"/>
-                    <VBox spacing="3" HBox.hgrow="ALWAYS">
-                        <Label text="System Notifications" styleClass="text-white"
-                               style="-fx-font-weight: bold; -fx-font-size: 13;"/>
-                        <Label text="Show Windows notifications for new messages"
-                               styleClass="text-muted" style="-fx-font-size: 11;"/>
+                <HBox alignment="CENTER">
+                    <StackPane>
+                        <ImageView fx:id="userImageView" fitWidth="100" fitHeight="100">
+                            <clip>
+                                <Circle radius="50" centerX="50" centerY="50"/>
+                            </clip>
+                            <image>
+                                <Image url="@../images/default_avatar.png"/>
+                            </image>
+                        </ImageView>
+                        <Button onAction="#onChangePictureClicked"
+                                text="EDIT"
+                                style="-fx-background-color: rgba(0,0,0,0.6); -fx-text-fill: white; -fx-font-size: 9; -fx-background-radius: 10;"
+                                StackPane.alignment="BOTTOM_CENTER" translateY="-5">
+                            <cursor>
+                                <Cursor fx:constant="HAND" />
+                            </cursor>
+                        </Button>
+                    </StackPane>
+                </HBox>
+
+                <VBox spacing="12">
+                    <VBox spacing="5">
+                        <Label text="Display Name" style="-fx-text-fill: #bbb; -fx-font-size: 12;"/>
+                        <TextField fx:id="displayNameField" style="-fx-background-color: #2a2a2a; -fx-text-fill: white; -fx-border-color: #444; -fx-border-radius: 5;"/>
                     </VBox>
+
+                    <VBox spacing="5">
+                        <Label text="Email" style="-fx-text-fill: #bbb; -fx-font-size: 12;"/>
+                        <TextField fx:id="emailField" disable="true" style="-fx-background-color: #2a2a2a; -fx-text-fill: white; -fx-border-color: #444; -fx-border-radius: 5;"/>
+                    </VBox>
+
+                    <VBox spacing="12">
+                        <!-- Status Section - Placed directly above the button -->
+                        <VBox spacing="5">
+                            <Label text="Status" style="-fx-text-fill: #bbb; -fx-font-size: 12;"/>
+                            <ComboBox fx:id="statusComboBox" prefWidth="Infinity" visibleRowCount="5"
+                                      style="-fx-background-color: #2a2a2a; -fx-text-fill: white; -fx-border-color: #444; -fx-border-radius: 5;">
+                                <!-- CSS to ensure the popup list is solid and overlays correctly -->
+                                <style>
+                                    .combo-box .list-view { -fx-background-color: #2a2a2a; -fx-border-color: #444; }
+                                    .combo-box .list-cell { -fx-text-fill: white; }
+                                    .combo-box .list-cell:hover { -fx-background-color: #3a3a3a; }
+                                </style>
+                            </ComboBox>
+                        </VBox>
+
+                        <!-- Save Button -->
+                        <Button onAction="#onSaveProfileClicked" text="Save Changes" maxWidth="Infinity"
+                                fx:id="saveProfileButton"
+                                style="-fx-background-color: #28a745; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10; -fx-background-radius: 8;">
+                            <cursor><Cursor fx:constant="HAND"/></cursor>
+                        </Button>
+                    </VBox>
+                </VBox>
+            </VBox>
+
+            <Separator opacity="0.1"/>
+
+            <!-- RESTORED: Notifications Section (Prevents the NullPointerException) -->
+            <VBox spacing="15">
+                <Label text="NOTIFICATIONS" style="-fx-text-fill: #888; -fx-font-size: 10; -fx-font-weight: bold;"/>
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <CheckBox fx:id="systemNotificationCheckBox" selected="true" />
+                    <Label text="Enable System Notifications" style="-fx-text-fill: white; -fx-font-size: 12;"/>
                 </HBox>
             </VBox>
+
+            <Separator opacity="0.1"/>
+
+            <!-- Account Section -->
+            <VBox spacing="15">
+                <Label text="ACCOUNT" style="-fx-text-fill: #888; -fx-font-size: 10; -fx-font-weight: bold;"/>
+                <Button onAction="#onLogoutClicked" text="Logout" maxWidth="Infinity"
+                        style="-fx-background-color: #dc3545; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10; -fx-background-radius: 8;">
+                    <cursor><Cursor fx:constant="HAND"/></cursor>
+                </Button>
+            </VBox>
         </VBox>
-
-        <Separator opacity="0.1"/>
-
-        <!-- Account Section -->
-        <VBox spacing="15">
-            <Label text="ACCOUNT" styleClass="text-muted-tiny"/>
-
-            <Button onAction="#onLogoutClicked"
-                    text="Logout"
-                    maxWidth="Infinity"
-                    style="-fx-background-color: #dc3545; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 12 20; -fx-background-radius: 8; -fx-cursor: hand;"/>
-        </VBox>
-
-    </VBox>
-
+    </ScrollPane>
 </VBox>
