@@ -1,7 +1,10 @@
 package com.jets.chat.server.rmi;
 
 import com.jets.chat.common.callback.ClientCallback;
-import com.jets.chat.common.dto.*;
+import com.jets.chat.common.dto.LoginResult;
+import com.jets.chat.common.dto.RegisterRequestDTO;
+import com.jets.chat.common.dto.RegisterResponseDTO;
+import com.jets.chat.common.dto.UserDTO;
 import com.jets.chat.common.enums.UserStatus;
 import com.jets.chat.common.rmi.RemoteUserService;
 import com.jets.chat.server.service.UserService;
@@ -60,6 +63,7 @@ public class RemoteUserServiceImpl extends UnicastRemoteObject implements Remote
     @Override
     public void updateStatus(long userId, UserStatus status) throws RemoteException {
         userService.updateStatus(userId, status);
+        userService.notifyContactsOfStatusChange(userId, status);
     }
 
     @Override
