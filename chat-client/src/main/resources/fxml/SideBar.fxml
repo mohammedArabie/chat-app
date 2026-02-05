@@ -32,18 +32,6 @@
 
                 <HBox spacing="15.0" alignment="CENTER_RIGHT">
                     <children>
-                        <!-- Announcements Icon -->
-                        <StackPane onMouseClicked="#onAnnouncementsClicked" styleClass="icon-container">
-                            <Label styleClass="icon-header" text="📢" />
-                            <Circle fx:id="announcementBadge" fill="#0084ff" radius="8.0" StackPane.alignment="TOP_RIGHT">
-                                <StackPane.margin><Insets right="-5.0" top="-5.0" /></StackPane.margin>
-                            </Circle>
-                            <Label fx:id="announcementCount" styleClass="badge-text" text="2" StackPane.alignment="TOP_RIGHT">
-                                <StackPane.margin><Insets right="-2.0" top="-6.0" /></StackPane.margin>
-                            </Label>
-                        </StackPane>
-
-                        <!-- Incoming Requests Icon -->
                         <StackPane onMouseClicked="#onRequestsClicked" styleClass="icon-container">
                             <Label styleClass="icon-header" text="👤+" />
                             <Circle fx:id="requestBadge" fill="#3ba55d" radius="8.0" StackPane.alignment="TOP_RIGHT">
