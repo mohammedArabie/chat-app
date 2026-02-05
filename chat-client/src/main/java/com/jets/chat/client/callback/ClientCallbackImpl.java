@@ -1,7 +1,7 @@
 package com.jets.chat.client.callback;
 
 import com.jets.chat.client.ui.viewmodel.ChatViewModel;
-import com.jets.chat.client.util.SessionManager;
+import com.jets.chat.client.util.ClientManager;
 import com.jets.chat.client.util.SystemNotificationUtil;
 import com.jets.chat.common.callback.ClientCallback;
 import com.jets.chat.common.dto.AnnouncementDTO;
@@ -10,7 +10,6 @@ import com.jets.chat.common.dto.InvitationDTO;
 import com.jets.chat.common.dto.MessageDTO;
 import com.jets.chat.common.enums.UserStatus;
 import javafx.application.Platform;
-import com.jets.chat.client.util.SystemNotificationUtil;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -32,8 +31,8 @@ public class ClientCallbackImpl extends UnicastRemoteObject implements ClientCal
                 String snippet = message.isFileMessage()
                         ? "📎 File: " + message.content()
                         : message.content();
-                SystemNotificationUtil.showInfoNotification("New message in " + message.chatId(),
-                        snippet);
+                SystemNotificationUtil
+                        .showInfoNotification("New message from " + message.senderName(), snippet);
             }
         });
     }
@@ -49,15 +48,20 @@ public class ClientCallbackImpl extends UnicastRemoteObject implements ClientCal
             System.out.println("Contact " + contactId + " is now " + status);
             var chatList = chatViewModel.getChatSummaryList();
             for (ChatSummaryDTO chat : chatList) {
-                if (chat.chatId() == contactId) {
-                    ChatSummaryDTO updatedChat = new ChatSummaryDTO(chat.chatId(), chat.chatName(),
-                            chat.lastMessage(), chat.lastMessageTime(), chat.lastMessageSender(),
-                            status);
-                    int index = chatList.indexOf(chat);
-                    if (index >= 0) {
-                        chatList.set(index, updatedChat);
+                try {
+                    if (ClientManager.getInstance().getRemoteChatService().isUserInChat(contactId,
+                            chat.chatId())) {
+                        ChatSummaryDTO updatedChat = new ChatSummaryDTO(chat.chatId(),
+                                chat.chatName(), chat.lastMessage(), chat.lastMessageTime(),
+                                chat.lastMessageSender(), status);
+                        int index = chatList.indexOf(chat);
+                        if (index >= 0) {
+                            chatList.set(index, updatedChat);
+                        }
+                        break;
                     }
-                    break;
+                } catch (RemoteException e) {
+                    throw new RuntimeException(e);
                 }
             }
         });
