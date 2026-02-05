@@ -4,10 +4,6 @@ import com.jets.chat.client.util.ClientManager;
 import com.jets.chat.client.util.SceneManager;
 import com.jets.chat.client.util.SessionManager;
 import com.jets.chat.common.dto.*;
-import com.jets.chat.common.dto.ChatSummaryDTO;
-import com.jets.chat.common.dto.InvitationDTO;
-import com.jets.chat.common.dto.MessageDTO;
-import com.jets.chat.common.dto.UserDTO;
 import com.jets.chat.common.enums.UserStatus;
 import com.jets.chat.common.rmi.RemoteChatService;
 import com.jets.chat.common.rmi.RemoteContactsService;
@@ -25,9 +21,6 @@ import java.nio.file.Paths;
 import java.rmi.RemoteException;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 public class ChatViewModel {
 
@@ -51,14 +44,10 @@ public class ChatViewModel {
     private final ObservableList<InvitationDTO> pendingInvitations = FXCollections
             .observableArrayList();
     private final IntegerProperty pendingRequestsCount = new SimpleIntegerProperty(0);
-
-    private final IntegerProperty unreadAnnouncementsCount = new SimpleIntegerProperty(0);
-
-    private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
     private final BooleanProperty showSettingsPane = new SimpleBooleanProperty(false);
     private final BooleanProperty enableSystemNotifications = new SimpleBooleanProperty(true);
 
-    public ChatViewModel() {
+    public ChatViewModel() throws RemoteException {
         pendingRequestsCount.bind(Bindings.size(pendingInvitations));
 
         selectedChat.addListener((obs, oldChat, newChat) -> {
@@ -89,17 +78,22 @@ public class ChatViewModel {
 
     public void addMessage(MessageDTO messageDTO) {
         if (selectedChat.get() != null && selectedChat.get().chatId() == messageDTO.chatId()) {
-            messageHistory.add(messageDTO);
+            Platform.runLater(() -> {
+                messageHistory.add(messageDTO);
+            });
         }
-        for (int i = 0; i < chatSummaryList.size(); i++) {
-            ChatSummaryDTO chat = chatSummaryList.get(i);
-            if (chat.chatId() == messageDTO.chatId()) {
-                chatSummaryList.set(i,
-                        new ChatSummaryDTO(chat.chatId(), chat.chatName(), messageDTO.content(),
-                                messageDTO.time(), messageDTO.senderName(), UserStatus.AVAILABLE));
-                break;
+        Platform.runLater(() -> {
+            for (int i = 0; i < chatSummaryList.size(); i++) {
+                ChatSummaryDTO chat = chatSummaryList.get(i);
+                if (chat.chatId() == messageDTO.chatId()) {
+                    chatSummaryList.set(i,
+                            new ChatSummaryDTO(chat.chatId(), chat.chatName(), messageDTO.content(),
+                                    messageDTO.time(), messageDTO.senderName(),
+                                    UserStatus.AVAILABLE));
+                    break;
+                }
             }
-        }
+        });
     }
 
     public void updateChatList() {
@@ -114,7 +108,9 @@ public class ChatViewModel {
         }
     }
 
-    public void loadUserChats(Long userId) {
+    public void loadUserChats(Long userId) throws RemoteException {
+        ClientManager.getInstance().getRemoteUserService().updateStatus(SessionManager.getUserId(),
+                UserStatus.AVAILABLE);
         new Thread(() -> {
             try {
                 RemoteChatService service = ClientManager.getInstance().getRemoteChatService();
@@ -159,6 +155,7 @@ public class ChatViewModel {
             try {
                 ClientManager.getInstance().getRemoteChatService()
                         .sendMessage(selectedChat.get().chatId(), text, SessionManager.getUserId());
+                addMessage(newMsg);
                 Platform.runLater(() -> {
                     messageHistory.add(newMsg);
                 });
@@ -382,6 +379,10 @@ public class ChatViewModel {
 
     public UserDTO search(String email) throws RemoteException {
         return ClientManager.getInstance().getRemoteUserService().getUserByEmail(email);
+    }
+
+    private void notifyContactsAboutMyStatus(UserStatus status) {
+
     }
 
     public void logout() {
