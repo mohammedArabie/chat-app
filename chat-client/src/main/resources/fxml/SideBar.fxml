@@ -20,13 +20,6 @@
         <HBox alignment="CENTER_LEFT" spacing="12.0">
             <children>
                 <Circle fill="#0084ff" radius="18.0" stroke="TRANSPARENT" />
-                <VBox alignment="CENTER_LEFT">
-                    <children>
-                        <Label styleClass="text-bold" text="You" style="-fx-text-fill: white;" />
-                        <Label styleClass="text-green" text="● Online" style="-fx-font-size: 10;" />
-                    </children>
-                </VBox>
-
                 <!-- This spacer pushes the buttons to the far right -->
                 <Region HBox.hgrow="ALWAYS" />
 
