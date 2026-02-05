@@ -2,6 +2,7 @@ package com.jets.chat.client.ui.controllers;
 
 import com.jets.chat.client.ui.viewmodel.ChatViewModel;
 import com.jets.chat.client.ui.viewmodel.RightPaneView;
+import com.jets.chat.client.util.ClientManager;
 import com.jets.chat.client.util.SessionManager;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
@@ -19,7 +20,7 @@ import static com.jets.chat.common.util.Functions.getInitials;
 
 public class MainController implements Initializable {
 
-    private final ChatViewModel chatViewModel = new ChatViewModel();
+    private final ChatViewModel chatViewModel = ClientManager.getInstance().getChatViewModel();
     @FXML
     private SideBarController sideBarController;
     @FXML
@@ -52,7 +53,7 @@ public class MainController implements Initializable {
         setupRightPaneBindings();
         chatViewModel.loadUserChats(SessionManager.getUserId());
         chatViewModel.fetchInvitationsFromServer();
-//        chatViewModel.startPolling();
+        // chatViewModel.startPolling();
     }
 
     private void setupRightPaneBindings() {

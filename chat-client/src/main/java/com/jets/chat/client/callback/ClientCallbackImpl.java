@@ -1,10 +1,10 @@
 package com.jets.chat.client.callback;
 
 import com.jets.chat.client.ui.viewmodel.ChatViewModel;
-import com.jets.chat.client.util.SessionManager;
 import com.jets.chat.common.callback.ClientCallback;
 import com.jets.chat.common.dto.AnnouncementDTO;
 import com.jets.chat.common.dto.ChatSummaryDTO;
+import com.jets.chat.common.dto.InvitationDTO;
 import com.jets.chat.common.dto.MessageDTO;
 import com.jets.chat.common.enums.UserStatus;
 import javafx.application.Platform;
@@ -25,7 +25,7 @@ public class ClientCallbackImpl extends UnicastRemoteObject implements ClientCal
     @Override
     public void receiveMessage(MessageDTO message) throws RemoteException {
         Platform.runLater(() -> {
-
+            chatViewModel.addMessage(message);
             if (chatViewModel.isSystemNotificationsEnabled()) {
                 SystemNotificationUtil.showInfoNotification("You have recieved a new message",
                         message.content());
@@ -35,7 +35,7 @@ public class ClientCallbackImpl extends UnicastRemoteObject implements ClientCal
 
     @Override
     public void reloadChats() throws RemoteException {
-        this.chatViewModel.loadUserChats(SessionManager.getUserId());
+        chatViewModel.updateChatList();
     }
 
     @Override
@@ -61,5 +61,27 @@ public class ClientCallbackImpl extends UnicastRemoteObject implements ClientCal
     @Override
     public void onAnnouncementReceived(AnnouncementDTO announcement) throws RemoteException {
         SystemNotificationUtil.showAnnouncement(announcement);
+    }
+
+    @Override
+    public void onInvitationReceived(InvitationDTO invitation) throws RemoteException {
+        Platform.runLater(() -> {
+            chatViewModel.getPendingInvitations().add(invitation);
+            if (chatViewModel.isSystemNotificationsEnabled()) {
+                SystemNotificationUtil.showInfoNotification("New Contact Request",
+                        "You have a new contact request from " + invitation.userName());
+            }
+        });
+    }
+
+    @Override
+    public void onInvitationAccepted(String contactName) throws RemoteException {
+        Platform.runLater(() -> {
+            if (chatViewModel.isSystemNotificationsEnabled()) {
+                SystemNotificationUtil.showInfoNotification("Contact Request Accepted",
+                        contactName + " has accepted your contact request");
+            }
+            chatViewModel.updateChatList();
+        });
     }
 }
